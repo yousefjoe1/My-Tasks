@@ -1,0 +1,65 @@
+import { WeeklyBlock, Database } from "@/types";
+
+const STORAGE_KEY = 'my-notion-app-data';
+
+const defaultData: Database = {
+
+  blocks: [
+    {
+      id: '1',
+      content: 'Workout',
+      pageId: '1',
+      days: {},
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ],
+};
+
+export class StorageService {
+  static getData(): Database {
+    if (typeof window === 'undefined') return defaultData;
+    
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : defaultData;
+  }
+
+
+
+  static saveData(data: Database): void {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+
+
+  static getWeeklyTasks(pageId: string): WeeklyBlock[] {
+    const data = this.getData();
+    return data.blocks.filter((block:WeeklyBlock) => block.pageId === pageId);
+  }
+
+  
+
+  static addBlock(block: WeeklyBlock): void {
+    const data = this.getData();
+    data.blocks.push(block);
+    this.saveData(data);
+  }
+
+
+
+  static updateBlock(blockId: string, updates: Partial<WeeklyBlock>): void {
+    const data = this.getData();
+    const blockIndex = data.blocks.findIndex((b:WeeklyBlock) => b.id === blockId);
+    
+    if (blockIndex !== -1) {
+      data.blocks[blockIndex] = { ...data.blocks[blockIndex], ...updates, updatedAt: new Date(), };
+      this.saveData(data);
+    }
+  }
+
+  static deleteBlock(blockId: string): void {
+    const data = this.getData();
+    data.blocks = data.blocks.filter((b:WeeklyBlock) => b.id !== blockId);
+    this.saveData(data);
+  }
+}

@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+
+:root {
+  /* Light Mode Colors */
+  --primary: 59 130 246;
+  /* #3B82F6 - blue */
+  --secondary: 16 185 129;
+  /* #10B981 - emerald */
+  --accent: 245 158 11;
+  /* #F59E0B - amber */
+
+  /* Background Colors */
+  --bg-primary: 255 255 255;
+  --bg-secondary: 249 250 251;
+  --bg-tertiary: 243 244 246;
+
+  /* Text Colors */
+  --text-primary: 17 24 39;
+  --text-secondary: 75 85 99;
+  --text-muted: 107 114 128;
+
+  /* Border Colors */
+  --border-primary: 229 231 235;
+  --border-secondary: 209 213 219;
+
+  /* State Colors */
+  --success: 16 185 129;
+  --warning: 245 158 11;
+  --error: 239 68 68;
+}
+
+.dark {
+  /* Dark Mode Colors - نفس الـ variables لكن بقيم مختلفة */
+  --primary: 96 165 250;
+  /* #60A5FA - blue-400 */
+  --secondary: 52 211 153;
+  /* #34D399 - emerald-400 */
+  --accent: 251 191 36;
+  /* #FBBF24 - amber-400 */
+
+  /* Background Colors */
+  --bg-primary: 17 24 39;
+  /* #111827 - gray-900 */
+  --bg-secondary: 31 41 55;
+  /* #1F2937 - gray-800 */
+  --bg-tertiary: 55 65 81;
+  /* #374151 - gray-700 */
+
+  /* Text Colors */
+  --text-primary: 249 250 251;
+  --text-secondary: 229 231 235;
+  --text-muted: 156 163 175;
+
+  /* Border Colors */
+  --border-primary: 55 65 81;
+  --border-secondary: 75 85 99;
+
+  /* State Colors */
+  --success: 52 211 153;
+  --warning: 251 191 36;
+  --error: 248 113 113;
+}
+
+/* Base Styles */
+body {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Custom Utility Classes */
+.bg-primary {
+  background-color: rgb(var(--bg-primary));
+}
+
+.bg-secondary {
+  background-color: rgb(var(--bg-secondary));
+}
+
+.bg-tertiary {
+  background-color: rgb(var(--bg-tertiary));
+}
+
+.text-primary {
+  color: rgb(var(--text-primary));
+}
+
+.text-secondary {
+  color: rgb(var(--text-secondary));
+}
+
+.text-muted {
+  color: rgb(var(--text-muted));
+}
+
+.border-primary {
+  border-color: rgb(var(--border-primary));
+}
+
+.border-secondary {
+  border-color: rgb(var(--border-secondary));
+}
+
+.bg-brand {
+  background-color: rgb(var(--primary));
+}
+
+.text-brand {
+  color: rgb(var(--primary));
+}
+
+.border-brand {
+  border-color: rgb(var(--primary));
+}
+
+.bg-success {
+  background-color: rgb(var(--success));
+}
+
+.bg-warning {
+  background-color: rgb(var(--warning));
+}
+
+.bg-error {
+  background-color: rgb(var(--error));
+}
