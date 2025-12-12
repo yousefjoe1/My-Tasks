@@ -2,7 +2,7 @@ import { WeeklyBlock } from "@/types";
 import { getWeekDates, getWeekDays } from "@/lib/utils";
 import { format } from "date-fns";
 import { useState } from "react";
-import { Edit } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 
 interface WeeklyTableProps {
   block: WeeklyBlock;
@@ -75,18 +75,18 @@ export function WeeklyTable({ block, onUpdate, onDelete }: WeeklyTableProps) {
             </div>
           </div>
         ) : (
-          <div className="flex items-center gap-3 group">
+          <div className="flex items-center justify-between w-full gap-3">
             <button
-              className="text-lg font-semibold text-primary hover:text-brand cursor-pointer transition-colors duration-200 px-3 py-1 rounded-lg hover:bg-brand/10"
+              className="text-lg font-semibold text-primary hover:text-brand cursor-pointer transition-colors duration-200 py-1 rounded-lg hover:bg-brand/10"
               onClick={() => setIsEditing(true)}
             >
               <Edit />
             </button>
             <button
               onClick={onDelete}
-              className="opacity-0 group-hover:opacity-100 transition-all duration-200 px-3 py-1 text-sm bg-error text-white rounded-lg hover:bg-red-600 active:scale-95 font-medium shadow-sm"
+              className="transition-all duration-200 px-1 py-1 text-sm bg-error text-white rounded-lg hover:bg-red-600 active:scale-95 font-medium shadow-sm"
             >
-              Delete
+              <Trash size={18} />
             </button>
           </div>
         )}
