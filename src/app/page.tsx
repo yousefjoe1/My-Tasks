@@ -2,8 +2,9 @@
 
 import { useWeeklyTasks } from '@/hooks/useWeeklyTasks';
 import { AddBlock } from '@/components/AddBlock';
-import { BlockRenderer } from '@/components/blocks/BlockRenderer';
 import NavBar from '@/common/NavBar/NavBar';
+import { SyncToggle } from '@/components/ToggleUploadToCloud/SyncToggle';
+import { WeeklyTable } from '@/components/blocks/WeeklyTable';
 
 export default function Home() {
   const { blocks, addBlock, updateBlock, deleteBlock } = useWeeklyTasks('1');
@@ -11,6 +12,9 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-secondary py-8 pt-18">
       <NavBar />
+
+      <SyncToggle
+      />
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
           <div className="mb-8">
@@ -23,14 +27,17 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            {blocks.map((block) => (
-              <BlockRenderer
-                key={block.id}
-                block={block}
-                onUpdate={updateBlock}
-                onDelete={deleteBlock}
-              />
-            ))}
+
+            {
+              blocks.map((block) => (
+                <WeeklyTable
+                  key={block.id}
+                  block={block}
+                  onUpdate={(updates) => updateBlock(block.id, updates)}
+                  onDelete={() => deleteBlock(block.id)}
+                />
+              ))
+            }
 
             <AddBlock onAddBlock={addBlock} />
           </div>

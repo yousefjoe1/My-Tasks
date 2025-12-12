@@ -1,14 +1,8 @@
+// hooks/useWeeklyTasks.ts (updated)
 import { useState, useEffect, useCallback } from "react";
 import { shouldResetWeek } from "@/lib/utils";
 import { WeeklyBlock } from "@/types";
-
-
-
-import { StorageService } from "@/lib/storage/weeklyTasksStorage";
-
-
-
-
+import { StorageService } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
 
 export function useWeeklyTasks(pageId: string) {
   const [blocks, setBlocks] = useState<WeeklyBlock[]>([]);
@@ -21,20 +15,16 @@ export function useWeeklyTasks(pageId: string) {
     );
 
     if (needsReset) {
-
-      // Update in storage asynchronously
       const updatePromises = loadedBlocks.map((block) => {
-          return StorageService.updateBlock(block.id, {
-            days: {},
-            updatedAt: new Date(),
-          });
-        return Promise.resolve();
+        return StorageService.updateBlock(block.id, {
+          days: {},
+          updatedAt: new Date(),
+        });
       });
 
-      // Wait for all storage updates to complete
       await Promise.all(updatePromises);
       
-      return loadedBlocks;
+      return StorageService.getWeeklyTasks(pageId);
     } else {
       return loadedBlocks;
     }
@@ -58,7 +48,7 @@ export function useWeeklyTasks(pageId: string) {
     };
   }, [firstLoad]);
 
-  const addBlock = ( content: string = "") => {
+  const addBlock = async (content: string = "") => {
     const newBlock: WeeklyBlock = {
       id: Date.now().toString(),
       content,
@@ -68,12 +58,12 @@ export function useWeeklyTasks(pageId: string) {
       updatedAt: new Date(),
     };
 
-    StorageService.addBlock(newBlock);
+    await StorageService.addBlock(newBlock);
     setBlocks((prev) => [...prev, newBlock]);
   };
 
-  const updateBlock = (blockId: string, updates: Partial<WeeklyBlock>) => {
-    StorageService.updateBlock(blockId, updates);
+  const updateBlock = async (blockId: string, updates: Partial<WeeklyBlock>) => {
+    await StorageService.updateBlock(blockId, updates);
     setBlocks((prev) =>
       prev.map((block) =>
         block.id === blockId ? { ...block, ...updates } : block
@@ -81,10 +71,12 @@ export function useWeeklyTasks(pageId: string) {
     );
   };
 
-  const deleteBlock = (blockId: string) => {
-    StorageService.deleteBlock(blockId);
+  const deleteBlock = async (blockId: string) => {
+    await StorageService.deleteBlock(blockId);
     setBlocks((prev) => prev.filter((block) => block.id !== blockId));
   };
+
+
 
   return {
     blocks,

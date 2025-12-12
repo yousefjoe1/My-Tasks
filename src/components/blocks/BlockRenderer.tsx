@@ -1,14 +1,14 @@
-import { Block } from "@/types";
+import { WeeklyBlock } from "@/types";
 import { WeeklyTable } from "./WeeklyTable";
 
 interface BlockRendererProps {
-    block: Block;
-    onUpdate: (blockId: string, updates: Partial<Block>) => void;
+    block: WeeklyBlock;
+    onUpdate: (blockId: string, updates: Partial<WeeklyBlock>) => void;
     onDelete: (blockId: string) => void;
 }
 
 export function BlockRenderer({ block, onUpdate, onDelete }: BlockRendererProps) {
-    const handleUpdate = (updates: Partial<Block>) => {
+    const handleUpdate = (updates: Partial<WeeklyBlock>) => {
         onUpdate(block.id, updates);
     };
 
@@ -28,12 +28,12 @@ export function BlockRenderer({ block, onUpdate, onDelete }: BlockRendererProps)
     };
 
     // If block type is not valid, return null or a fallback component
-    if (!isValidBlockType(block.type)) {
-        console.warn(`Unknown block type: ${block.type}`);
+    if (!isValidBlockType('block')) {
+        console.warn(`Unknown block type: block`);
         return null;
     }
 
-    const Component = components[block.type];
+    const Component = components['weekly'];
 
     return (
         <Component

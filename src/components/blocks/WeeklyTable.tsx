@@ -1,12 +1,12 @@
-import { Block } from "@/types";
+import { WeeklyBlock } from "@/types";
 import { getWeekDates, getWeekDays } from "@/lib/utils";
 import { format } from "date-fns";
 import { useState } from "react";
 import { Edit } from "lucide-react";
 
 interface WeeklyTableProps {
-  block: Block;
-  onUpdate: (updates: Partial<Block>) => void;
+  block: WeeklyBlock;
+  onUpdate: (updates: Partial<WeeklyBlock>) => void;
   onDelete: () => void;
 }
 
