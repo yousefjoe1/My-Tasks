@@ -3,7 +3,7 @@ import { Database, WeeklyBlock } from "@/types";
 
 const STORAGE_KEY = 'my-notion-app-data';
 
-export class StorageService {
+export class LocalStorageStrategy {
   private static getData(): Database {
     if (typeof window === 'undefined') {
       return {
@@ -19,7 +19,7 @@ export class StorageService {
         ],
       };
     }
-    
+
     const data = localStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : {
       blocks: [
@@ -54,12 +54,12 @@ export class StorageService {
   static updateBlock(blockId: string, updates: Partial<WeeklyBlock>): void {
     const data = this.getData();
     const blockIndex = data.blocks.findIndex(b => b.id === blockId);
-    
+
     if (blockIndex !== -1) {
-      data.blocks[blockIndex] = { 
-        ...data.blocks[blockIndex], 
-        ...updates, 
-        updatedAt: new Date() 
+      data.blocks[blockIndex] = {
+        ...data.blocks[blockIndex],
+        ...updates,
+        updatedAt: new Date()
       };
       this.saveData(data);
     }
