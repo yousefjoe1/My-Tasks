@@ -2,13 +2,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { shouldResetWeek } from "@/lib/utils";
 import { WeeklyBlock } from "@/types";
-import { StorageService } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
+import { LocalStorageStrategy } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
 
 export function useWeeklyTasks(pageId: string) {
   const [blocks, setBlocks] = useState<WeeklyBlock[]>([]);
 
   const firstLoad = useCallback(async () => {
-    const loadedBlocks = StorageService.getWeeklyTasks(pageId);
+    const loadedBlocks = LocalStorageStrategy.getWeeklyTasks(pageId);
 
     const needsReset = loadedBlocks.some(
       (block) => block.updatedAt && shouldResetWeek(new Date(block.updatedAt))
@@ -16,15 +16,15 @@ export function useWeeklyTasks(pageId: string) {
 
     if (needsReset) {
       const updatePromises = loadedBlocks.map((block) => {
-        return StorageService.updateBlock(block.id, {
+        return LocalStorageStrategy.updateBlock(block.id, {
           days: {},
           updatedAt: new Date(),
         });
       });
 
       await Promise.all(updatePromises);
-      
-      return StorageService.getWeeklyTasks(pageId);
+
+      return LocalStorageStrategy.getWeeklyTasks(pageId);
     } else {
       return loadedBlocks;
     }
@@ -32,7 +32,7 @@ export function useWeeklyTasks(pageId: string) {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     const initializeData = () => {
       firstLoad().then((newBlocks) => {
         if (isMounted && newBlocks) {
@@ -40,9 +40,9 @@ export function useWeeklyTasks(pageId: string) {
         }
       });
     };
-    
+
     initializeData();
-    
+
     return () => {
       isMounted = false;
     };
@@ -53,17 +53,17 @@ export function useWeeklyTasks(pageId: string) {
       id: Date.now().toString(),
       content,
       pageId,
-      days: {}, 
+      days: {},
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    await StorageService.addBlock(newBlock);
+    await LocalStorageStrategy.addBlock(newBlock);
     setBlocks((prev) => [...prev, newBlock]);
   };
 
   const updateBlock = async (blockId: string, updates: Partial<WeeklyBlock>) => {
-    await StorageService.updateBlock(blockId, updates);
+    await LocalStorageStrategy.updateBlock(blockId, updates);
     setBlocks((prev) =>
       prev.map((block) =>
         block.id === blockId ? { ...block, ...updates } : block
@@ -72,7 +72,7 @@ export function useWeeklyTasks(pageId: string) {
   };
 
   const deleteBlock = async (blockId: string) => {
-    await StorageService.deleteBlock(blockId);
+    await LocalStorageStrategy.deleteBlock(blockId);
     setBlocks((prev) => prev.filter((block) => block.id !== blockId));
   };
 
