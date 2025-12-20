@@ -93,78 +93,81 @@ export function WeeklyTable({ block, onUpdate, onDelete }: WeeklyTableProps) {
       </div>
 
       {/* Table Section */}
-      <table className="w-full overflow-hidden rounded-b-xl">
-        {/* Table Header */}
-        <thead className="border-b border-secondary bg-secondary">
-          <tr>
-            {/* <th className="p-4 font-semibold text-primary border-r border-secondary text-left">
-              <span className="truncate">Edit</span>
-            </th> */}
-            <th className="p-4 font-semibold text-primary border-r border-secondary text-left">
-              <span className="truncate">Task Name</span>
-            </th>
-            {weekDays.map((day, index) => (
-              <th
-                key={day}
-                className="p-4 border-r border-secondary last:border-r-0 text-center"
-              >
-                <div className="flex flex-col">
-                  <span className="font-semibold text-primary">{day}</span>
-                  <span className="text-xs text-muted mt-1 normal-case">
-                    {format(weekDates[index], "MMM dd")}
-                  </span>
-                </div>
+      <div className="overflow-x-auto ">
+        <table className="w-full overflow-hidden rounded-b-xl min-w-[800px]">
+          {/* Table Header */}
+          <thead className="border-b border-secondary bg-secondary">
+            <tr>
+              {/* <th className="p-4 font-semibold text-primary border-r border-secondary text-left">
+                <span className="truncate">Edit</span>
+              </th> */}
+              <th className="p-4 font-semibold text-primary border-r border-secondary text-left">
+                <span className="truncate">Task Name</span>
               </th>
-            ))}
-          </tr>
-        </thead>
-
-        {/* Table Body */}
-        <tbody className="bg-primary">
-          <tr className="transition-all duration-200 hover:bg-tertiary/50">
-            {/* <td className="p-4 border-r border-secondary font-medium text-primary align-middle">
-              <Edit />
-            </td> */}
-            <td className="p-4 border-r border-secondary font-medium text-primary align-middle">
-              <span className="truncate">{content || "Untitled Task"}</span>
-            </td>
-            {weekDays.map((day) => (
-              <td
-                key={day}
-                className={[
-                  "p-4 border-r border-secondary last:border-r-0 align-middle transition-colors",
-                  block.days?.[day]
-                    ? "bg-success/10 border-l-4 border-l-success dark:bg-success/20"
-                    : "bg-primary",
-                ].join(" ")}
-              >
-                <button
-                  className={[
-                    "w-full h-full cursor-pointer transition-all duration-200 flex items-center justify-center group",
-                    "hover:bg-tertiary active:scale-95 min-h-[48px] rounded",
-                    block.days?.[day]
-                      ? "hover:bg-success/20"
-                      : "hover:bg-secondary",
-                  ].join(" ")}
-                  onClick={() => toggleDay(day)}
+              {weekDays.map((day, index) => (
+                <th
+                  key={day}
+                  className="p-4 border-r border-secondary last:border-r-0 text-center"
                 >
-                  <div
-                    className={[
-                      "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200",
-                      "group-hover:scale-110 group-active:scale-95",
-                      block.days?.[day]
-                        ? "bg-success border-success text-white shadow-sm"
-                        : "border-muted text-transparent hover:border-success",
-                    ].join(" ")}
-                  >
-                    <span className="font-bold text-sm">✓</span>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-primary">{day}</span>
+                    <span className="text-xs text-muted mt-1 normal-case">
+                      {format(weekDates[index], "MMM dd")}
+                    </span>
                   </div>
-                </button>
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          {/* Table Body */}
+          <tbody className="bg-primary">
+            <tr className="transition-all duration-200 hover:bg-tertiary/50">
+              {/* <td className="p-4 border-r border-secondary font-medium text-primary align-middle">
+                <Edit />
+              </td> */}
+              <td className="p-4 border-r border-secondary font-medium text-primary align-middle">
+                <span className="truncate">{content || "Untitled Task"}</span>
               </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+              {weekDays.map((day) => (
+                <td
+                  key={day}
+                  className={[
+                    "p-4 border-r border-secondary last:border-r-0 align-middle transition-colors",
+                    block.days?.[day]
+                      ? "bg-success/10 border-l-4 border-l-success dark:bg-success/20"
+                      : "bg-primary",
+                  ].join(" ")}
+                >
+                  <button
+                    className={[
+                      "w-full h-full cursor-pointer transition-all duration-200 flex items-center justify-center group",
+                      "hover:bg-tertiary active:scale-95 min-h-[48px] rounded",
+                      block.days?.[day]
+                        ? "hover:bg-success/20"
+                        : "hover:bg-secondary",
+                    ].join(" ")}
+                    onClick={() => toggleDay(day)}
+                  >
+                    <div
+                      className={[
+                        "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200",
+                        "group-hover:scale-110 group-active:scale-95",
+                        block.days?.[day]
+                          ? "bg-success border-success text-white shadow-sm"
+                          : "border-muted text-transparent hover:border-success",
+                      ].join(" ")}
+                    >
+                      <span className="font-bold text-sm">✓</span>
+                    </div>
+                  </button>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
 
       {/* Status Bar */}
       <div className="px-4 py-2 bg-secondary border-t border-secondary rounded-b-xl">
