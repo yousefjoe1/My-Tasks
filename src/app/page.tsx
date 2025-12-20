@@ -3,7 +3,7 @@
 import { useWeeklyTasks } from '@/hooks/useWeeklyTasks';
 import { AddBlock } from '@/components/AddBlock';
 import NavBar from '@/common/NavBar/NavBar';
-import { SyncToggle } from '@/components/ToggleUploadToCloud/SyncToggle';
+// import { SyncToggle } from '@/components/ToggleUploadToCloud/SyncToggle';
 import { WeeklyTable } from '@/components/blocks/WeeklyTable';
 
 export default function Home() {
@@ -13,8 +13,8 @@ export default function Home() {
     <div className="min-h-screen bg-secondary py-8 pt-18">
       <NavBar />
 
-      <SyncToggle
-      />
+      {/* <SyncToggle
+      /> */}
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
           <div className="mb-8">
