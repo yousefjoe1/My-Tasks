@@ -4,8 +4,6 @@ import { shouldResetWeek } from "@/lib/utils";
 import { WeeklyBlock } from "@/types";
 import { LocalStorageStrategy } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
 
-import { invoke } from "@tauri-apps/api/core";
-
 export function useWeeklyTasks(pageId: string) {
   const [blocks, setBlocks] = useState<WeeklyBlock[]>([]);
 
@@ -33,7 +31,6 @@ export function useWeeklyTasks(pageId: string) {
   }, [pageId]);
 
   useEffect(() => {
-    invoke("hello").then((res) => console.log(res));
     let isMounted = true;
 
     const initializeData = () => {
