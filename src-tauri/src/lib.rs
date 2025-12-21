@@ -1,0 +1,24 @@
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
+
+#[tauri::command]
+fn hello() -> String {
+  "Hello, World!".to_string()
+}
+
+
+pub fn run() {
+  tauri::Builder::default()
+    .setup(|app| {
+      if cfg!(debug_assertions) {
+        app.handle().plugin(
+          tauri_plugin_log::Builder::default()
+          .invoce_handler(tauri::generate_handler!([hello]))
+            .level(log::LevelFilter::Info)
+            .build(),
+        )?;
+      }
+      Ok(())
+    })
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application");
+}
