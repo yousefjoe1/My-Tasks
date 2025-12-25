@@ -1,5 +1,5 @@
 // lib/storage/StorageService.ts
-import { Database, WeeklyBlock } from "@/types";
+import { Database, WeeklyBlock, WeeklySnapshot } from "@/types";
 
 const STORAGE_KEY = 'my-notion-app-data';
 
@@ -10,11 +10,11 @@ export class LocalStorageStrategy {
         blocks: [
           {
             id: '1',
-            content: 'Workout',
+            content: 'First Taks',
             pageId: '1',
             days: {},
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            created_at: new Date().toString(),
+            updated_at: new Date().toString(),
           },
         ],
       };
@@ -25,11 +25,11 @@ export class LocalStorageStrategy {
       blocks: [
         {
           id: '1',
-          content: 'Workout',
+          content: 'First Taks',
           pageId: '1',
           days: {},
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          created_at: new Date().toString(),
+          updated_at: new Date().toString(),
         },
       ],
     };
@@ -59,10 +59,23 @@ export class LocalStorageStrategy {
       data.blocks[blockIndex] = {
         ...data.blocks[blockIndex],
         ...updates,
-        updatedAt: new Date()
+        updated_at: new Date().toString()
       };
       this.saveData(data);
     }
+  }
+
+  // saveWeeklySnapshot
+  // static saveWeeklySnapshot(pageId: string, snapshot: WeeklySnapshot): void {
+  //   const data = this.getData();
+  //   data.weeklySnapshots.push(snapshot);
+  //   this.saveData(data);
+  // }
+
+  static clearTasks(pageId: string): void {
+    const data = this.getData();
+    data.blocks = data.blocks.filter(b => b.pageId !== pageId);
+    this.saveData(data);
   }
 
   static deleteBlock(blockId: string): void {

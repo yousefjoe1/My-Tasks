@@ -19,7 +19,7 @@ export default function Home() {
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-primary mb-2">
-              My Notion-like App
+              Weekly Tasks
             </h1>
             <p className="text-secondary">
               A simple weekly habit tracker that resets automatically every week

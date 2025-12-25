@@ -14,7 +14,7 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 export interface SupabaseBlock {
   id: string;
   content: string;
-  page_id: string;
+  pageId: string;
   days: Record<string, boolean>;
   created_at: string;
   updated_at: string;
@@ -25,10 +25,10 @@ export function toSupabaseBlock(block: WeeklyBlock): SupabaseBlock {
   return {
     id: block.id,
     content: block.content,
-    page_id: block.pageId,
+    pageId: block.pageId,
     days: block.days || {},
-    created_at: block.createdAt.toISOString(),
-    updated_at: block.updatedAt.toISOString(),
+    created_at: block.created_at.toString(),
+    updated_at: block.updated_at.toString(),
   };
 }
 
@@ -37,9 +37,9 @@ export function fromSupabaseBlock(sbBlock: SupabaseBlock): WeeklyBlock {
   return {
     id: sbBlock.id,
     content: sbBlock.content,
-    pageId: sbBlock.page_id,
+    pageId: sbBlock.pageId,
     days: sbBlock.days || {},
-    createdAt: new Date(sbBlock.created_at),
-    updatedAt: new Date(sbBlock.updated_at),
+    created_at: new Date(sbBlock.created_at).toString(),
+    updated_at: new Date(sbBlock.updated_at).toString(),
   };
 }
