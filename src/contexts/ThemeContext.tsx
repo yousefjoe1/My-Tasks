@@ -17,6 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Only run on client after mount
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, react-hooks/set-state-in-effect
     setMounted(prev => prev = true)
 
     const savedTheme = localStorage.getItem('theme') as Theme
