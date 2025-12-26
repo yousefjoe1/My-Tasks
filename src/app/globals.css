@@ -1,131 +1,107 @@
 @import "tailwindcss";
 
+@theme {
+  /* Light Mode */
+  --color-brand-bg: #ffffff;
+  --color-brand-secondary: #f9fafb;
+  --color-brand-tertiary: #f3f4f6;
 
-:root {
-  /* Light Mode Colors */
-  --primary: 59 130 246;
-  /* #3B82F6 - blue */
-  --secondary: 16 185 129;
-  /* #10B981 - emerald */
-  --accent: 245 158 11;
-  /* #F59E0B - amber */
+  --color-brand-text: #0f172a;
+  --color-brand-text-secondary: #4b5563;
+  --color-brand-text-muted: #6b7280;
 
-  /* Background Colors */
-  --bg-primary: 255 255 255;
-  --bg-secondary: 249 250 251;
-  --bg-tertiary: 243 244 246;
+  --color-brand-border: #e5e7eb;
+  --color-brand-border-secondary: #d1d5db;
 
-  /* Text Colors */
-  --text-primary: 17 24 39;
-  --text-secondary: 75 85 99;
-  --text-muted: 107 114 128;
-
-  /* Border Colors */
-  --border-primary: 229 231 235;
-  --border-secondary: 209 213 219;
-
-  /* State Colors */
-  --success: 16 185 129;
-  --warning: 245 158 11;
-  --error: 239 68 68;
+  --color-brand-primary: #3b82f6;
+  --color-brand-success: #22c55d;
+  --color-brand-warning: #f59e0b;
+  --color-brand-error: #ef4444;
 }
 
-.dark {
-  /* Dark Mode Colors - نفس الـ variables لكن بقيم مختلفة */
-  --primary: 96 165 250;
-  /* #60A5FA - blue-400 */
-  --secondary: 52 211 153;
-  /* #34D399 - emerald-400 */
-  --accent: 251 191 36;
-  /* #FBBF24 - amber-400 */
+:root.dark {
+  --color-brand-bg: #111827;
+  --color-brand-secondary: #1f2937;
+  --color-brand-tertiary: #374151;
 
-  /* Background Colors */
-  --bg-primary: 17 24 39;
-  /* #111827 - gray-900 */
-  --bg-secondary: 31 41 55;
-  /* #1F2937 - gray-800 */
-  --bg-tertiary: 55 65 81;
-  /* #374151 - gray-700 */
+  --color-brand-text: #f9fafb;
+  --color-brand-text-secondary: #e5e7eb;
+  --color-brand-text-muted: #9ca3af;
 
-  /* Text Colors */
-  --text-primary: 249 250 251;
-  --text-secondary: 229 231 235;
-  --text-muted: 156 163 175;
+  --color-brand-border: #374151;
+  --color-brand-border-secondary: #4b5563;
 
-  /* Border Colors */
-  --border-primary: 55 65 81;
-  --border-secondary: 75 85 99;
-
-  /* State Colors */
-  --success: 52 211 153;
-  --warning: 251 191 36;
-  --error: 248 113 113;
+  --color-brand-primary: #60a5fa;
+  --color-brand-success: #34d399;
+  --color-brand-warning: #fbbf24;
+  --color-brand-error: #f87171;
 }
 
-/* Base Styles */
-body {
-  background-color: rgb(var(--bg-primary));
-  color: rgb(var(--text-primary));
-  transition: background-color 0.3s ease, color 0.3s ease;
+@layer base {
+  body {
+    background-color: var(--color-brand-bg);
+    color: var(--color-brand-text);
+    @apply transition-colors duration-300;
+  }
+
+  button {
+    cursor: pointer;
+  }
 }
 
-button {
-  cursor: pointer;
-}
-
-/* Custom Utility Classes */
+/* Custom Utility Classes mapped to your brand variables */
 .bg-primary {
-  background-color: rgb(var(--bg-primary));
+  background-color: var(--color-brand-bg);
 }
 
 .bg-secondary {
-  background-color: rgb(var(--bg-secondary));
+  background-color: var(--color-brand-secondary);
 }
 
 .bg-tertiary {
-  background-color: rgb(var(--bg-tertiary));
+  background-color: var(--color-brand-tertiary);
 }
 
 .text-primary {
-  color: rgb(var(--text-primary));
+  color: var(--color-brand-text);
 }
 
 .text-secondary {
-  color: rgb(var(--text-secondary));
+  color: var(--color-brand-text-secondary);
 }
 
 .text-muted {
-  color: rgb(var(--text-muted));
+  color: var(--color-brand-text-muted);
 }
 
 .border-primary {
-  border-color: rgb(var(--border-primary));
+  border-color: var(--color-brand-border);
 }
 
 .border-secondary {
-  border-color: rgb(var(--border-secondary));
+  border-color: var(--color-brand-border-secondary);
 }
 
 .bg-brand {
-  background-color: rgb(var(--primary));
+  background-color: var(--color-brand-primary);
 }
 
 .text-brand {
-  color: rgb(var(--primary));
+  color: var(--color-brand-primary);
 }
 
 .border-brand {
-  border-color: rgb(var(--primary));
+  border-color: var(--color-brand-primary);
 }
 
 .bg-success {
-  background-color: rgb(var(--success));
+  background-color: var(--color-brand-success);
 }
 
 .bg-warning {
-  background-color: rgb(var(--warning));
+  background-color: var(--color-brand-warning);
 }
 
 .bg-error {
-  background-color: rgb(var(--error));
+  background-color: var(--color-brand-error);
 }

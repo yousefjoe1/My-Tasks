@@ -1,64 +1,75 @@
-import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState } from 'react';
+
+interface Error {
+    message: string;
+}
 
 export default function LoginModal() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
-    const { user, loading: authLoading } = useAuth();
-    console.log("🚀 ~ LoginModal ~ user:", user)
-
-
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setMessage(null);
 
-        const { error } = await supabase.auth.signInWithOtp({
-            email,
-            options: {
-                // Change this to your production URL later
-                emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : '',
-            },
-        });
+        try {
+            const { error } = await supabase.auth.signInWithOtp({
+                email,
+                options: {
+                    // Ensures the user is redirected back to your site after clicking the link
+                    emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : '',
+                },
+            });
 
-        if (error) {
-            setMessage({ type: 'error', text: error.message });
-        } else {
-            setMessage({ type: 'success', text: 'Check your email for the login link!' });
+            if (error) throw error;
+
+            setMessage({
+                type: 'success',
+                text: 'Check your email! We sent you a secure login link.'
+            });
+        } catch (error: unknown) {
+            const err = error as Error;
+            setMessage({
+                type: 'error',
+                text: err.message || 'Failed to send magic link. Please try again.'
+            });
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
-
-    const handleLogout = async () => {
-        setLoading(true);
-        const { error } = await supabase.auth.signOut();
-        if (error) console.error('Error logging out:', error);
-        setLoading(false);
-    };
-
-    if (user?.id) {
-        return <div>
-            <h2 className="text-2xl font-bold text-primary mb-6 text-center">Welcome Back</h2>
-            <button disabled={loading} className={`${loading ? 'bg-auto' : 'bg-secondary'}`} onClick={handleLogout}>Logout</button>
-        </div>
-    }
 
     return (
-        <div className="max-w-md mx-auto p-6 bg-primary rounded-xl border border-secondary shadow-lg">
-            <h2 className="text-2xl font-bold text-primary mb-6 text-center">Welcome Back</h2>
+        <div className="w-full max-w-md mx-auto p-8 bg-brand-bg rounded-2xl border border-brand-border shadow-2xl ring-1 ring-brand-border/50">
+            <div className="flex flex-col items-center mb-8">
+                {/* Icon */}
+                <div className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-brand-primary/20">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-muted mb-1">Email Address</label>
+                <h2 className="text-3xl font-bold text-brand-text tracking-tight text-center">
+                    Magic Link Login
+                </h2>
+                <p className="text-brand-text-muted mt-2 text-center text-sm">
+                    Enter your email and we&apos;ll send a secure link to your inbox. No password required.
+                </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                    <label className="text-sm font-semibold text-brand-text ml-1">
+                        Email Address
+                    </label>
                     <input
                         type="email"
-                        placeholder="name@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-3 rounded-lg bg-secondary border border-secondary text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-3.5 rounded-xl bg-brand-secondary border border-brand-border text-brand-text focus:ring-2 focus:ring-brand-primary/40 outline-none transition-all placeholder:text-brand-text-muted/30"
+                        placeholder="name@example.com"
                         required
                     />
                 </div>
@@ -66,20 +77,31 @@ export default function LoginModal() {
                 <button
                     disabled={loading}
                     type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+                    className="w-full bg-brand-primary hover:opacity-90 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-primary/20 active:scale-[0.98] transition-all disabled:opacity-50"
                 >
-                    {loading ? 'Sending link...' : 'Send Magic Link'}
+                    {loading ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                            Sending...
+                        </span>
+                    ) : 'Send Magic Link'}
                 </button>
             </form>
 
-            <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-secondary"></span></div>
-                <div className="relative flex justify-center text-xs uppercase"><span className="bg-primary px-2 text-muted">Or continue with</span></div>
-            </div>
-
             {message && (
-                <div className={`mt-4 p-3 rounded text-sm text-center ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {message.text}
+                <div className={`mt-6 p-4 rounded-xl text-sm font-medium flex items-center gap-3 animate-in fade-in slide-in-from-top-2 ${message.type === 'success'
+                        ? 'bg-brand-success/10 text-brand-success border border-brand-success/20'
+                        : 'bg-brand-error/10 text-brand-error border border-brand-error/20'
+                    }`}>
+                    {message.type === 'success' ? (
+                        <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                    ) : (
+                        <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    )}
+                    <span>{message.text}</span>
                 </div>
             )}
         </div>
