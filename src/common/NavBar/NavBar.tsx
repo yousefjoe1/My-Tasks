@@ -1,20 +1,36 @@
 import { useRef, useState } from "react";
-import { LogIn, Menu, X } from "lucide-react";
+import { LoaderIcon, LogIn, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import ToggleMode from "./ToggleMode";
 import LoginModal from "../Modals/LoginModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase/client";
+
+const navLinks = [
+  { name: "Main", href: "/" },
+  { name: "Todos", href: "/todos" },
+  { name: "Notes", href: "/notes" },
+  { name: "My Productivity", href: "/productivity" },
+];
 
 export default function Navbar() {
+  const { user, loading: authLoading } = useAuth();
+  console.log("🚀 ~ Navbar ~ user:", user)
+
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const navLinks = [
-    { name: "Main", href: "/" },
-    { name: "Todos", href: "/todos" },
-    { name: "Notes", href: "/notes" },
-    { name: "My Productivity", href: "/productivity" },
-  ];
+  const [loading, setLoading] = useState(false);
+
+
+  const handleLogout = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error('Error logging out:', error);
+    setLoading(false);
+  };
 
   return (
     <>
@@ -57,10 +73,35 @@ export default function Navbar() {
                 <Menu className="h-6 w-6" />
               )}
             </button>
-            <ToggleMode />
-            <button onClick={() => dialogRef?.current?.showModal()}>
-              <LogIn />
-            </button>
+            <div className="space-x-4 flex items-center">
+              <ToggleMode />
+
+              {
+                authLoading ? <LoaderIcon className="animate-spin" /> :
+                  <>
+                    {
+                      user == null ?
+                        <button
+                          className=" p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
+
+                          onClick={() => dialogRef?.current?.showModal()}>
+                          <LogIn />
+                        </button>
+                        :
+                        <button
+                          disabled={loading}
+                          className="p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
+
+                          onClick={handleLogout}>
+
+                          {loading ? <LoaderIcon className="animate-spin" /> : <LogOut />}
+                        </button>
+
+                    }
+                  </>
+              }
+
+            </div>
           </div>
 
           {/* Mobile Navigation */}
@@ -84,8 +125,11 @@ export default function Navbar() {
 
       {/* html dialog */}
 
-      <dialog ref={dialogRef} className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-primary backdrop:blur-sm">
+      <dialog ref={dialogRef} className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-brand-bg">
         <LoginModal />
+        <button
+          className="p-3 rounded-full w-full text-brand-text bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
+          onClick={() => dialogRef?.current?.close()}>Close</button>
       </dialog>
 
     </>

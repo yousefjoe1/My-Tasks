@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export function useWeeklyTasks(pageId: string) {
   const [blocks, setBlocks] = useState<WeeklyBlock[]>([]);
-  const { user, loading: authLoading } = useAuth();
+  const { user, } = useAuth();
   const [loading, setLoading] = useState(true);
 
   /**
@@ -134,7 +134,7 @@ export function useWeeklyTasks(pageId: string) {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-
+    setLoading(true);
     if (user) {
       const sbData = toSupabaseBlock(newBlock);
       const { id, ...insertData } = sbData;
@@ -150,6 +150,8 @@ export function useWeeklyTasks(pageId: string) {
       await LocalStorageStrategy.addBlock(newBlock);
       setBlocks((prev) => [...prev, newBlock]);
     }
+    setLoading(false);
+
   };
 
   const updateBlock = async (blockId: string, updates: Partial<WeeklyBlock>) => {
