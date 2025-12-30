@@ -1,86 +1,69 @@
 // lib/storage/StorageService.ts
-import { Database, WeeklyBlock, WeeklySnapshot } from "@/types";
+import { WeeklySnapshot, WeeklyTask } from "@/types";
 
 const STORAGE_KEY = 'my-notion-app-data';
+const SNAPSHOT_KEY = 'my-notion-app-snapshots';
 
 export class LocalStorageStrategy {
-  private static getData(): Database {
-    if (typeof window === 'undefined') {
-      return {
-        blocks: [
-          {
-            id: '1',
-            content: 'First Taks',
-            pageId: '1',
-            days: {},
-            created_at: new Date().toString(),
-            updated_at: new Date().toString(),
-          },
-        ],
-      };
-    }
+  private static getData(): WeeklyTask[] {
 
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : {
-      blocks: [
-        {
-          id: '1',
-          content: 'First Taks',
-          pageId: '1',
-          days: {},
-          created_at: new Date().toString(),
-          updated_at: new Date().toString(),
-        },
-      ],
-    };
+    return data ? JSON.parse(data) : []
   }
 
-  private static saveData(data: Database): void {
+  private static saveData(data: WeeklyTask[]): void {
     if (typeof window === 'undefined') return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
-  static getWeeklyTasks(pageId: string): WeeklyBlock[] {
+  static getWeeklyTasks(): WeeklyTask[] {
     const data = this.getData();
-    return data.blocks.filter(block => block.pageId === pageId);
+    console.log("🚀 ~ LocalStorageStrategy ~ getWeeklyTasks ~ data:", data)
+    return data;
   }
 
-  static addBlock(block: WeeklyBlock): void {
+
+  // save all tasks
+  static saveAllData(data: WeeklyTask[]): void {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+
+  static addBlock(block: WeeklyTask): void {
     const data = this.getData();
-    data.blocks.push(block);
+    data.push(block);
     this.saveData(data);
   }
 
-  static updateBlock(blockId: string, updates: Partial<WeeklyBlock>): void {
+  static updateBlock(blockId: string, updates: Partial<WeeklyTask>): void {
     const data = this.getData();
-    const blockIndex = data.blocks.findIndex(b => b.id === blockId);
+    const blockIndex = data.findIndex(b => b.id === blockId);
 
     if (blockIndex !== -1) {
-      data.blocks[blockIndex] = {
-        ...data.blocks[blockIndex],
+      data[blockIndex] = {
+        ...data[blockIndex],
         ...updates,
-        updated_at: new Date().toString()
+        updated_at: new Date().toISOString()
       };
       this.saveData(data);
     }
   }
 
   // saveWeeklySnapshot
-  // static saveWeeklySnapshot(pageId: string, snapshot: WeeklySnapshot): void {
-  //   const data = this.getData();
-  //   data.weeklySnapshots.push(snapshot);
-  //   this.saveData(data);
-  // }
+  static saveWeeklySnapshot(snapshot: WeeklySnapshot): void {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot));
+  }
 
-  static clearTasks(pageId: string): void {
+  static clearTasks(): void {
     const data = this.getData();
-    data.blocks = data.blocks.filter(b => b.pageId !== pageId);
     this.saveData(data);
   }
 
   static deleteBlock(blockId: string): void {
     const data = this.getData();
-    data.blocks = data.blocks.filter(b => b.id !== blockId);
-    this.saveData(data);
+    const newData = data.filter(b => b.id !== blockId);
+    this.saveData(newData);
   }
 }
