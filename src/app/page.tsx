@@ -5,9 +5,11 @@ import { AddBlock } from '@/components/AddBlock';
 import NavBar from '@/common/NavBar/NavBar';
 // import { SyncToggle } from '@/components/ToggleUploadToCloud/SyncToggle';
 import { WeeklyTable } from '@/components/blocks/WeeklyTable';
+import { WeeklyTask } from '@/types';
 
 export default function Home() {
-  const { blocks, addBlock, updateBlock, deleteBlock } = useWeeklyTasks('1');
+  const { blocks, updateBlock, deleteBlock, addNewTask, loading } = useWeeklyTasks();
+
 
   return (
     <div className="min-h-screen bg-secondary py-8 pt-18">
@@ -27,19 +29,19 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
+            <AddBlock addNewTask={addNewTask} loading={loading} />
 
             {
               blocks.map((block) => (
                 <WeeklyTable
                   key={block.id}
-                  block={block}
-                  onUpdate={(updates) => updateBlock(block.id, updates)}
-                  onDelete={() => deleteBlock(block.id)}
+                  task={block}
+                  onUpdate={(taskid: string, updates: Partial<WeeklyTask>) => updateBlock(taskid, updates)}
+                  onDelete={() => deleteBlock(block.id)} loading={loading}
                 />
               ))
             }
 
-            <AddBlock onAddBlock={addBlock} />
           </div>
         </div>
 
@@ -48,6 +50,7 @@ export default function Home() {
           <p className="mt-1">💾 Data is saved locally in your browser</p>
         </div>
       </div>
+
     </div>
   );
 }

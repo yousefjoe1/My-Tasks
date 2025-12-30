@@ -1,7 +1,6 @@
-export interface WeeklyBlock {
+export interface WeeklyTask {
   id: string;
   content: string;
-  pageId: string;
   days?: {
     [key: string]: boolean;
   };
@@ -9,18 +8,14 @@ export interface WeeklyBlock {
   updated_at: string;
 }
 
-export interface Database {
-  blocks: WeeklyBlock[];
-}
 
 export interface WeeklySnapshot {
-  pageId: string;
   user_id: string | null;
   archived_at: string; // ISO Date string
   week_data: {
     id: string;
     content: string;
-    days: Record<string, boolean>;
+    days?: Record<string, boolean>;
   }[];
 }
 
@@ -34,6 +29,5 @@ export interface SupabaseTaskUpdate {
   content?: string;
   days?: Record<string, boolean>;
   updated_at: string; // ISO string
-  pageId?: string;
   userId?: string;
 }

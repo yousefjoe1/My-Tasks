@@ -1,53 +1,107 @@
 'use client';
 import { useState, useEffect, useCallback } from "react";
 import { shouldResetWeek } from "@/lib/utils";
-import { SupabaseTaskUpdate, WeeklyBlock } from "@/types";
+import { SupabaseTaskUpdate, WeeklyTask } from "@/types";
 import { LocalStorageStrategy } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
 import { supabase, fromSupabaseBlock, toSupabaseBlock } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
-export function useWeeklyTasks(pageId: string) {
-  const [blocks, setBlocks] = useState<WeeklyBlock[]>([]);
-  const { user, } = useAuth();
+
+export function useWeeklyTasks() {
+
+  const [blocks, setBlocks] = useState<WeeklyTask[]>([]);
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
   /**
    * MIGRATION LOGIC
    * Moves data from LocalStorage to Supabase when a user logs in.
    */
+
+  const updateExistTaskt = useCallback(async () => {
+    // const localBlocks = LocalStorageStrategy.getWeeklyTasks();
+    // if (user?.id) {
+    //   const { data, error } = await supabase
+    //     .from('weekly_tasks')
+    //     .select('*')
+    //     .eq('userId', user.id);
+    //   console.log("🚀 ~ useWeeklyTasks ~ data:", data)
+
+    //   if (!error && data) {
+    //     const updatedBlocks = data.map(fromSupabaseBlock);
+    //     setBlocks(updatedBlocks);
+    //   }
+    // }
+  }, [user]);
+
+
   const migrateLocalData = useCallback(async (userId: string) => {
-    const localBlocks = LocalStorageStrategy.getWeeklyTasks(pageId);
+    const localBlocks = LocalStorageStrategy.getWeeklyTasks();
+    console.log("🚀 ~ useWeeklyTasks ~ localBlocks:", localBlocks)
     if (localBlocks.length === 0) return;
-
-    // Check if cloud already has data to avoid duplicates (optional)
-    const { count } = await supabase
+    // 1. Fetch existing IDs from Supabase for this user
+    const { data: cloudTasks, error: fetchError } = await supabase
       .from('weekly_tasks')
-      .select('*', { count: 'exact', head: true })
-      .eq('pageId', pageId)
+      .select('id') // We only need the IDs to check for duplicates
       .eq('userId', userId);
+    console.log("🚀 ~ useWeeklyTasks ~ cloudTasks:", cloudTasks)
 
-    if (count === 0) {
-      const supabaseData = localBlocks.map(block => {
-        const sb = toSupabaseBlock(block);
-        // Remove the local ID to let Supabase generate a fresh UUID if necessary
-        // or keep it if your ID is a valid UUID string
-        const { id, ...dataWithoutId } = sb;
-        return { ...dataWithoutId, userId: id };
-      });
-
-      const { error } = await supabase.from('weekly_tasks').insert(supabaseData);
-
-      if (!error) {
-        // Clear local data after successful migration to prevent confusion
-        // You might want to show a "Data synced!" toast here
-        LocalStorageStrategy.clearTasks(pageId);
-      }
+    if (fetchError) {
+      console.error("Migration fetch error:", fetchError);
+      return;
     }
-  }, [pageId]);
+
+    // 2. Create a Set of IDs that already exist in the cloud
+    const existingCloudIds = new Set(cloudTasks?.map(task => task.id));
+
+    // // 3. Filter local tasks: Only keep those whose IDs ARE NOT in the cloud yet
+    // const newTasksToMigrate = localBlocks
+    //   .filter(task => !existingCloudIds.has(task.id)) // <--- The Duplicate Check
+    //   .map(t => ({
+    //     ...t,
+    //     userId: userId // Ensure the correct userId is attached
+    //   }));
+    // console.log("🚀 ~ useWeeklyTasks ~ newTasksToMigrate:", newTasksToMigrate)
+
+    // // 4. If there's actually something new, insert it
+    // if (newTasksToMigrate.length > 0) {
+    //   const { error: insertError } = await supabase
+    //     .from('weekly_tasks')
+    //     .insert(newTasksToMigrate);
+
+    //   if (!insertError) {
+    //     console.log(`${newTasksToMigrate.length} tasks migrated successfully.`);
+    //     // Optional: Clear local storage or mark as synced
+    //     // LocalStorageStrategy.addBlock(newTasksToMigrate);
+    //   } else {
+    //     console.error("Migration insert error:", insertError);
+    //   }
+    // } else {
+    //   console.log("No new tasks to migrate.");
+    // }
+
+    const existTasks = localBlocks
+      .map(block => toSupabaseBlock(block))
+      .filter(sbBlock => existingCloudIds.has(sbBlock.id))
+      .map(sbBlock => ({
+        ...sbBlock,
+        userId: userId
+      }));
+    console.log("🚀 ~ useWeeklyTasks ~ existTasks:", existTasks)
+
+    // update the tasks exist in db
+    updateExistTaskt()
+
+
+
+  }, [updateExistTaskt]);
+
+
+
 
   const firstLoad = useCallback(async () => {
     setLoading(true);
-    let loadedBlocks: WeeklyBlock[] = [];
+    let loadedBlocks: WeeklyTask[] = [];
 
     if (user) {
       // Ensure local data is migrated if this is the first time seeing this user
@@ -57,15 +111,15 @@ export function useWeeklyTasks(pageId: string) {
       const { data, error } = await supabase
         .from('weekly_tasks')
         .select('*')
-        .eq('pageId', pageId)
         .eq('userId', user.id);
+      console.log("🚀 ~ useWeeklyTasks ~ data:", data)
 
       if (!error && data) {
         loadedBlocks = data.map(fromSupabaseBlock);
       }
     } else {
       // --- LOCAL STRATEGY ---
-      loadedBlocks = LocalStorageStrategy.getWeeklyTasks(pageId);
+      loadedBlocks = LocalStorageStrategy.getWeeklyTasks();
     }
 
     const needsReset = loadedBlocks.some(
@@ -80,7 +134,6 @@ export function useWeeklyTasks(pageId: string) {
       }));
 
       const snapshot = {
-        pageId: pageId,
         user_id: user?.id || null,
         archived_at: new Date().toISOString(),
         week_data: snapshotData
@@ -90,7 +143,7 @@ export function useWeeklyTasks(pageId: string) {
       if (user) {
         await supabase.from('weekly_snapshots').insert(snapshot);
       } else {
-        // await LocalStorageStrategy.saveWeeklySnapshot(pageId, snapshot);
+        LocalStorageStrategy.saveWeeklySnapshot(snapshot);
       }
 
       // Reset logic
@@ -98,13 +151,11 @@ export function useWeeklyTasks(pageId: string) {
         await supabase
           .from('weekly_tasks')
           .update({ days: {}, updated_at: new Date().toISOString() })
-          .eq('pageId', pageId)
           .eq('userId', user.id);
 
         const { data } = await supabase
           .from('weekly_tasks')
           .select('*')
-          .eq('pageId', pageId);
 
         loadedBlocks = (data || []).map(fromSupabaseBlock);
       } else {
@@ -112,24 +163,26 @@ export function useWeeklyTasks(pageId: string) {
           LocalStorageStrategy.updateBlock(block.id, { days: {}, updated_at: new Date().toISOString() })
         );
         await Promise.all(updatePromises);
-        loadedBlocks = LocalStorageStrategy.getWeeklyTasks(pageId);
+        loadedBlocks = LocalStorageStrategy.getWeeklyTasks();
       }
     }
 
     setBlocks(loadedBlocks);
     setLoading(false);
-  }, [pageId, user, migrateLocalData]);
+  }, [user, migrateLocalData]);
+
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     firstLoad();
   }, [firstLoad]);
 
-  const addBlock = async (content: string = "") => {
-    const newBlock: WeeklyBlock = {
-      id: user ? "" : Date.now().toString(),
+
+
+  const addNewTask = async (content: string = "") => {
+    const newBlock: WeeklyTask = {
+      id: user ? "" : crypto.randomUUID(),
       content,
-      pageId,
       days: {},
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -144,49 +197,67 @@ export function useWeeklyTasks(pageId: string) {
         .insert({ ...insertData, userId: user.id })
         .select()
         .single();
+      console.log("🚀 ~ addNewTask ~ data:", data)
 
-      if (data && !error) setBlocks((prev) => [...prev, fromSupabaseBlock(data)]);
+      if (data && !error) {
+        setBlocks((prev) => [...prev, fromSupabaseBlock(data)])
+        LocalStorageStrategy.addBlock(newBlock);
+      };
     } else {
-      await LocalStorageStrategy.addBlock(newBlock);
+      LocalStorageStrategy.addBlock(newBlock);
       setBlocks((prev) => [...prev, newBlock]);
     }
     setLoading(false);
 
   };
 
-  const updateBlock = async (blockId: string, updates: Partial<WeeklyBlock>) => {
-    const now = new Date();
 
+
+  const updateBlock = async (blockId: string, updates: Partial<WeeklyTask>) => {
+    const now = new Date().toISOString();
+    setLoading(true)
     if (user) {
-      const sbUpdates: SupabaseTaskUpdate = { updated_at: now.toISOString() };
+      const sbUpdates: SupabaseTaskUpdate = { updated_at: now };
       if (updates.days) sbUpdates.days = updates.days;
       if (updates.content) sbUpdates.content = updates.content;
 
-      await supabase
+      // add user id
+      const res = await supabase
         .from('weekly_tasks')
         .update(sbUpdates)
-        .eq('id', blockId);
+        .eq('id', blockId)
+        .eq('userId', user.id);
+      console.log("🚀 ~ updateBlock ~ res:", res)
+      updateLocalStorage(blockId, updates, now);
     } else {
-      await LocalStorageStrategy.updateBlock(blockId, { ...updates, updated_at: now.toISOString() });
+      updateLocalStorage(blockId, updates, now);
     }
 
     setBlocks((prev) =>
       prev.map((block) => (block.id === blockId ? { ...block, ...updates, updatedAt: now } : block))
     );
+    setLoading(false)
   };
+
+  const updateLocalStorage = (blockId: string, updates: Partial<WeeklyTask>, now: string) => {
+    LocalStorageStrategy.updateBlock(blockId, { ...updates, updated_at: now });
+    setBlocks((prev) =>
+      prev.map((block) => (block.id === blockId ? { ...block, ...updates, updatedAt: now } : block))
+    );
+  }
 
   const deleteBlock = async (blockId: string) => {
     if (user) {
       await supabase.from('weekly_tasks').delete().eq('id', blockId);
     } else {
-      await LocalStorageStrategy.deleteBlock(blockId);
+      LocalStorageStrategy.deleteBlock(blockId);
     }
     setBlocks((prev) => prev.filter((block) => block.id !== blockId));
   };
 
   return {
     blocks,
-    addBlock,
+    addNewTask,
     updateBlock,
     deleteBlock,
     loading

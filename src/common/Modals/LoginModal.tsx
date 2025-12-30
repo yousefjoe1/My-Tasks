@@ -8,41 +8,73 @@ interface Error {
 export default function LoginModal() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isSignUp, setIsSignUp] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+    //     setMessage(null);
+
+    //     try {
+    //         const { error } = await supabase.auth.signInWithOtp({
+    //             email,
+    //             options: {
+    //                 // Ensures the user is redirected back to your site after clicking the link
+    //                 emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : '',
+    //             },
+    //         });
+
+    //         if (error) throw error;
+
+    //         setMessage({
+    //             type: 'success',
+    //             text: 'Check your email! We sent you a secure login link.'
+    //         });
+    //     } catch (error: unknown) {
+    //         const err = error as Error;
+    //         setMessage({
+    //             type: 'error',
+    //             text: err.message || 'Failed to send magic link. Please try again.'
+    //         });
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setMessage(null);
 
         try {
-            const { error } = await supabase.auth.signInWithOtp({
-                email,
-                options: {
-                    // Ensures the user is redirected back to your site after clicking the link
-                    emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : '',
-                },
-            });
-
-            if (error) throw error;
-
-            setMessage({
-                type: 'success',
-                text: 'Check your email! We sent you a secure login link.'
-            });
+            if (isSignUp) {
+                // SIGN UP LOGIC
+                const { error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                });
+                if (error) throw error;
+                setMessage({ type: 'success', text: 'Registration successful! Check your email for verification.' });
+            } else {
+                // LOGIN LOGIC
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+                if (error) throw error;
+                setMessage({ type: 'success', text: 'Welcome back!' });
+            }
         } catch (error: unknown) {
             const err = error as Error;
-            setMessage({
-                type: 'error',
-                text: err.message || 'Failed to send magic link. Please try again.'
-            });
+            console.log("🚀 ~ handleSubmit ~ error:", error)
+            setMessage({ type: 'error', text: err.message });
         } finally {
             setLoading(false);
         }
     };
-
     return (
-        <div className="w-full max-w-md mx-auto p-8 bg-brand-bg rounded-2xl border border-brand-border shadow-2xl ring-1 ring-brand-border/50">
+        <div className="w-full max-w-md mx-auto p-8 rounded-2xl border border-brand-border shadow-2xl ring-1 ring-brand-border/50">
             <div className="flex flex-col items-center mb-8">
                 {/* Icon */}
                 <div className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-brand-primary/20">
@@ -74,6 +106,20 @@ export default function LoginModal() {
                     />
                 </div>
 
+                <div className="space-y-2">
+                    <label className="text-sm font-semibold text-brand-text ml-1">
+                        Password
+                    </label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full p-3.5 rounded-xl bg-brand-secondary border border-brand-border text-brand-text focus:ring-2 focus:ring-brand-primary/40 outline-none transition-all placeholder:text-brand-text-muted/30"
+                        placeholder="Enter your password"
+                        required
+                    />
+                </div>
+
                 <button
                     disabled={loading}
                     type="submit"
@@ -90,11 +136,19 @@ export default function LoginModal() {
                     ) : 'Send Magic Link'}
                 </button>
             </form>
+            <div className="mt-6 text-center">
+                <button
+                    onClick={() => setIsSignUp(!isSignUp)}
+                    className="text-sm text-brand-text-muted hover:text-brand-primary transition-colors"
+                >
+                    {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+                </button>
+            </div>
 
             {message && (
                 <div className={`mt-6 p-4 rounded-xl text-sm font-medium flex items-center gap-3 animate-in fade-in slide-in-from-top-2 ${message.type === 'success'
-                        ? 'bg-brand-success/10 text-brand-success border border-brand-success/20'
-                        : 'bg-brand-error/10 text-brand-error border border-brand-error/20'
+                    ? 'bg-brand-success/10 text-brand-success border border-brand-success/20'
+                    : 'bg-brand-error/10 text-brand-error border border-brand-error/20'
                     }`}>
                     {message.type === 'success' ? (
                         <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>

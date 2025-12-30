@@ -4,7 +4,8 @@ import Link from "next/link";
 import ToggleMode from "./ToggleMode";
 import LoginModal from "../Modals/LoginModal";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase/client";
+import { fromSupabaseBlock, supabase } from "@/lib/supabase/client";
+import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 
 const navLinks = [
   { name: "Main", href: "/" },
@@ -15,9 +16,6 @@ const navLinks = [
 
 export default function Navbar() {
   const { user, loading: authLoading } = useAuth();
-  console.log("🚀 ~ Navbar ~ user:", user)
-
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -27,10 +25,28 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error('Error logging out:', error);
-    setLoading(false);
+    if (user != null) {
+      try {
+        const { data: cloudBlocks, error } = await supabase
+          .from('weekly_tasks')
+          .select('*')
+          .eq('userId', user.id);
+        console.log("🚀 ~ handleLogout ~ data:", cloudBlocks)
+
+        if (!error && cloudBlocks) {
+          const localFormatBlocks = cloudBlocks.map(block => fromSupabaseBlock(block));
+          LocalStorageStrategy.saveAllData(localFormatBlocks);
+        }
+
+        await supabase.auth.signOut();
+      } catch (err) {
+        console.error("Error during logout sync:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
+
 
   return (
     <>
