@@ -93,10 +93,11 @@ export default function LoginModal() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-semibold text-brand-text ml-1">
+                    <label htmlFor='email' className="text-sm font-semibold text-brand-text ml-1">
                         Email Address
                     </label>
                     <input
+                        id='email'
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}

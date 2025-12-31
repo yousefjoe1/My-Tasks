@@ -1,7 +1,7 @@
 // lib/storage/StorageService.ts
 import { WeeklySnapshot, WeeklyTask } from "@/types";
 
-const STORAGE_KEY = 'my-notion-app-data';
+export const STORAGE_KEY = 'my-notion-app-data';
 const SNAPSHOT_KEY = 'my-notion-app-snapshots';
 
 export class LocalStorageStrategy {
@@ -12,20 +12,19 @@ export class LocalStorageStrategy {
   }
 
   private static saveData(data: WeeklyTask[]): void {
-    if (typeof window === 'undefined') return;
+    // if (typeof window === 'undefined') return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
   static getWeeklyTasks(): WeeklyTask[] {
     const data = this.getData();
-    console.log("🚀 ~ LocalStorageStrategy ~ getWeeklyTasks ~ data:", data)
     return data;
   }
 
 
   // save all tasks
   static saveAllData(data: WeeklyTask[]): void {
-    if (typeof window === 'undefined') return;
+    // if (typeof window === 'undefined') return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
@@ -52,7 +51,7 @@ export class LocalStorageStrategy {
 
   // saveWeeklySnapshot
   static saveWeeklySnapshot(snapshot: WeeklySnapshot): void {
-    if (typeof window === 'undefined') return;
+    // if (typeof window === 'undefined') return;
     localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot));
   }
 
