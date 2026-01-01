@@ -4,8 +4,8 @@ export interface WeeklyTask {
   days?: {
     [key: string]: boolean;
   };
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 

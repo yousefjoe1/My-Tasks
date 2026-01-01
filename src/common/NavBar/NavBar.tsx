@@ -98,6 +98,7 @@ export default function Navbar() {
                     {
                       user == null ?
                         <button
+                          title="Log in"
                           className=" p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
 
                           onClick={() => dialogRef?.current?.showModal()}>
@@ -105,6 +106,7 @@ export default function Navbar() {
                         </button>
                         :
                         <button
+                          title="Logout"
                           disabled={loading}
                           className="p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
 
