@@ -12,7 +12,7 @@ export class LocalStorageStrategy {
   }
 
   private static saveData(data: WeeklyTask[]): void {
-    // if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
@@ -24,7 +24,7 @@ export class LocalStorageStrategy {
 
   // save all tasks
   static saveAllData(data: WeeklyTask[]): void {
-    // if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
@@ -43,7 +43,6 @@ export class LocalStorageStrategy {
       data[blockIndex] = {
         ...data[blockIndex],
         ...updates,
-        updated_at: new Date().toISOString()
       };
       this.saveData(data);
     }
@@ -51,7 +50,7 @@ export class LocalStorageStrategy {
 
   // saveWeeklySnapshot
   static saveWeeklySnapshot(snapshot: WeeklySnapshot): void {
-    // if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
     localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot));
   }
 
@@ -62,7 +61,9 @@ export class LocalStorageStrategy {
 
   static deleteBlock(blockId: string): void {
     const data = this.getData();
+    console.log("🚀 ~ LocalStorageStrategy ~ deleteBlock ~ data:", data)
     const newData = data.filter(b => b.id !== blockId);
+    console.log("🚀 ~ LocalStorageStrategy ~ deleteBlock ~ newData:", newData)
     this.saveData(newData);
   }
 }
