@@ -13,16 +13,36 @@ export function useWeeklyTasks() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
+  async function checkActualConnectivity() {
+    try {
+      // Request a tiny file or a favicon from a reliable server
+      const response = await fetch('https://www.google.com/favicon.ico', {
+        mode: 'no-cors',
+        cache: 'no-store'
+      });
+      return true; // We got a response!
+    } catch (error) {
+      return false; // Request failed, likely offline
+    }
+  }
+
+
 
   const getCloudTasks = useCallback(async () => {
-    if (user?.id) {
-      const { data: cloudTasks } = await supabase
-        .from('weekly_tasks')
-        .select('*')
-        .eq('userId', user.id);
-      if (cloudTasks != null) {
-        setBlocks(cloudTasks)
+    const isOnline = await checkActualConnectivity()
+    if (isOnline) {
+      if (user?.id) {
+        const { data: cloudTasks } = await supabase
+          .from('weekly_tasks')
+          .select('*')
+          .eq('userId', user.id);
+        if (cloudTasks != null) {
+          setBlocks(cloudTasks)
+        }
       }
+    } else {
+      const tasks = LocalStorageStrategy.getWeeklyTasks()
+      setBlocks(tasks)
     }
   }, [user])
 
@@ -128,101 +148,108 @@ export function useWeeklyTasks() {
     setLoading(true);
     let loadedBlocks: WeeklyTask[] = [];
 
-    if (user) {
+    const isOnline = await checkActualConnectivity()
+    console.log("🚀 ~ useWeeklyTasks ~ isOnline:", isOnline)
 
-      // --- SUPABASE STRATEGY ---
-      const { data: cloudTasks, error } = await supabase
-        .from('weekly_tasks')
-        .select('*')
-        .eq('userId', user.id);
-      const localTasks = LocalStorageStrategy.getWeeklyTasks()
+    if (isOnline) {
 
-      if (cloudTasks != null) {
-        // senarios
-        //1. if the local and db is the same --> insert from local to database, and update the matching tasks from local to database
+      if (user) {
 
+        // --- SUPABASE STRATEGY ---
+        const { data: cloudTasks, error } = await supabase
+          .from('weekly_tasks')
+          .select('*')
+          .eq('userId', user.id);
+        const localTasks = LocalStorageStrategy.getWeeklyTasks()
 
-        // if what in local is less what in data base --> then delete what in data base
-        if (localTasks.length < cloudTasks?.length) {
-          await handleDeleteMissingTasks(localTasks, cloudTasks)
-        }
-
-        if (cloudTasks.length == localTasks.length) {
-          await updateExistTaskt(localTasks, cloudTasks)
-
-          //  insert the missing from db, check what not in the db from local and isert it
-          await insertFromLocalToDataBase(localTasks)
-
-        }
+        if (cloudTasks != null) {
+          // senarios
+          //1. if the local and db is the same --> insert from local to database, and update the matching tasks from local to database
 
 
-        // if local has data but database not have data
-        if (localTasks.length > cloudTasks.length) {
-          await insertFromLocalToDataBase(cloudTasks)
-        }
+          // if what in local is less what in data base --> then delete what in data base
+          if (localTasks.length < cloudTasks?.length) {
+            await handleDeleteMissingTasks(localTasks, cloudTasks)
+          }
+
+          if (cloudTasks.length == localTasks.length) {
+            await updateExistTaskt(localTasks, cloudTasks)
+
+            //  insert the missing from db, check what not in the db from local and isert it
+            await insertFromLocalToDataBase(localTasks)
+
+          }
 
 
-        if (!error && cloudTasks) {
-          loadedBlocks = cloudTasks.map(fromSupabaseBlock);
-        }
-      } else {
-        // --- LOCAL STRATEGY ---
-        loadedBlocks = LocalStorageStrategy.getWeeklyTasks();
-      }
+          // if local has data but database not have data
+          if (localTasks.length > cloudTasks.length) {
+            await insertFromLocalToDataBase(cloudTasks)
+          }
 
-      const needsReset = loadedBlocks.some(
-        (block) => block.updated_at && shouldResetWeek(new Date(block.updated_at))
-      );
 
-      if (needsReset) {
-        const snapshotData = loadedBlocks.map(block => ({
-          id: block.id,
-          content: block.content,
-          days: block.days
-        }));
-
-        const snapshot = {
-          user_id: user?.id || null,
-          archived_at: new Date().toISOString(),
-          week_data: snapshotData
-        };
-
-        // Archive logic
-        if (user) {
-          await supabase.from('weekly_snapshots').insert(snapshot);
+          if (!error && cloudTasks) {
+            loadedBlocks = cloudTasks.map(fromSupabaseBlock);
+          }
         } else {
-          LocalStorageStrategy.saveWeeklySnapshot(snapshot);
-        }
-
-        // Reset logic
-        if (user) {
-          await supabase
-            .from('weekly_tasks')
-            .update({ days: {} })
-            .eq('userId', user.id);
-
-          const { data } = await supabase
-            .from('weekly_tasks')
-            .select('*')
-
-          loadedBlocks = (data || []).map(fromSupabaseBlock);
-        } else {
-          const updatePromises = loadedBlocks.map((block) =>
-            LocalStorageStrategy.updateBlock(block.id, { days: {} })
-          );
-          await Promise.all(updatePromises);
+          // --- LOCAL STRATEGY ---
           loadedBlocks = LocalStorageStrategy.getWeeklyTasks();
         }
-      }
+
+        const needsReset = loadedBlocks.some(
+          (block) => block.updated_at && shouldResetWeek(new Date(block.updated_at))
+        );
+
+        if (needsReset) {
+          const snapshotData = loadedBlocks.map(block => ({
+            id: block.id,
+            content: block.content,
+            days: block.days
+          }));
+
+          const snapshot = {
+            user_id: user?.id || null,
+            archived_at: new Date().toISOString(),
+            week_data: snapshotData
+          };
+
+          // Archive logic
+          if (user) {
+            await supabase.from('weekly_snapshots').insert(snapshot);
+          } else {
+            LocalStorageStrategy.saveWeeklySnapshot(snapshot);
+          }
+
+          // Reset logic
+          if (user) {
+            await supabase
+              .from('weekly_tasks')
+              .update({ days: {} })
+              .eq('userId', user.id);
+
+            const { data } = await supabase
+              .from('weekly_tasks')
+              .select('*')
+
+            loadedBlocks = (data || []).map(fromSupabaseBlock);
+          } else {
+            const updatePromises = loadedBlocks.map((block) =>
+              LocalStorageStrategy.updateBlock(block.id, { days: {} })
+            );
+            await Promise.all(updatePromises);
+            loadedBlocks = LocalStorageStrategy.getWeeklyTasks();
+          }
+        }
 
 
-      const { data: cloudTasksData } = await supabase
-        .from('weekly_tasks')
-        .select('*')
-        .eq('userId', user.id);
-      if (cloudTasksData != null) {
-        setBlocks(cloudTasksData)
+        const { data: cloudTasksData } = await supabase
+          .from('weekly_tasks')
+          .select('*')
+          .eq('userId', user.id);
+        if (cloudTasksData != null) {
+          setBlocks(cloudTasksData)
+        }
       }
+
     } else {
       loadedBlocks = LocalStorageStrategy.getWeeklyTasks();
       setBlocks(loadedBlocks);
@@ -241,26 +268,31 @@ export function useWeeklyTasks() {
 
 
   const addNewTask = async (content: string = "") => {
+    const isOnline = await checkActualConnectivity()
+
     const newBlock: WeeklyTask = {
       id: crypto.randomUUID(),
       content,
       days: {},
     };
-    setLoading(true);
-    if (user) {
-      const sbData = toSupabaseBlock(newBlock);
-      const { id, ...insertData } = sbData;
+    if (isOnline) {
+      if (user) {
+        setLoading(true);
+        const sbData = toSupabaseBlock(newBlock);
+        const { id, ...insertData } = sbData;
 
-      const { data, error } = await supabase
-        .from('weekly_tasks')
-        .insert({ ...insertData, userId: user.id })
-        .select()
-        .single();
+        const { data, error } = await supabase
+          .from('weekly_tasks')
+          .insert({ ...insertData, userId: user.id })
+          .select()
+          .single();
 
-      if (data && !error) {
-        setBlocks((prev) => [...prev, fromSupabaseBlock(data)])
-        LocalStorageStrategy.addBlock(newBlock);
-      };
+        if (data && !error) {
+          setBlocks((prev) => [...prev, fromSupabaseBlock(data)])
+          LocalStorageStrategy.addBlock(newBlock);
+        };
+      }
+
     } else {
       LocalStorageStrategy.addBlock(newBlock);
       setBlocks((prev) => [...prev, newBlock]);
