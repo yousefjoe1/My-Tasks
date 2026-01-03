@@ -61,9 +61,7 @@ export class LocalStorageStrategy {
 
   static deleteBlock(blockId: string): void {
     const data = this.getData();
-    console.log("🚀 ~ LocalStorageStrategy ~ deleteBlock ~ data:", data)
-    const newData = data.filter(b => b.id !== blockId);
-    console.log("🚀 ~ LocalStorageStrategy ~ deleteBlock ~ newData:", newData)
+    const newData = data.filter(b => b.id != blockId);
     this.saveData(newData);
   }
 }

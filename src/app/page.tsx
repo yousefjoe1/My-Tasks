@@ -10,6 +10,10 @@ import { WeeklyTask } from '@/types';
 export default function Home() {
   const { blocks, updateBlock, deleteBlock, addNewTask, loading } = useWeeklyTasks();
 
+  const handleDelete = (id: string) => {
+    deleteBlock(id)
+  }
+
 
   return (
     <div className="min-h-screen bg-secondary py-8 pt-18">
@@ -37,7 +41,7 @@ export default function Home() {
                   key={block.id}
                   task={block}
                   onUpdate={(taskid: string, updates: Partial<WeeklyTask>) => updateBlock(taskid, updates)}
-                  onDelete={() => deleteBlock(block.id)} loading={loading}
+                  onDelete={handleDelete} loading={loading}
                 />
               ))
             }
@@ -47,7 +51,7 @@ export default function Home() {
 
         <div className="mt-6 text-center text-muted text-lg">
           <p>📅 Weekly tasks automatically reset every Monday</p>
-          <p className="mt-1">💾 Data is saved locally in your browser</p>
+          <p className="mt-1">💾 Data is saved locally in your browser and synced to cloud after you login</p>
         </div>
       </div>
 

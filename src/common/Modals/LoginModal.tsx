@@ -134,7 +134,7 @@ export default function LoginModal() {
                             </svg>
                             Sending...
                         </span>
-                    ) : 'Send Magic Link'}
+                    ) : 'Submit'}
                 </button>
             </form>
             <div className="mt-6 text-center">
