@@ -31,7 +31,6 @@ export default function Navbar() {
           .from('weekly_tasks')
           .select('*')
           .eq('userId', user.id);
-        console.log("🚀 ~ handleLogout ~ data:", cloudBlocks)
 
         if (!error && cloudBlocks) {
           const localFormatBlocks = cloudBlocks.map(block => fromSupabaseBlock(block));
@@ -112,7 +111,7 @@ export default function Navbar() {
 
                           onClick={handleLogout}>
 
-                          {loading ? <LoaderIcon className="animate-spin" /> : <LogOut />}
+                          {loading ? <LoaderIcon className="animate-spin" /> : <LogOut className="" />}
                         </button>
 
                     }
@@ -143,7 +142,8 @@ export default function Navbar() {
 
       {/* html dialog */}
 
-      <dialog ref={dialogRef} className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-brand-bg">
+      <dialog ref={dialogRef}
+        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-brand-bg">
         <LoginModal />
         <button
           className="p-3 rounded-full w-full text-brand-text bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"

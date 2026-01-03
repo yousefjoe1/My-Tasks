@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { shouldResetWeek } from "@/lib/utils";
 import { WeeklyTask } from "@/types";
-import { LocalStorageStrategy } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
+import { LocalStorageStrategy, STORAGE_KEY } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
 import { supabase, fromSupabaseBlock, toSupabaseBlock } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -331,15 +331,14 @@ export function useWeeklyTasks() {
     );
   }
 
-  const deleteBlock = async (blockId: string) => {
+  const deleteBlock = async (taskId: string) => {
+    setLoading(true)
     if (user) {
-      await supabase.from('weekly_tasks').delete().eq('id', blockId);
-      // delete from local storage
-      LocalStorageStrategy.deleteBlock(blockId);
-    } else {
-      LocalStorageStrategy.deleteBlock(blockId);
+      await supabase.from('weekly_tasks').delete().eq('id', taskId);
     }
-    setBlocks((prev) => prev.filter((block) => block.id !== blockId));
+    LocalStorageStrategy.deleteBlock(taskId);
+    setBlocks((prev) => prev.filter((block) => block.id !== taskId));
+    setLoading(false)
   };
 
   return {
