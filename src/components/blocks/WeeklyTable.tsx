@@ -12,7 +12,6 @@ interface WeeklyTableProps {
 }
 
 export function WeeklyTable({ task, onUpdate, onDelete, loading }: WeeklyTableProps) {
-  console.log("🚀 ~ WeeklyTable ~ task:", task.id)
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(task.content);
