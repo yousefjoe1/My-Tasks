@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { shouldResetWeek } from "@/lib/utils";
 import { WeeklyTask } from "@/types";
-import { LocalStorageStrategy, STORAGE_KEY } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
+import { LocalStorageStrategy } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
 import { supabase, fromSupabaseBlock, toSupabaseBlock } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -12,11 +12,6 @@ export function useWeeklyTasks() {
   const [blocks, setBlocks] = useState<WeeklyTask[]>([]);
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-
-  /**
-   * MIGRATION LOGIC
-   * Moves data from LocalStorage to Supabase when a user logs in.
-   */
 
 
   const getCloudTasks = useCallback(async () => {
@@ -58,24 +53,6 @@ export function useWeeklyTasks() {
 
 
 
-  // const insertLocalDataToDB = async () => {
-  //   if (localStorage.getItem(STORAGE_KEY)) {
-  //     const dataLocal = LocalStorageStrategy.getWeeklyTasks()
-  //     const { error: insertError } = await supabase
-  //       .from('weekly_tasks')
-  //       .insert(dataLocal);
-
-  //     if (!insertError) {
-  //       setBlocks(dataLocal);
-  //       // Optional: Clear local storage or mark as synced
-  //       LocalStorageStrategy.saveAllData([]);
-  //     } else {
-  //       console.error("Migration insert error:", insertError);
-  //     }
-  //   }
-  // }
-
-
   const insertFromLocalToDataBase = useCallback(async (cloudTasks: WeeklyTask[] | null) => {
 
     const localBlocks = LocalStorageStrategy.getWeeklyTasks();
@@ -102,14 +79,14 @@ export function useWeeklyTasks() {
           .eq('userId', user.id);
 
         if (!insertError) {
-          console.log(`${newTasksToMigrate.length} tasks migrated successfully.`);
+          // console.log(`${newTasksToMigrate.length} tasks migrated successfully.`);
           // Optional: Clear local storage or mark as synced
           // LocalStorageStrategy.addBlock(newTasksToMigrate);
         } else {
           console.error("Migration insert error:", insertError);
         }
       } else {
-        console.log("No new tasks to migrate.");
+        // console.log("No new tasks to migrate.");
       }
 
     }
@@ -138,7 +115,6 @@ export function useWeeklyTasks() {
           .eq('id', missingId)
           .eq('userId', user.id);
         if (!error) {
-          console.log('Missing tasks deleted successfully.');
         } else {
           console.error('Error deleting missing tasks:', error);
         }
@@ -159,9 +135,7 @@ export function useWeeklyTasks() {
         .from('weekly_tasks')
         .select('*')
         .eq('userId', user.id);
-      console.log("🚀 ~ useWeeklyTasks ~ cloudTasks:", cloudTasks)
       const localTasks = LocalStorageStrategy.getWeeklyTasks()
-      console.log("🚀 ~ useWeeklyTasks ~ localTasks:", localTasks)
 
       if (cloudTasks != null) {
         // senarios
@@ -256,7 +230,6 @@ export function useWeeklyTasks() {
 
 
     setLoading(false);
-    // }, [user, migrateLocalData]);
   }, [user, insertFromLocalToDataBase, handleDeleteMissingTasks, updateExistTaskt]);
 
 
@@ -272,8 +245,6 @@ export function useWeeklyTasks() {
       id: crypto.randomUUID(),
       content,
       days: {},
-      // created_at: new Date().toISOString(),
-      // updated_at: new Date().toISOString(),
     };
     setLoading(true);
     if (user) {
@@ -301,7 +272,6 @@ export function useWeeklyTasks() {
 
 
   const updateBlock = async (blockId: string, updates: Partial<WeeklyTask>) => {
-    const now = new Date().toISOString();
     setLoading(true)
     if (user) {
       if (updates.days) updates.days = updates.days;
