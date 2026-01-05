@@ -84,10 +84,14 @@ export default function LoginModal() {
                 </div>
 
                 <h2 className="text-3xl font-bold text-brand-text tracking-tight text-center">
-                    Magic Link Login
+                    {
+                        isSignUp ? 'Sign Up' : 'Login'
+                    }
                 </h2>
                 <p className="text-brand-text-muted mt-2 text-center text-sm">
-                    Enter your email and we&apos;ll send a secure link to your inbox. No password required.
+                    {
+                        isSignUp ? 'Create an account' : 'Enter your email and password'
+                    }
                 </p>
             </div>
 
