@@ -1,8 +1,11 @@
 import { WeeklyTask } from "@/types";
 import { getWeekDates, getWeekDays } from "@/lib/utils";
 import { format } from "date-fns";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Edit, Loader, Trash } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+
 
 interface WeeklyTableProps {
   task: WeeklyTask;
@@ -11,7 +14,9 @@ interface WeeklyTableProps {
   loading: boolean;
 }
 
-export function WeeklyTable({ task, onUpdate, onDelete, loading }: WeeklyTableProps) {
+const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) => {
+
+  const { error } = useSelector((state: RootState) => state.weeklyTasks)
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(task.content);
@@ -49,6 +54,9 @@ export function WeeklyTable({ task, onUpdate, onDelete, loading }: WeeklyTablePr
     <>
       <div className="group relative mb-8 bg-primary rounded-xl shadow-sm border border-primary hover:shadow-md transition-all duration-200">
         {/* Header Section */}
+        {error[task.id] && (
+          <p className="text-red-500 text-sm mt-1">{error[task.id]}</p>
+        )}
         <div className="flex items-center justify-between p-4 border-b border-secondary bg-linear-to-r from-secondary to-primary">
           {isEditing ? (
             <div className="flex items-center gap-3 flex-1">
@@ -125,8 +133,14 @@ export function WeeklyTable({ task, onUpdate, onDelete, loading }: WeeklyTablePr
             </thead>
 
             {/* Table Body */}
-            <tbody className="bg-primary">
-              <tr className="transition-all duration-200 hover:bg-tertiary/50">
+            <tbody className="bg-primary relative">
+              {
+                loading &&
+                <tr className="absolute z-10 rounded-2xl flex justify-center items-center inset-0 w-full h-full border ">
+                  <td className="loader-2" />
+                </tr>
+              }
+              <tr className="relative transition-all duration-200 hover:bg-tertiary/50">
                 {weekDays.map((day) => (
                   <td
                     key={day}
@@ -137,32 +151,28 @@ export function WeeklyTable({ task, onUpdate, onDelete, loading }: WeeklyTablePr
                         : "bg-primary",
                     ].join(" ")}
                   >
-                    {
-                      loading ? <Loader className="animate-spin w-8 h-8 " /> :
-
-                        <button
-                          className={[
-                            "w-full h-full cursor-pointer transition-all duration-200 flex items-center justify-center group",
-                            "hover:bg-tertiary active:scale-95 min-h-[48px] rounded",
-                            task.days?.[day]
-                              ? "hover:bg-success/20"
-                              : "hover:bg-secondary",
-                          ].join(" ")}
-                          onClick={() => toggleDay(day)}
-                        >
-                          <div
-                            className={[
-                              "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200",
-                              "group-hover:scale-110 group-active:scale-95",
-                              task.days?.[day]
-                                ? "bg-success border-success text-white shadow-sm"
-                                : "border-muted text-transparent hover:border-success bg-brand-success/10",
-                            ].join(" ")}
-                          >
-                            <span className="font-bold text-sm">✓</span>
-                          </div>
-                        </button>
-                    }
+                    <button
+                      className={[
+                        "w-full h-full cursor-pointer transition-all duration-200 flex items-center justify-center group",
+                        "hover:bg-tertiary active:scale-95 min-h-[48px] rounded",
+                        task.days?.[day]
+                          ? "hover:bg-success/20"
+                          : "hover:bg-secondary",
+                      ].join(" ")}
+                      onClick={() => toggleDay(day)}
+                    >
+                      <div
+                        className={[
+                          "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200",
+                          "group-hover:scale-110 group-active:scale-95",
+                          task.days?.[day]
+                            ? "bg-success border-success text-white shadow-sm"
+                            : "border-muted text-transparent hover:border-success bg-brand-success/10",
+                        ].join(" ")}
+                      >
+                        <span className="font-bold text-sm">✓</span>
+                      </div>
+                    </button>
                   </td>
                 ))}
               </tr>
@@ -192,7 +202,7 @@ export function WeeklyTable({ task, onUpdate, onDelete, loading }: WeeklyTablePr
           <p className="text-lg font-semibold mb-4 text-brand-primary">Are you sure you want to delete this task?</p>
           <button
             disabled={loading}
-            className="p-3 hover:bg-brand-success rounded-full w-full text-brand-text transition-colors shadow-lg border border-primary"
+            className={`p-3 hover:bg-brand-success ${loading && 'bg-brand-success/50'} gap-3 rounded-full w-full text-brand-text transition-colors shadow-lg border border-primary flex justify-center items-center`}
 
             onClick={() => onDelete(task.id)}>Yes {loading && <Loader />} </button>
           <button
@@ -203,3 +213,5 @@ export function WeeklyTable({ task, onUpdate, onDelete, loading }: WeeklyTablePr
     </>
   );
 }
+
+export default React.memo(WeeklyTable)
