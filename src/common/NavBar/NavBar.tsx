@@ -1,3 +1,4 @@
+'use client'
 import { useRef, useState } from "react";
 import { LoaderIcon, LogIn, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +12,7 @@ const navLinks = [
   { name: "Main", href: "/" },
   { name: "Todos", href: "/todos" },
   { name: "Notes", href: "/notes" },
-  { name: "My Productivity", href: "/productivity" },
+  { name: "My Productivity", href: "/dashboard" },
 ];
 
 export default function Navbar() {

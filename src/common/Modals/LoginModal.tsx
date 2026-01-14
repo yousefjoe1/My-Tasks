@@ -5,43 +5,21 @@ interface Error {
     message: string;
 }
 
+
+type MessageType = 'success' | 'error'
+
+interface Message {
+    type: MessageType;
+    text: string;
+}
+
 export default function LoginModal() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
-    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+    const [message, setMessage] = useState<Message | null>(null);
 
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-    //     setMessage(null);
-
-    //     try {
-    //         const { error } = await supabase.auth.signInWithOtp({
-    //             email,
-    //             options: {
-    //                 // Ensures the user is redirected back to your site after clicking the link
-    //                 emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : '',
-    //             },
-    //         });
-
-    //         if (error) throw error;
-
-    //         setMessage({
-    //             type: 'success',
-    //             text: 'Check your email! We sent you a secure login link.'
-    //         });
-    //     } catch (error: unknown) {
-    //         const err = error as Error;
-    //         setMessage({
-    //             type: 'error',
-    //             text: err.message || 'Failed to send magic link. Please try again.'
-    //         });
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);

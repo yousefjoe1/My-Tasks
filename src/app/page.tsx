@@ -2,25 +2,29 @@
 
 import { useWeeklyTasks } from '@/hooks/useWeeklyTasks';
 import { AddBlock } from '@/components/AddBlock';
-import NavBar from '@/common/NavBar/NavBar';
-// import { SyncToggle } from '@/components/ToggleUploadToCloud/SyncToggle';
-import { WeeklyTable } from '@/components/blocks/WeeklyTable';
+
+import WeeklyTable from '@/components/blocks/WeeklyTable';
 import { WeeklyTask } from '@/types';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { useCallback } from 'react';
+import ErrorBoundary from '@/common/ErrorBoundry';
 
 export default function Home() {
-  const { blocks, updateBlock, deleteBlock, addNewTask, loading } = useWeeklyTasks();
+  const { updateBlock, deleteBlock } = useWeeklyTasks();
+  const { tasks, loading, syncLoading } = useSelector((state: RootState) => state.weeklyTasks);
 
-  const handleDelete = (id: string) => {
-    deleteBlock(id)
-  }
+
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteBlock(id)
+    }
+    , [deleteBlock])
 
 
   return (
     <div className="min-h-screen bg-secondary py-8 pt-18">
-      <NavBar />
 
-      {/* <SyncToggle
-      /> */}
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
           <div className="mb-8">
@@ -32,17 +36,30 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="space-y-4">
-            <AddBlock addNewTask={addNewTask} loading={loading} />
-
+          <div className="space-y-4 relative">
             {
-              blocks.map((block) => (
-                <WeeklyTable
+              syncLoading && <div className='z-10 rounded-xl absolute inset-0 h-full w-full flex flex-col items-center justify-start bg-brand-text-secondary/50'>
+                <div className="loader"></div>
+                <h2 className='bg-brand-secondary p-3 lg:text-3xl rounded-2xl'>
+                  Kindly wait until Syncing Finish
+                </h2>
+              </div>
+            }
+            <AddBlock />
+            {
+              tasks?.map((block) => (
+                <ErrorBoundary
                   key={block.id}
-                  task={block}
-                  onUpdate={(taskid: string, updates: Partial<WeeklyTask>) => updateBlock(taskid, updates)}
-                  onDelete={handleDelete} loading={loading}
-                />
+                  fallback={<div className="p-2 bg-gray-100 text-red-500">Failed to load this task.</div>}
+                >
+
+                  <WeeklyTable
+                    key={block.id}
+                    task={block}
+                    onUpdate={(taskid: string, updates: Partial<WeeklyTask>) => updateBlock(taskid, updates)}
+                    onDelete={handleDelete} loading={loading}
+                  />
+                </ErrorBoundary>
               ))
             }
 

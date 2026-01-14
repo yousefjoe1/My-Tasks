@@ -105,3 +105,82 @@
 .bg-error {
   background-color: var(--color-brand-error);
 }
+
+
+/* HTML: <div class="loader"></div> */
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 100px;
+  height: 60px;
+  display: flex;
+  animation: l12-0 2s infinite linear;
+}
+
+.loader::before,
+.loader::after {
+  content: "";
+  flex: 4;
+  background:
+    radial-gradient(at 50% 20%, #0000, #000a) bottom left/20px 20px repeat-x,
+    linear-gradient(red 0 0) bottom/100% 20px no-repeat #ddd;
+  -webkit-mask:
+    repeating-linear-gradient(90deg, #000 0 4px, #0000 0 20px) 8px 0,
+    radial-gradient(farthest-side, #000 90%, #0000) left bottom/20px 20px repeat-x;
+}
+
+.loader::after {
+  flex: 1;
+  transform-origin: top;
+  animation: l12-1 1s cubic-bezier(0, 20, 1, 20) infinite;
+}
+
+@keyframes l12-0 {
+
+  0%,
+  49.9% {
+    transform: scaleX(1)
+  }
+
+  50%,
+  100% {
+    transform: scaleX(-1)
+  }
+}
+
+@keyframes l12-1 {
+  100% {
+    transform: rotate(-2deg)
+  }
+}
+
+.loader-2 {
+  width: 60px;
+  height: 30px;
+  display: grid;
+  --c: #eee9e900 calc(100% - 5px), #4c3fc4 calc(100% - 4px) 96%, #0000;
+  background:
+    radial-gradient(farthest-side at bottom, var(--c)) 0 0,
+    radial-gradient(farthest-side at top, var(--c)) 100% 100%;
+  background-size: calc(50% + 2px) 50%;
+  background-repeat: no-repeat;
+  animation: l14 1.5s infinite linear;
+}
+
+.loader-2:before,
+.loader-2:after {
+  content: "";
+  grid-area: 1/1;
+  background: inherit;
+  animation: inherit;
+  animation-duration: 2s;
+}
+
+.loader-2:after {
+  --s: -1;
+}
+
+@keyframes l14 {
+  100% {
+    transform: rotate(calc(var(--s, 1)*1turn))
+  }
+}
