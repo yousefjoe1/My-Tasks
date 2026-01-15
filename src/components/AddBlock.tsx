@@ -31,7 +31,7 @@ export function AddBlock() {
       const newTaskData = await WeeklyTasksService.addTask(newTask, user?.id)
       dispatch(setTasks([...tasks, newTaskData]))
       success('Task added successfully')
-      await WeeklyTasksService.saveSnapShotNow(user?.id)
+      // await WeeklyTasksService.saveSnapShotNow(user?.id)
     } catch (error) {
       dispatch(setError({ id: newTask.id, message: error instanceof Error ? error.message : 'Failed to add task' }))
     }
