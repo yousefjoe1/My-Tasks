@@ -10,8 +10,6 @@ import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStra
 
 const navLinks = [
   { name: "Main", href: "/" },
-  { name: "Todos", href: "/todos" },
-  { name: "Notes", href: "/notes" },
   { name: "My Productivity", href: "/dashboard" },
 ];
 

@@ -1,5 +1,5 @@
 // store/weeklyTasksSlice.ts
-import { WeeklyTask } from '@/types'
+import { WeeklySnapshot, WeeklyTask } from '@/types'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
@@ -14,7 +14,7 @@ const initialState: WeeklyTasksState = {
     tasks: [],
     loading: false,
     error: {},
-    syncLoading: false
+    syncLoading: false,
 }
 
 export const weeklyTasksSlice = createSlice({
