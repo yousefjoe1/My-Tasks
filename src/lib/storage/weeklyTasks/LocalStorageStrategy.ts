@@ -16,6 +16,11 @@ export class LocalStorageStrategy {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
+  static getSnapshotData(): WeeklySnapshot[] {
+    const data = localStorage.getItem(SNAPSHOT_KEY);
+    return data ? JSON.parse(data) : {} as WeeklySnapshot[]
+  }
+
   static getWeeklyTasks(): WeeklyTask[] {
     const data = this.getData();
     return data;
@@ -49,8 +54,21 @@ export class LocalStorageStrategy {
   }
 
   // saveWeeklySnapshot
-  static saveWeeklySnapshot(snapshot: WeeklySnapshot): void {
+  static saveWeeklySnapshot(userId: string | undefined): void {
     if (typeof window === 'undefined') return;
+    const tasks = this.getData()
+    const snapshotData = tasks.map(block => ({
+      id: block.id,
+      content: block.content,
+      days: block.days
+    }));
+
+    const snapshot = {
+      userId: userId,
+      archived_at: new Date().toISOString(),
+      week_data: snapshotData
+    }
+
     localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot));
   }
 

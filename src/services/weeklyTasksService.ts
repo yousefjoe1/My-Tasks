@@ -2,6 +2,7 @@
 import { WeeklyTask } from '@/types'
 import { supabase } from '@/lib/supabase/client'
 import { LocalStorageStrategy } from '@/lib/storage/weeklyTasks/LocalStorageStrategy'
+import { shouldResetWeek } from '@/lib/utils'
 
 /**
  * Service layer handles ALL data operations
@@ -101,26 +102,69 @@ export class WeeklyTasksService {
         LocalStorageStrategy.deleteBlock(taskId)
     }
 
-    // Sync local tasks to cloud
-    static async syncLocalToCloud(userId: string): Promise<void> {
-        const localTasks = LocalStorageStrategy.getWeeklyTasks()
+    static async saveSnapShot(userId: string | undefined): Promise<void> {
+        if (userId) {
+            const tasks = await this.fetchTasks(userId)
+            const needsReset = tasks?.some(
+                (block) => block.updated_at && shouldResetWeek(new Date(block.updated_at))
+            )
+            if (needsReset) {
+                const snapshotData = tasks.map(block => ({
+                    id: block.id,
+                    content: block.content,
+                    days: block.days
+                }));
 
-        const { data: cloudTasks } = await supabase
-            .from('weekly_tasks')
-            .select('*')
-            .eq('userId', userId)
 
-        const existingIds = new Set(cloudTasks?.map(t => t.id) || [])
-        const newTasks = localTasks
-            .filter(task => !existingIds.has(task.id))
-            .map(task => ({ ...task, userId }))
+                const snapshot = {
+                    user_id: userId,
+                    archived_at: new Date().toISOString(),
+                    week_data: snapshotData
+                };
 
-        if (newTasks.length > 0) {
-            const { error } = await supabase
-                .from('weekly_tasks')
-                .insert(newTasks)
+                await supabase.from('weekly_snapshots').insert(snapshot);
+            } else {
 
-            if (error) throw error
+                LocalStorageStrategy.saveWeeklySnapshot(userId);
+            }
+
         }
     }
+
+    static async saveSnapShotNow(userId: string | undefined): Promise<void> {
+        if (userId) {
+            const tasks = await this.fetchTasks(userId)
+
+            const snapshotData = tasks.map(block => ({
+                id: block.id,
+                content: block.content,
+                days: block.days
+            }));
+
+
+            const snapshot = {
+                userId: userId,
+                archived_at: new Date().toISOString(),
+                week_data: snapshotData
+            };
+
+            await supabase.from('weekly_snapshots').insert(snapshot);
+        } else {
+            LocalStorageStrategy.saveWeeklySnapshot(userId);
+        }
+
+
+
+
+    }
+
+    // static async getSnapShotCloud(userId: string | undefined):Promise<void>{
+    //     if(userId){
+    //         const { data, error } = await supabase.from('weekly_snapshots')
+    //             .select('*')
+    //             .eq('userId', userId)
+    //         return data
+    //     }
+
+    // }
 }
