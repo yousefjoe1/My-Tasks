@@ -82,4 +82,25 @@ export class LocalStorageStrategy {
     const newData = data.filter(b => b.id != blockId);
     this.saveData(newData);
   }
+
+  static saveSyncState() {
+    const currentSyncedValue = localStorage.getItem('synced');
+    if (currentSyncedValue) {
+      return currentSyncedValue;
+    } else {
+      if (currentSyncedValue == undefined) {
+        localStorage.setItem('synced', 'yes');
+        return 'no'
+      }
+
+    }
+
+
+  }
+
+  static resetSync() {
+    localStorage.setItem('synced', 'no');
+  }
+
+
 }

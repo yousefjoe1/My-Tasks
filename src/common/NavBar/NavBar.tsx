@@ -34,6 +34,7 @@ export default function Navbar() {
         if (!error && cloudBlocks) {
           const localFormatBlocks = cloudBlocks.map(block => fromSupabaseBlock(block));
           LocalStorageStrategy.saveAllData(localFormatBlocks);
+          LocalStorageStrategy.resetSync();
         }
 
         await supabase.auth.signOut();

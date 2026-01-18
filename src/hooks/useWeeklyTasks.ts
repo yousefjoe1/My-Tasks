@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { setTasks, setLoading, updateTask, setError, removeTask, setSyncLoading } from "@/store/weeklyTasksSlice";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import { WeeklyTasksSync } from "@/services/weeklyTasksSyncService";
+import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 
 
 export function useWeeklyTasks() {
@@ -47,12 +48,15 @@ export function useWeeklyTasks() {
   }
 
   const SyncFromLocalToCloud = async () => {
-    dispatch(setSyncLoading(true))
     if (user?.id) {
-      await WeeklyTasksSync.addTheNewTasks(user?.id)
-      await WeeklyTasksSync.updateExistingTasks(user?.id)
-      await WeeklyTasksSync.deleteMissingTasks(user?.id)
-      await WeeklyTasksService.saveSnapShot(user?.id)
+      const isSynced = LocalStorageStrategy.saveSyncState()
+      if (isSynced !== 'yes') {
+        dispatch(setSyncLoading(true))
+        await WeeklyTasksSync.addTheNewTasks(user?.id)
+        await WeeklyTasksSync.updateExistingTasks(user?.id)
+        await WeeklyTasksSync.deleteMissingTasks(user?.id)
+        await WeeklyTasksService.saveSnapShot(user?.id)
+      }
     }
     getTasks()
     dispatch(setSyncLoading(false))
