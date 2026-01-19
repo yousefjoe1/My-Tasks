@@ -19,9 +19,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Productivity Tracker App",
-  description: "Track your productivity with ease",
+export const metadata = {
+  title: "My Next PWA",
+  description: "Best PWA ever",
+  manifest: "/manifest.json", // ربط ملف المانيفست
+  themeColor: "#000000",
+  viewport: "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "My Weekly Tasks",
+  },
 };
 
 export default function RootLayout({
