@@ -115,40 +115,61 @@ export class WeeklyTasksService {
                     days: block.days
                 }));
 
+                // Calculate week start and end
+                const now = new Date();
+                const weekStart = new Date(now);
+                weekStart.setDate(now.getDate() - now.getDay()); // Sunday
+                weekStart.setHours(0, 0, 0, 0);
+
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6); // Saturday
+                weekEnd.setHours(23, 59, 59, 999);
 
                 const snapshot = {
                     user_id: userId,
                     archived_at: new Date().toISOString(),
+                    week_start: weekStart.toISOString(),
+                    week_end: weekEnd.toISOString(),
                     week_data: snapshotData
                 };
 
                 await supabase.from('weekly_snapshots').insert(snapshot);
+                LocalStorageStrategy.saveWeeklySnapshot(userId);
             } else {
-
                 LocalStorageStrategy.saveWeeklySnapshot(userId);
             }
-
         }
     }
 
     static async saveSnapShotNow(userId: string | undefined): Promise<void> {
         if (userId) {
             const tasks = await this.fetchTasks(userId)
-
             const snapshotData = tasks.map(block => ({
                 id: block.id,
                 content: block.content,
                 days: block.days
             }));
 
+            // Calculate week start and end
+            const now = new Date();
+            const weekStart = new Date(now);
+            weekStart.setDate(now.getDate() - now.getDay()); // Sunday
+            weekStart.setHours(0, 0, 0, 0);
+
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // Saturday
+            weekEnd.setHours(23, 59, 59, 999);
 
             const snapshot = {
-                userId: userId,
+                user_id: userId,
                 archived_at: new Date().toISOString(),
+                week_start: weekStart.toISOString(),
+                week_end: weekEnd.toISOString(),
                 week_data: snapshotData
             };
 
             await supabase.from('weekly_snapshots').insert(snapshot);
+            LocalStorageStrategy.saveWeeklySnapshot(userId);
         } else {
             LocalStorageStrategy.saveWeeklySnapshot(userId);
         }
