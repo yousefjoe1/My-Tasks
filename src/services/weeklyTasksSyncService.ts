@@ -1,10 +1,26 @@
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import { WeeklyTasksService } from "./weeklyTasksService";
+import { supabase } from "@/lib/supabase/client";
 
 
 
 export class WeeklyTasksSync {
     // Change this in your WeeklyTasksSync class:
+
+    // fetch snapshot
+    static async fetchSnapshot(userId: string | undefined) {
+        if (userId) {
+            const { data, error } = await supabase
+                .from('weekly_snapshots')
+                .select('*')
+                .eq('user_id', userId)
+            return data
+        } else {
+            return LocalStorageStrategy.getSnapshotData()
+        }
+    }
+
+
     static async addTheNewTasks(userId: string | undefined) {
         const localTasks = LocalStorageStrategy.getWeeklyTasks();
         const cloudTasks = await WeeklyTasksService.fetchTasks(userId);

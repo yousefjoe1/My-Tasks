@@ -16,9 +16,9 @@ export class LocalStorageStrategy {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
-  static getSnapshotData(): WeeklySnapshot[] {
+  static getSnapshotData(): WeeklySnapshot[] | null {
     const data = localStorage.getItem(SNAPSHOT_KEY);
-    return data ? JSON.parse(data) : {} as WeeklySnapshot[]
+    return data ? JSON.parse(data) : null
   }
 
   static getWeeklyTasks(): WeeklyTask[] {
@@ -63,13 +63,27 @@ export class LocalStorageStrategy {
       days: block.days
     }));
 
-    const snapshot = {
-      userId: userId,
-      archived_at: new Date().toISOString(),
-      week_data: snapshotData
-    }
+    // Calculate week start and end
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay()); // Sunday
+    weekStart.setHours(0, 0, 0, 0);
 
-    localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot));
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6); // Saturday
+    weekEnd.setHours(23, 59, 59, 999);
+
+    const snapshot = {
+      user_id: userId,
+      archived_at: new Date().toISOString(),
+      week_start: weekStart.toISOString(),
+      week_end: weekEnd.toISOString(),
+      week_data: snapshotData
+    };
+
+    const existingSnapshots = this.getSnapshotData() || [];
+    existingSnapshots.push(snapshot);
+    localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(existingSnapshots));
   }
 
   static clearTasks(): void {
@@ -85,16 +99,16 @@ export class LocalStorageStrategy {
 
   static saveSyncState() {
     const currentSyncedValue = localStorage.getItem('synced');
-    if (currentSyncedValue) {
-      return currentSyncedValue;
-    } else {
-      if (currentSyncedValue == undefined) {
-        localStorage.setItem('synced', 'yes');
-        return 'no'
-      }
-
+    if (currentSyncedValue == null) {
+      localStorage.setItem('synced', 'yes');
+      return 'no'
     }
 
+    if (currentSyncedValue === 'no') {
+      localStorage.setItem('synced', 'yes')
+    }
+
+    return currentSyncedValue
 
   }
 

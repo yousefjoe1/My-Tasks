@@ -10,8 +10,12 @@ export interface WeeklyTask {
 
 
 export interface WeeklySnapshot {
+  id?: string;
   user_id: string | undefined;
   archived_at: string;
+  created_at?: string;
+  week_start?: string;
+  week_end?: string;
   week_data: {
     id: string;
     content: string;
