@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
 const metadata = {
   title: "My Weekly Tasks",
   description: "Best PWA ever",
