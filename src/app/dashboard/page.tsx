@@ -38,6 +38,14 @@ const DashBoard = () => {
             }
 
             {
+                snapData && snapData.length === 0 && (
+                    <div>
+                        <h2 className='text-2xl'>No History</h2>
+                    </div>
+                )
+            }
+
+            {
                 snapData && snapData.length > 0 && (
                     <div>
                         <h2 className='text-2xl'>History</h2>
