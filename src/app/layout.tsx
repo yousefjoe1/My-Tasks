@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "My Next PWA",
+const metadata = {
+  title: "My Weekly Tasks",
   description: "Best PWA ever",
   manifest: "/manifest.json", // ربط ملف المانيفست
   themeColor: "#000000",
