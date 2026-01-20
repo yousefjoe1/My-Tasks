@@ -135,9 +135,9 @@ export class WeeklyTasksService {
 
                 await supabase.from('weekly_snapshots').insert(snapshot);
                 LocalStorageStrategy.saveWeeklySnapshot(userId);
-            } else {
-                LocalStorageStrategy.saveWeeklySnapshot(userId);
             }
+        } else {
+            LocalStorageStrategy.saveWeeklySnapshot(userId);
         }
     }
 
