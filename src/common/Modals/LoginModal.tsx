@@ -13,7 +13,7 @@ interface Message {
     text: string;
 }
 
-export default function LoginModal() {
+export default function LoginModal({ closeModal }: { closeModal: () => void }) {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -42,6 +42,7 @@ export default function LoginModal() {
                 });
                 if (error) throw error;
                 setMessage({ type: 'success', text: 'Welcome back!' });
+                closeModal()
             }
         } catch (error: unknown) {
             const err = error as Error;
