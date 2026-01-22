@@ -52,6 +52,7 @@ export class WeeklyTasksSync {
 
     static async deleteMissingTasks(userId: string | undefined) {
 
+        // if local is empty, make a message to the user informing him that his local has no tasks, whould he want to delete the cloud tasks ?
         const localTasks = LocalStorageStrategy.getWeeklyTasks()
         const cloudTasks = await WeeklyTasksService.fetchCloudTasks(userId)
         const localTasksIds = localTasks.map(el => el.id)
