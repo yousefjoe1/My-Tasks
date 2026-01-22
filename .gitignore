@@ -19,6 +19,7 @@
 
 # production
 /build
+/favicon
 
 # misc
 .DS_Store
