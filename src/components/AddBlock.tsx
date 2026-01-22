@@ -27,10 +27,10 @@ export function AddBlock() {
       content,
       days: {},
     };
-    // dispatch(setLoading(true))
+    dispatch(setLoading(true))
     try {
-      // const newTaskData = await WeeklyTasksService.addTask(newTask, user?.id)
-      // dispatch(setTasks([...tasks, newTaskData]))
+      const newTaskData = await WeeklyTasksService.addTask(newTask, user?.id)
+      dispatch(setTasks([...tasks, newTaskData]))
       success('Task added successfully')
       const item = await AsmahAllah.getCurrentName();
       AsmahAllah.updateIndex();
@@ -51,10 +51,10 @@ export function AddBlock() {
         <button
           disabled={loading}
           onClick={() => {
-            // if (taskName.length < 5) {
-            //   error('Task name must be at least 5 characters long');
-            //   return
-            // }
+            if (taskName.length < 5) {
+              error('Task name must be at least 5 characters long');
+              return
+            }
             addNewTask(taskName);
           }}
           className="p-3 border flex justify-center border-primary w-full rounded-lg hover:bg-secondary transition-colors text-center"
