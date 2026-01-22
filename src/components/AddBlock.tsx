@@ -7,6 +7,7 @@ import { WeeklyTask } from "@/types";
 import { setError, setLoading, setTasks } from "@/store/weeklyTasksSlice";
 import { RootState } from "@/store/store";
 import { useAuth } from "@/contexts/AuthContext";
+import AsmahAllah from "@/features/Allah-names/services/allah-names";
 
 
 export function AddBlock() {
@@ -18,7 +19,7 @@ export function AddBlock() {
   const dispatch = useDispatch()
 
 
-  const { error, ToastContainer, success } = useToast()
+  const { error, ToastContainer, success, toast } = useToast()
 
   const addNewTask = async (content: string) => {
     const newTask: WeeklyTask = {
@@ -26,19 +27,21 @@ export function AddBlock() {
       content,
       days: {},
     };
-    dispatch(setLoading(true))
+    // dispatch(setLoading(true))
     try {
-      const newTaskData = await WeeklyTasksService.addTask(newTask, user?.id)
-      dispatch(setTasks([...tasks, newTaskData]))
+      // const newTaskData = await WeeklyTasksService.addTask(newTask, user?.id)
+      // dispatch(setTasks([...tasks, newTaskData]))
       success('Task added successfully')
-      // await WeeklyTasksService.saveSnapShotNow(user?.id)
+      const item = await AsmahAllah.getCurrentName();
+      AsmahAllah.updateIndex();
+      toast(item.name, item.details)
     } catch (error) {
       dispatch(setError({ id: newTask.id, message: error instanceof Error ? error.message : 'Failed to add task' }))
     }
   }
 
   return (
-    <div className="p-4 border rounded-lg shadow-sm space-y-3">
+    <section title="Add Task Section" className="p-4 border border-brand-primary rounded-lg shadow-sm space-y-3">
 
       <div>
         <label htmlFor="task">Task Name</label>
@@ -48,21 +51,21 @@ export function AddBlock() {
         <button
           disabled={loading}
           onClick={() => {
-            if (taskName.length < 5) {
-              error('Task name must be at least 5 characters long');
-              return
-            }
+            // if (taskName.length < 5) {
+            //   error('Task name must be at least 5 characters long');
+            //   return
+            // }
             addNewTask(taskName);
           }}
           className="p-3 border flex justify-center border-primary w-full rounded-lg hover:bg-secondary transition-colors text-center"
         >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : ''}
-          <div className="text-primary">📅 Add Task</div>
+          <h6 className="text-primary">📅 Add Task</h6>
         </button>
 
       </div>
       <ToastContainer />
 
-    </div>
+    </section>
   );
 }

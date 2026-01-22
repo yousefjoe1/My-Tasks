@@ -1,11 +1,11 @@
 'use client'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark'
+type Theme = 'light' | 'dark' | 'pink';
 
 interface ThemeContextType {
   theme: Theme
-  toggleTheme: () => void
+  toggleTheme: (color: string) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
@@ -32,13 +32,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!mounted) return
 
     const root = window.document.documentElement
-    root.classList.remove('light', 'dark')
+    root.classList.remove('light', 'dark', 'pink')
     root.classList.add(theme)
     localStorage.setItem('theme', theme)
   }, [theme, mounted])
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light')
+  const toggleTheme = (color: string) => {
+    setTheme(color as Theme)
   }
 
 
