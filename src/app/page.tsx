@@ -23,7 +23,7 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-secondary py-8 pt-18">
+    <section className="min-h-screen bg-secondary py-8 pt-18">
 
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
@@ -50,7 +50,7 @@ export default function Home() {
               tasks?.map((block) => (
                 <ErrorBoundary
                   key={block.id}
-                  fallback={<div className="p-2 bg-gray-100 text-red-500">Failed to load this task.</div>}
+                  fallback={<p className="p-2 bg-gray-100 text-red-500">Failed to load this task.</p>}
                 >
 
                   <WeeklyTable
@@ -70,8 +70,16 @@ export default function Home() {
           <p>📅 Weekly tasks automatically reset every Monday</p>
           <p className="mt-1">💾 Data is saved locally in your browser and synced to cloud after you login</p>
         </div>
+
+
+        {/* My information developed by*/}
+        <section className='mt-6 text-center text-muted text-lg'>
+          <h4>Developed By: <b>Youssef Mahmoud</b> </h4>
+          <h4>Email: yousefmahmoud150@gmail.com </h4>
+          <h4>Whats App: 01554464169 </h4>
+        </section>
       </div>
 
-    </div>
+    </section>
   );
 }

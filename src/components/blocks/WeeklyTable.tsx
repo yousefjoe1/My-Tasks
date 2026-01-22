@@ -167,7 +167,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                           "group-hover:scale-110 group-active:scale-95",
                           task.days?.[day]
                             ? "bg-success border-success text-white shadow-sm"
-                            : "border-muted text-transparent hover:border-success bg-brand-success/10",
+                            : "border-muted text-transparent hover:border-success bg-brand-success/30",
                         ].join(" ")}
                       >
                         <span className="font-bold text-sm">✓</span>
