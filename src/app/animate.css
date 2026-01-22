@@ -1,0 +1,39 @@
+@keyframes wallSlide {
+    0% {
+        transform: translateY(100%);
+    }
+
+    50% {
+        transform: translateY(0%);
+    }
+
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+.animate-wall-slide-up {
+    animation: wallSlide 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+@keyframes l14 {
+    100% {
+        transform: rotate(calc(var(--s, 1)*1turn))
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animate-toast-in {
+    animation: slideIn 0.5s ease-out forwards;
+}

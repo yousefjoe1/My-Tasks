@@ -209,25 +209,3 @@
     transform: rotate(-2deg)
   }
 }
-
-@keyframes l14 {
-  100% {
-    transform: rotate(calc(var(--s, 1)*1turn))
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.animate-toast-in {
-  animation: slideIn 0.5s ease-out forwards;
-}
