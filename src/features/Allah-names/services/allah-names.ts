@@ -1,5 +1,7 @@
 const ASMA_INDEX_KEY = "asma_husna_current_index";
 
+const THIKR_INDEX_KEY = "thikr_current_index";
+
 const asmaulHusna = [
     { name: "الرَّحْمَنُ", details: "الذي وسعت رحمته كل شيء في الدنيا والآخرة." },
     { name: "الرَّحِيمُ", details: "المنعم أبدًا، المتفضل دومًا، فرحمته لا تنتهي." },
@@ -90,6 +92,69 @@ const asmaulHusna = [
     { name: "الصَّبُورُ", details: "الذي لا يعاجل بالعقوبة، ويصبر على عباده." }
 ];
 
+const thikrList = [
+    {
+        name: "الاستغفار",
+        details: "أستغفرُ اللهَ العظيم الذي لا إله إلا هو الحي القيوُم وأتوبُ إليه."
+    },
+    {
+        name: "التسبيح",
+        details: "سبحان الله وبحمده، عدد خلقه، ورضا نفسه، وزنة عرشه، ومداد كلماته."
+    },
+    {
+        name: "التهليل",
+        details: "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير."
+    },
+    {
+        name: "الحوقلة",
+        details: "لا حول ولا قوة إلا بالله؛ هي كنز من كنوز الجنة ودافع للهموم والكروب."
+    },
+    {
+        name: "الصلاة على النبي",
+        details: "اللهم صلِّ وسلم وبارك على نبينا محمد؛ صلاةً تُقضى بها الحاجات وتُغفر بها الذنوب."
+    },
+    {
+        name: "الباقيات الصالحات",
+        details: "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر."
+    },
+    {
+        name: "سيد الاستغفار",
+        details: "اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت."
+    },
+    {
+        name: "الذكر عند الكرب",
+        details: "لا إله إلا أنت سبحانك إني كنت من الظالمين."
+    },
+    {
+        name: "الشكر",
+        details: "الحمد لله حمداً كثيراً طيباً مباركاً فيه كما يحب ربنا ويرضى."
+    },
+    {
+        name: "التحصين",
+        details: "بسم الله الذي لا يضر مع اسمه شيء في الأرض ولا في السماء وهو السميع العليم."
+    },
+    {
+        name: "استوداع الله",
+        details: "اللهم إني أستودعك نفسي وديني وخواتيم عملي؛ فاحفظني بما تحفظ به عبادك الصالحين."
+    },
+    {
+        name: "طلب العافية",
+        details: "اللهم إني أسألك العفو والعافية في الدنيا والآخرة."
+    },
+    {
+        name: "التوكل على الله",
+        details: "حسبي الله لا إله إلا هو، عليه توكلت وهو رب العرش العظيم."
+    },
+    {
+        name: "الاعتراف بالنعمة",
+        details: "يا حي يا قيوم برحمتك أستغيث، أصلح لي شأني كله ولا تكلني إلى نفسي طرفة عين."
+    },
+    {
+        name: "الاستعاذة من الهم",
+        details: "اللهم إني أعوذ بك من الهم والحزن، والعجز والكسل، والبخل والجبن."
+    }
+];
+
 
 const AsmahAllah = {
     getCurrentName: () => {
@@ -108,7 +173,27 @@ const AsmahAllah = {
 
         localStorage.setItem(ASMA_INDEX_KEY, nextIndex.toString());
         // return asmaulHusna[nextIndex];
+    },
+
+
+    getCurrentThikr: () => {
+        const savedIndex = localStorage.getItem(THIKR_INDEX_KEY);
+        let currentIndex = savedIndex ? parseInt(savedIndex) : 0;
+
+        if (currentIndex >= thikrList.length) currentIndex = 0;
+
+        return thikrList[currentIndex];
+    },
+
+    updateThikrIndex: () => {
+        const savedIndex = localStorage.getItem(THIKR_INDEX_KEY);
+        const currentIndex = savedIndex ? parseInt(savedIndex) : 0;
+        const nextIndex = (currentIndex + 1) % thikrList.length;
+
+        localStorage.setItem(THIKR_INDEX_KEY, nextIndex.toString());
+        // return thikrList[nextIndex];
     }
+
 };
 
 export default AsmahAllah;

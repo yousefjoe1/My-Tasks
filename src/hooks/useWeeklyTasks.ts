@@ -7,13 +7,24 @@ import { setTasks, setLoading, updateTask, setError, removeTask, setSyncLoading 
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import { WeeklyTasksSync } from "@/services/weeklyTasksSyncService";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
+import AsmahAllah from "@/features/Allah-names/services/allah-names";
 
 
-export function useWeeklyTasks() {
+export function useWeeklyTasks({
+  error,
+  success,
+  toast,
+}: {
+  error: (m: string) => void;
+  success: (m: string) => void;
+  toast: (m: string, d: string) => void;
+}) {
 
   const dispatch = useDispatch()
 
   const { user } = useAuth();
+
+
 
 
   const getTasks = useCallback(async () => {
@@ -27,9 +38,13 @@ export function useWeeklyTasks() {
     // Clear any previous error for this specific task before starting
     dispatch(setError({ id: taskId, message: null }));
     dispatch(setLoading(true))
+    success('Task updated successfully')
     try {
       await WeeklyTasksService.updateTask(taskId, updates, user?.id);
-      dispatch(updateTask({ id: taskId, updates }));
+      dispatch(updateTask({ id: taskId, updates }))
+      const item = await AsmahAllah.getCurrentThikr();
+      AsmahAllah.updateThikrIndex();
+      toast(item.name, item.details);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Update failed';
       dispatch(setError({ id: taskId, message }));

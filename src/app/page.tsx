@@ -9,9 +9,16 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { useCallback } from 'react';
 import ErrorBoundary from '@/common/ErrorBoundry';
+import ToastContainer from '@/components/Toasts/ToastContainer';
+import { useToast } from '@/components/Toasts/useToast';
 
 export default function Home() {
-  const { updateBlock, deleteBlock } = useWeeklyTasks();
+  const { error, success, toast, toasts, removeToast } = useToast()
+  const { updateBlock, deleteBlock } = useWeeklyTasks({
+    error,
+    success,
+    toast,
+  });
   const { tasks, loading, syncLoading } = useSelector((state: RootState) => state.weeklyTasks);
 
 
@@ -24,6 +31,7 @@ export default function Home() {
 
   return (
     <section className="min-h-screen bg-secondary py-8 pt-18">
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
 
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
@@ -45,7 +53,7 @@ export default function Home() {
                 </h2>
               </div>
             }
-            <AddBlock />
+            <AddBlock success={success} toast={toast} error={error} />
             {
               tasks?.map((block) => (
                 <ErrorBoundary
