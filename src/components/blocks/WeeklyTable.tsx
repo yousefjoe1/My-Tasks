@@ -110,7 +110,13 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
 
         {/* Table Section */}
-        <div className="overflow-x-auto ">
+        {
+          loading &&
+          <div className="absolute z-10 rounded-2xl flex justify-center items-center inset-0 w-full h-full bg-brand-text-muted/50">
+            <div className="loader-2" />
+          </div>
+        }
+        <div className="overflow-x-auto relative ">
           <table className="w-full overflow-hidden rounded-b-xl min-w-[800px]">
             {/* Table Header */}
             <thead className="border-b border-secondary bg-secondary">
@@ -134,12 +140,6 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
             {/* Table Body */}
             <tbody className="bg-primary relative">
-              {
-                loading &&
-                <tr className="absolute z-10 rounded-2xl flex justify-center items-center inset-0 w-full h-full border ">
-                  <td className="loader-2" />
-                </tr>
-              }
               <tr className="relative transition-all duration-200 hover:bg-tertiary/50">
                 {weekDays.map((day) => (
                   <td

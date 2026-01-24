@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import StoreProvider from "@/contexts/StoreProvider";
 import Navbar from "@/common/NavBar/NavBar";
 import SeviceWorker from "@/common/serviceWorker/SeviceWorker";
+import ToastContainer from "@/components/Toasts/ToastContainer";
 
 
 const geistSans = Geist({

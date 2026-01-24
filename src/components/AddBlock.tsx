@@ -1,6 +1,5 @@
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import useToast from "./Toasts/useToast";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import { useDispatch, useSelector } from "react-redux";
 import { WeeklyTask } from "@/types";
@@ -10,16 +9,20 @@ import { useAuth } from "@/contexts/AuthContext";
 import AsmahAllah from "@/features/Allah-names/services/allah-names";
 
 
-export function AddBlock() {
+interface Toast {
+  success: (m: string) => void;
+  toast: (m: string, d: string) => void;
+  error: (m: string) => void;
+}
+
+
+export function AddBlock({ success, toast, error }: Toast) {
   const { user } = useAuth();
 
   const [taskName, setTaskName] = useState('')
   const { tasks, loading } = useSelector((state: RootState) => state.weeklyTasks);
 
   const dispatch = useDispatch()
-
-
-  const { error, ToastContainer, success, toast } = useToast()
 
   const addNewTask = async (content: string) => {
     const newTask: WeeklyTask = {
@@ -64,7 +67,6 @@ export function AddBlock() {
         </button>
 
       </div>
-      <ToastContainer />
 
     </section>
   );
