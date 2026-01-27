@@ -68,7 +68,7 @@ const DashBoard = () => {
                                             </div>
 
                                             <div className="space-y-3">
-                                                {snap.week_data.map(task => {
+                                                {snap.week_data.map((task, i) => {
                                                     // Convert days object to array matching weekDays order
                                                     if (!task.days) return null;
                                                     const daysArray = weekDays.map(day => {
@@ -77,14 +77,14 @@ const DashBoard = () => {
                                                     });
 
                                                     return (
-                                                        <div key={task.id} className="border rounded p-3">
+                                                        <div key={i} className="border rounded p-3">
                                                             <h4 className="font-medium mb-2">{task.content}</h4>
 
                                                             {/* Day completion icons */}
                                                             <div className="flex gap-2">
                                                                 {daysArray.map((completed, index) => (
                                                                     <div
-                                                                        key={weekDays[index]}
+                                                                        key={index}
                                                                         className={`flex items-center justify-center w-10 h-10 rounded ${completed ? 'bg-green-500' : 'bg-gray-300'
                                                                             }`}
                                                                         title={`${weekDays[index]} (${format(snapWeekDates[index], 'MMM dd')}): ${completed ? 'Completed' : 'Not completed'}`}
@@ -108,7 +108,7 @@ const DashBoard = () => {
                                                             {/* Day labels with dates */}
                                                             <div className="flex gap-2 mt-1">
                                                                 {weekDays.map((day, index) => (
-                                                                    <div key={day} className="w-10 text-center">
+                                                                    <div key={index} className="w-10 text-center">
                                                                         <div className="text-xs font-medium text-gray-700">{day}</div>
                                                                         <div className="text-xs text-gray-500">
                                                                             {format(snapWeekDates[index], 'dd')}

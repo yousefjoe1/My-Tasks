@@ -3,6 +3,7 @@ import { WeeklyTask } from '@/types'
 import { supabase } from '@/lib/supabase/client'
 import { LocalStorageStrategy } from '@/lib/storage/weeklyTasks/LocalStorageStrategy'
 import { shouldResetWeek } from '@/lib/utils'
+import { endOfWeek, startOfWeek } from 'date-fns'
 
 /**
  * Service layer handles ALL data operations
@@ -102,43 +103,70 @@ export class WeeklyTasksService {
         LocalStorageStrategy.deleteBlock(taskId)
     }
 
-    static async saveSnapShot(userId: string | undefined): Promise<void> {
+
+    // resetAllTasksDays
+    static async resetAllTasksDays(userId: string | undefined): Promise<void> {
         if (userId) {
-            const tasks = await this.fetchTasks(userId)
-            const needsReset = tasks?.some(
-                (block) => block.updated_at && shouldResetWeek(new Date(block.updated_at))
-            )
+            const { error } = await supabase
+                .from('weekly_tasks')
+                .update({ days: 0 })
+                .eq('userId', userId)
+
+            if (error) throw error
+        }
+    }
+
+    static async saveSnapShot(userId: string | undefined): Promise<void> {
+
+        if (userId) {
+            const tasks = await this.fetchTasks(userId);
+            const needsReset = tasks?.some((block) => {
+                const dateToCompare = block.updated_at;
+                return dateToCompare && shouldResetWeek(new Date(dateToCompare));
+            });
             if (needsReset) {
-                const snapshotData = tasks.map(block => ({
-                    id: block.id,
-                    content: block.content,
-                    days: block.days
-                }));
+                console.log("🔄 New week detected! Taking snapshot and resetting...");
 
-                // Calculate week start and end
                 const now = new Date();
-                const weekStart = new Date(now);
-                weekStart.setDate(now.getDate() - now.getDay()); // Sunday
-                weekStart.setHours(0, 0, 0, 0);
-
-                const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekStart.getDate() + 6); // Saturday
-                weekEnd.setHours(23, 59, 59, 999);
+                const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+                const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
 
                 const snapshot = {
                     user_id: userId,
-                    archived_at: new Date().toISOString(),
+                    archived_at: now.toISOString(),
                     week_start: weekStart.toISOString(),
                     week_end: weekEnd.toISOString(),
-                    week_data: snapshotData
+                    week_data: tasks.map(block => ({
+                        id: block.id,
+                        content: block.content,
+                        days: block.days
+                    }))
                 };
 
-                await supabase.from('weekly_snapshots').insert(snapshot);
-                LocalStorageStrategy.saveWeeklySnapshot(userId);
+                const { error: snapshotError } = await supabase.from('weekly_snapshots').insert(snapshot);
+
+                if (!snapshotError) {
+                    const { error: updateError } = await supabase
+                        .from('weekly_tasks')
+                        .update({
+                            days: {},
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('user_id', userId);
+
+                    if (!updateError) {
+                        console.log("✅ Week reset successfully. Won't trigger until next week.");
+                        LocalStorageStrategy.saveWeeklySnapshot(userId);
+                    }
+                }
             }
+
         } else {
             LocalStorageStrategy.saveWeeklySnapshot(userId);
+
         }
+
+
     }
 
     static async saveSnapShotNow(userId: string | undefined): Promise<void> {

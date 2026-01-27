@@ -1,4 +1,4 @@
-import {  startOfWeek, addDays, isSameWeek } from "date-fns";
+import { startOfWeek, addDays, isSameWeek } from "date-fns";
 
 export function getWeekDates(date: Date = new Date()) {
   const startDate = startOfWeek(date, { weekStartsOn: 1 }); // Start from Monday
@@ -9,7 +9,9 @@ export function getWeekDays() {
   return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 }
 
-export function shouldResetWeek(lastUpdated: Date): boolean {
+export function shouldResetWeek(dateString: string | Date): boolean {
+  const lastDate = new Date(dateString);
   const now = new Date();
-  return !isSameWeek(lastUpdated, now, { weekStartsOn: 1 });
+  // نستخدم weekStartsOn: 1 لتبدأ من يوم الاثنين (أو 0 للأحد حسب نظامك)
+  return !isSameWeek(lastDate, now, { weekStartsOn: 1 });
 }
