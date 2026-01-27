@@ -31,7 +31,7 @@ export class WeeklyTasksSync {
         for (const task of newTasks) {
             const { ...rest } = task;
             await WeeklyTasksService.addTask(rest, userId);
-            LocalStorageStrategy.deleteBlock(task?.id);
+            LocalStorageStrategy.deleteBlock(task?.id, userId);
         }
     }
 
@@ -52,11 +52,9 @@ export class WeeklyTasksSync {
 
     static async deleteMissingTasks(userId: string | undefined) {
 
-        // if local is empty, make a message to the user informing him that his local has no tasks, whould he want to delete the cloud tasks ?
-        const localTasks = LocalStorageStrategy.getWeeklyTasks()
+        const currentIds = JSON.parse(localStorage.getItem('current-tasks-local-ids') || '[]')
         const cloudTasks = await WeeklyTasksService.fetchCloudTasks(userId)
-        const localTasksIds = localTasks.map(el => el.id)
-        const missingTasks = cloudTasks.filter(el => !localTasksIds.includes(el.id))
+        const missingTasks = cloudTasks.filter(el => currentIds.includes(el.id))
 
 
         for (const task of missingTasks) {

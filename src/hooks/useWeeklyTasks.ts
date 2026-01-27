@@ -69,7 +69,7 @@ export function useWeeklyTasks({
         dispatch(setSyncLoading(true))
         await WeeklyTasksSync.addTheNewTasks(user?.id)
         await WeeklyTasksSync.updateExistingTasks(user?.id)
-        // await WeeklyTasksSync.deleteMissingTasks(user?.id)
+        await WeeklyTasksSync.deleteMissingTasks(user?.id)
       }
     }
     await WeeklyTasksService.saveSnapShot(user?.id)

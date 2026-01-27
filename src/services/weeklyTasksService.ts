@@ -30,6 +30,17 @@ export class WeeklyTasksService {
         }
     }
 
+    static async saveData(userId: string | undefined) {
+        try {
+            const tasks = await this.fetchCloudTasks(userId)
+            LocalStorageStrategy.saveAllData(tasks)
+            return true
+        } catch (error) {
+            console.log(error)
+            return { error: error }
+        }
+    }
+
     // Fetch tasks from appropriate source
     static async fetchTasks(userId: string | undefined): Promise<WeeklyTask[]> {
         if (userId) {
@@ -100,7 +111,7 @@ export class WeeklyTasksService {
             if (error) throw error
         }
 
-        LocalStorageStrategy.deleteBlock(taskId)
+        LocalStorageStrategy.deleteBlock(taskId, userId)
     }
 
 

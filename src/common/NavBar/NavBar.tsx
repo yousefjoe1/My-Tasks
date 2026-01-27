@@ -5,8 +5,9 @@ import Link from "next/link";
 import ToggleMode from "./ToggleMode";
 import LoginModal from "../Modals/LoginModal";
 import { useAuth } from "@/contexts/AuthContext";
-import { fromSupabaseBlock, supabase } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
+import { WeeklyTasksService } from "@/services/weeklyTasksService";
 
 const navLinks = [
   { name: "Main", href: "/" },
@@ -24,6 +25,10 @@ export default function Navbar() {
   const handleLogout = async () => {
     setLoading(true);
     try {
+      const saveDataBeforeLogout = await WeeklyTasksService.saveData(user?.id)
+      if (saveDataBeforeLogout != true) {
+        throw 'error'
+      }
       const { error } = await supabase.auth.signOut();
 
       if (error && error.status !== 404 && error.code !== 'session_not_found') {
