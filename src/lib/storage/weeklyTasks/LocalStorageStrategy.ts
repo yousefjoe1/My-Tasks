@@ -1,6 +1,7 @@
 // lib/storage/StorageService.ts
 import { shouldResetWeek } from "@/lib/utils";
 import { WeeklySnapshot, WeeklyTask } from "@/types";
+import { endOfWeek, startOfWeek } from "date-fns";
 
 export const STORAGE_KEY = 'my-notion-app-data';
 const SNAPSHOT_KEY = 'my-notion-app-snapshots';
@@ -64,21 +65,16 @@ export class LocalStorageStrategy {
 
     // 2. التحقق هل نحتاج Reset؟
     const needsReset = tasks?.some((block) => {
-      const dateToCompare = block.updated_at || block.created_at;
+      const dateToCompare = block.updated_at;
       return dateToCompare && shouldResetWeek(dateToCompare);
     });
 
     if (needsReset) {
+
       const now = new Date();
+      const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
 
-      // حساب بداية ونهاية الأسبوع (يفضل استخدام date-fns لو متاح هنا أيضاً)
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay());
-      weekStart.setHours(0, 0, 0, 0);
-
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-      weekEnd.setHours(23, 59, 59, 999);
 
       // 3. تجهيز السناب شوت
       const snapshot = {

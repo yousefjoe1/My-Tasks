@@ -21,28 +21,23 @@ export default function Navbar() {
 
   const [loading, setLoading] = useState(false);
 
-
   const handleLogout = async () => {
     setLoading(true);
-    if (user != null) {
-      try {
-        const { data: cloudBlocks, error } = await supabase
-          .from('weekly_tasks')
-          .select('*')
-          .eq('userId', user.id);
+    try {
+      const { error } = await supabase.auth.signOut();
 
-        if (!error && cloudBlocks) {
-          const localFormatBlocks = cloudBlocks.map(block => fromSupabaseBlock(block));
-          LocalStorageStrategy.saveAllData(localFormatBlocks);
-          LocalStorageStrategy.resetSync();
-        }
-
-        await supabase.auth.signOut();
-      } catch (err) {
-        console.error("Error during logout sync:", err);
-      } finally {
-        setLoading(false);
+      if (error && error.status !== 404 && error.code !== 'session_not_found') {
+        throw error;
       }
+
+      console.log("Logged out successfully");
+    } catch (err) {
+      console.error("Logout error details:", err);
+    } finally {
+      LocalStorageStrategy.resetSync();
+      localStorage.removeItem('supabase.auth.token');
+
+      setLoading(false);
     }
   };
 

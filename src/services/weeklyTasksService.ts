@@ -105,16 +105,16 @@ export class WeeklyTasksService {
 
 
     // resetAllTasksDays
-    static async resetAllTasksDays(userId: string | undefined): Promise<void> {
-        if (userId) {
-            const { error } = await supabase
-                .from('weekly_tasks')
-                .update({ days: 0 })
-                .eq('userId', userId)
+    // static async resetAllTasksDays(userId: string | undefined): Promise<void> {
+    //     if (userId) {
+    //         const { error } = await supabase
+    //             .from('weekly_tasks')
+    //             .update({ days: 0 })
+    //             .eq('userId', userId)
 
-            if (error) throw error
-        }
-    }
+    //         if (error) throw error
+    //     }
+    // }
 
     static async saveSnapShot(userId: string | undefined): Promise<void> {
 

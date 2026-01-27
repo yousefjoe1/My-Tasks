@@ -29,6 +29,7 @@ export function AddBlock({ success, toast, error }: Toast) {
       id: crypto.randomUUID(),
       content,
       days: {},
+      updated_at: new Date().toISOString()
     };
     dispatch(setLoading(true))
     try {
