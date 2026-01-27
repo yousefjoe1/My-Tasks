@@ -115,9 +115,18 @@ export class LocalStorageStrategy {
     this.saveData(data);
   }
 
-  static deleteBlock(blockId: string): void {
+  static deleteBlock(blockId: string, userId: string | undefined): void {
     const data = this.getData();
     const newData = data.filter(b => b.id != blockId);
+    if (userId == undefined) {
+      const currentIds = JSON.parse(localStorage.getItem('current-tasks-local-ids') || '[]')
+      if (currentIds == undefined || currentIds == null) {
+        localStorage.setItem('current-tasks-local-ids', JSON.stringify([blockId]))
+      } else {
+        currentIds.push(blockId)
+        localStorage.setItem('current-tasks-local-ids', JSON.stringify(currentIds))
+      }
+    }
     this.saveData(newData);
   }
 
