@@ -72,20 +72,17 @@ export function useWeeklyTasks({
         await WeeklyTasksSync.deleteMissingTasks(user?.id)
       }
     }
+    await WeeklyTasksService.saveSnapShot(user?.id)
 
     getTasks()
     dispatch(setSyncLoading(false))
   }
 
-  const shouldReset = async () => {
-    await WeeklyTasksService.saveSnapShot(user?.id)
-  }
-
 
   useEffect(() => {
     SyncFromLocalToCloud()
-    shouldReset()
   }, [user?.id])
+
 
 
   return {

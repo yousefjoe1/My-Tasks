@@ -57,38 +57,60 @@ export class LocalStorageStrategy {
   // saveWeeklySnapshot
   static saveWeeklySnapshot(userId: string | undefined): void {
     if (typeof window === 'undefined') return;
-    const tasks = this.getData()
-    const needsReset = tasks?.some(
-      (block) => block.updated_at && shouldResetWeek(new Date(block.updated_at))
-    )
-    if (needsReset) {
-      const snapshotData = tasks.map(block => ({
-        id: block.id,
-        content: block.content,
-        days: block.days
-      }));
 
-      // Calculate week start and end
+    // 1. جلب المهام الحالية
+    const tasks = this.getData();
+    if (!tasks || tasks.length === 0) return;
+
+    // 2. التحقق هل نحتاج Reset؟
+    const needsReset = tasks?.some((block) => {
+      const dateToCompare = block.updated_at || block.created_at;
+      return dateToCompare && shouldResetWeek(dateToCompare);
+    });
+
+    if (needsReset) {
       const now = new Date();
+
+      // حساب بداية ونهاية الأسبوع (يفضل استخدام date-fns لو متاح هنا أيضاً)
       const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay()); // Sunday
+      weekStart.setDate(now.getDate() - now.getDay());
       weekStart.setHours(0, 0, 0, 0);
 
       const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6); // Saturday
+      weekEnd.setDate(weekStart.getDate() + 6);
       weekEnd.setHours(23, 59, 59, 999);
 
+      // 3. تجهيز السناب شوت
       const snapshot = {
         user_id: userId,
-        archived_at: new Date().toISOString(),
+        archived_at: now.toISOString(),
         week_start: weekStart.toISOString(),
         week_end: weekEnd.toISOString(),
-        week_data: snapshotData
+        week_data: tasks.map(block => ({
+          id: block.id,
+          content: block.content,
+          days: block.days
+        }))
       };
 
+      // 4. حفظ السناب شوت في الـ Local Storage
       const existingSnapshots = this.getSnapshotData() || [];
       existingSnapshots.push(snapshot);
       localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(existingSnapshots));
+
+      // ---------------------------------------------------------
+      // 5. الخطوة الأهم لمنع التكرار: تحديث المهام الأصلية
+      // ---------------------------------------------------------
+      const resetTasks = tasks.map(block => ({
+        ...block,
+        days: {}, // تصفير الأيام
+        updated_at: now.toISOString() // تحديث التاريخ لليوم (عشان ميعملش Reset تاني)
+      }));
+
+      // حفظ المهام "الجديدة" مكان القديمة
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(resetTasks));
+
+      console.log("✅ LocalStorage Snapshot saved and tasks reset for the new week.");
     }
   }
 
