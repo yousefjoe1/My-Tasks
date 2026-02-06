@@ -118,7 +118,7 @@ export function useWeeklyTasks({
       // 3. لو الداتابيز كمان بتقول إنه أسبوع جديد (أو أول مرة للمستخدم)
       if (dbLastReset !== currentWeekStart) {
         console.log("DB: New week detected! Running Snapshot & Reset...");
-
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
         const result = await handleWeeklyReset(userId); // دالة المسح والحفظ اللي عملناها
 
         if (result?.success) {
@@ -129,7 +129,7 @@ export function useWeeklyTasks({
             .eq('id', userId);
 
           // تحديث الـ LocalStorage عشان المرة الجاية ميعملش ريكوست
-          localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+          // localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
         }
       } else {
         // لو الداتابيز كانت متحدثة بس الـ LocalStorage كان ممسوح
