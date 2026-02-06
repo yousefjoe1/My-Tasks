@@ -8,6 +8,10 @@ import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import { WeeklyTasksSync } from "@/services/weeklyTasksSyncService";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import AsmahAllah from "@/features/Allah-names/services/allah-names";
+import { endOfWeek, startOfWeek, isSameWeek } from "date-fns";
+import { handleWeeklyReset } from "@/services/snapShotService";
+import { supabase } from "@/lib/supabase/client";
+
 
 
 export function useWeeklyTasks({
@@ -28,6 +32,11 @@ export function useWeeklyTasks({
 
 
   const getTasks = useCallback(async () => {
+    const now = new Date();
+    const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+    console.log("🚀 ~ useWeeklyTasks ~ weekStart:", weekStart)
+    const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
+    console.log("🚀 ~ useWeeklyTasks ~ weekEnd:", weekEnd)
     dispatch(setLoading(true))
     const tasks = await WeeklyTasksService.fetchTasks(user?.id)
     dispatch(setTasks(tasks))
@@ -72,15 +81,68 @@ export function useWeeklyTasks({
         await WeeklyTasksSync.deleteMissingTasks(user?.id)
       }
     }
-    await WeeklyTasksService.saveSnapShot(user?.id)
 
     getTasks()
     dispatch(setSyncLoading(false))
   }
 
 
+  const checkWeeklyResetWithCache = async (userId: string | undefined) => {
+
+    if (userId) {
+
+
+      const now = new Date();
+      const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
+
+      // 1. فحص الـ LocalStorage أولاً
+      const localLastReset = localStorage.getItem(`last_reset_${userId}`);
+
+      // لو التاريخ اللي متخزن محلياً هو نفسه بداية الأسبوع الحالي، اخرج فوراً
+      if (localLastReset === currentWeekStart) {
+        console.log("Local: Still in the same week. No DB request needed.");
+        return;
+      }
+
+      // 2. لو مفيش كاش أو الأسبوع اتغير في الكاش، نتأكد من الداتابيز
+      console.log("Local cache outdated. Checking Database...");
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('last_snapshot_week')
+        .eq('id', userId)
+        .single();
+
+      const dbLastReset = profile?.last_snapshot_week;
+
+      // 3. لو الداتابيز كمان بتقول إنه أسبوع جديد (أو أول مرة للمستخدم)
+      if (dbLastReset !== currentWeekStart) {
+        console.log("DB: New week detected! Running Snapshot & Reset...");
+
+        const result = await handleWeeklyReset(userId); // دالة المسح والحفظ اللي عملناها
+
+        if (result?.success) {
+          // تحديث الداتابيز
+          await supabase
+            .from('profiles')
+            .update({ last_snapshot_week: currentWeekStart })
+            .eq('id', userId);
+
+          // تحديث الـ LocalStorage عشان المرة الجاية ميعملش ريكوست
+          localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        }
+      } else {
+        // لو الداتابيز كانت متحدثة بس الـ LocalStorage كان ممسوح
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        console.log("DB was already updated. Synced LocalStorage.");
+      }
+    }
+
+  };
+
   useEffect(() => {
     SyncFromLocalToCloud()
+    checkWeeklyResetWithCache(user?.id)
   }, [user?.id])
 
 
