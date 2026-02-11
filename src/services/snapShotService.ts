@@ -1,41 +1,25 @@
 import { supabase } from '@/lib/supabase/client';
 import { WeeklyTasksService } from './weeklyTasksService';
 
-/* 
-
-- check if today is saturday
-- submit the current tasks to the snapshot table
-- reset the marked days
-- start new week
-
-
-*/
-
-// const saveSnapShot = async (userId: string | undefined): Promise<void> => {
-//     const tasks = await WeeklyTasksService.fetchTasks(userId);
-
-// }
-
 // services/weeklyService.ts
 import { startOfWeek, endOfWeek, subWeeks } from "date-fns";
+import { SNAPSHOT_KEY, STORAGE_KEY } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
 
-export const handleWeeklyReset = async (userId: string | undefined) => {
+export const handleWeeklyReset = async (userId: string | undefined): Promise<{ success: boolean; }> => {
+    const lastWeekDate = subWeeks(new Date(), 1);
+    const weekStart = startOfWeek(lastWeekDate, { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(lastWeekDate, { weekStartsOn: 1 });
+    const resetDays = { Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false, Sun: false };
     if (userId) {
         try {
-            // 1. تحديد نطاق الأسبوع الماضي (الذي نريد أخذ لقطة له)
-            const lastWeekDate = subWeeks(new Date(), 1);
-            const weekStart = startOfWeek(lastWeekDate, { weekStartsOn: 1 });
-            const weekEnd = endOfWeek(lastWeekDate, { weekStartsOn: 1 });
 
-            // 2. جلب التاسكات الحالية للمستخدم
             const { data: tasks, error: fetchError } = await supabase
-                .from('weekly_tasks') // تأكد من اسم جدولك
+                .from('weekly_tasks')
                 .select('*')
                 .eq('userId', userId);
 
             if (fetchError || !tasks) throw fetchError;
 
-            // 3. تجهيز الـ Snapshot
             const snapshot = {
                 user_id: userId,
                 week_start: weekStart.toISOString(),
@@ -43,14 +27,10 @@ export const handleWeeklyReset = async (userId: string | undefined) => {
                 week_data: tasks.map(t => ({
                     id: t.id,
                     content: t.content,
-                    days: t.days // الحالة الحالية (صح/خطأ) لكل يوم
+                    days: t.days
                 })),
                 archived_at: new Date().toISOString()
             };
-
-            // 4. تنفيذ العمليتين (حفظ السناب شوت وتصفير الأيام)
-            // نستخدم الأيام الافتراضية كـ Object فارغ أو كل الأيام false
-            const resetDays = { Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false, Sun: false };
 
             const { error: snapshotError } = await supabase.from('weekly_snapshots').insert(snapshot);
             if (snapshotError) throw snapshotError;
@@ -65,7 +45,40 @@ export const handleWeeklyReset = async (userId: string | undefined) => {
             return { success: true };
         } catch (error) {
             console.error("Error in weekly reset:", error);
-            return { success: false, error };
+            return { success: false };
+        }
+
+
+
+    } else {
+        try {
+            const tasks = await WeeklyTasksService.fetchTasks(undefined)
+
+            if (!tasks || tasks.length === 0) return { success: true };
+
+            const snapshot = {
+                user_id: 'guest',
+                week_start: weekStart.toISOString(),
+                week_end: weekEnd.toISOString(),
+                week_data: tasks.map(t => ({ id: t.id, content: t.content, days: t.days })),
+                archived_at: new Date().toISOString()
+            };
+
+            const existingSnapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) || '[]');
+            existingSnapshots.push(snapshot);
+            localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(existingSnapshots));
+            const updatedTasks = tasks.map(task => ({
+                ...task,
+                days: resetDays
+            }));
+
+            // حفظ المهام بعد التصفير في الـ Local Storage بنفس المفتاح اللي الـ Service بتستخدمه
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+
+            return { success: true };
+        } catch (error) {
+            console.error("Error in weekly reset (Local):", error);
+            return { success: false };
         }
 
     }
