@@ -4,7 +4,7 @@ import { WeeklySnapshot, WeeklyTask } from "@/types";
 import { endOfWeek, startOfWeek } from "date-fns";
 
 export const STORAGE_KEY = 'my-notion-app-data';
-const SNAPSHOT_KEY = 'my-notion-app-snapshots';
+export const SNAPSHOT_KEY = 'my-notion-app-snapshots';
 
 export class LocalStorageStrategy {
   private static getData(): WeeklyTask[] {
