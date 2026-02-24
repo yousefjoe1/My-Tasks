@@ -39,6 +39,7 @@ export function AddBlock({ success, toast, error }: Toast) {
       const item = await AsmahAllah.getCurrentName();
       AsmahAllah.updateIndex();
       toast(item.name, item.details)
+      setTaskName('')
     } catch (error) {
       dispatch(setError({ id: newTask.id, message: error instanceof Error ? error.message : 'Failed to add task' }))
     }
@@ -61,10 +62,10 @@ export function AddBlock({ success, toast, error }: Toast) {
             }
             addNewTask(taskName);
           }}
-          className="p-3 border flex justify-center border-primary w-full rounded-lg hover:bg-secondary transition-colors text-center"
+          className="p-3 border flex justify-center bg-brand-secondary border-primary w-full rounded-lg hover:bg-brand-border-secondary transition-colors text-center"
         >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : ''}
-          <h6 className="text-primary">📅 Add Task</h6>
+          <h6 className="text-primary">+ Add Task</h6>
         </button>
 
       </div>
