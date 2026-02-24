@@ -64,7 +64,6 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                 type="text"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                onBlur={handleSave}
                 onKeyDown={handleKeyPress}
                 className="flex-1 px-4 py-2 text-lg font-semibold border border-brand rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-brand bg-primary text-primary transition-all placeholder:text-muted"
                 autoFocus
@@ -199,14 +198,14 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
         <div
           className="w-full flex flex-col gap-4 max-w-md mx-auto p-8 rounded-2xl border border-brand-border shadow-2xl ring-1 ring-brand-border/50">
 
-          <p className="text-lg font-semibold mb-4 text-brand-primary">Are you sure you want to delete this task?</p>
+          <p className="text-lg font-semibold mb-4 text-brand-error">Are you sure you want to delete this task?</p>
           <button
             disabled={loading}
-            className={`p-3 hover:bg-brand-success ${loading && 'bg-brand-success/50'} gap-3 rounded-full w-full text-brand-text transition-colors shadow-lg border border-primary flex justify-center items-center`}
+            className={`p-3 bg-brand-error ${loading && 'bg-brand-success/50'} gap-3 rounded-full w-full text-brand-text transition-colors shadow-lg border border-primary flex justify-center items-center`}
 
             onClick={() => onDelete(task.id)}>Yes {loading && <Loader />} </button>
           <button
-            className="p-3 hover:bg-brand-error rounded-full w-full text-brand-text transition-colors shadow-lg border border-primary"
+            className="p-3 bg-brand-success/20 rounded-full w-full text-brand-text transition-colors shadow-lg border border-primary"
             onClick={() => deleteDialogRef.current?.close()}>No</button>
         </div>
       </dialog>
