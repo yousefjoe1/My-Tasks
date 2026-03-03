@@ -81,6 +81,18 @@ export default function RootLayout({
             </AuthProvider>
           </ThemeProvider>
         </StoreProvider>
+        <div className="mt-6 text-center text-muted text-lg">
+          <p>📅 Weekly tasks automatically reset every Monday</p>
+          <p className="mt-1">💾 Data is saved locally in your browser and synced to cloud after you login</p>
+        </div>
+
+
+        {/* My information developed by*/}
+        <section className='mt-y py-4 flex flex-col gap-4 text-center text-muted text-lg'>
+          <h4>Developed By: <b>Youssef Mahmoud</b> </h4>
+          <a href="mailto:yousefmahmoud150@gmail.com">Email: yousefmahmoud150@gmail.com </a>
+          <a href="https://wa.me/201554464169">Whats App: 01554464169 </a>
+        </section>
       </body>
     </html>
   );

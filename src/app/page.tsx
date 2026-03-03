@@ -74,18 +74,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-6 text-center text-muted text-lg">
-          <p>📅 Weekly tasks automatically reset every Monday</p>
-          <p className="mt-1">💾 Data is saved locally in your browser and synced to cloud after you login</p>
-        </div>
 
-
-        {/* My information developed by*/}
-        <section className='mt-6 text-center text-muted text-lg'>
-          <h4>Developed By: <b>Youssef Mahmoud</b> </h4>
-          <h4>Email: yousefmahmoud150@gmail.com </h4>
-          <h4>Whats App: 01554464169 </h4>
-        </section>
       </div>
 
     </section>
