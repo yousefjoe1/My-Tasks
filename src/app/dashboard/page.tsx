@@ -35,7 +35,7 @@ const DashBoard = () => {
     const totalWeeks = snapData?.length || 0;
 
     return (
-        <div className='flex flex-col gap-4 py-20 px-4'>
+        <div className='flex flex-col gap-4 py-20 px-7'>
             {
                 loading && <div className='loader' />
             }
@@ -65,7 +65,7 @@ const DashBoard = () => {
 
                         <div className="flex gap-4 w-full md:w-auto">
                             <div className="flex-1 md:flex-none bg-white/20 backdrop-blur-md rounded-2xl p-4 min-w-[140px]">
-                                <p className="text-[10px] uppercase font-bold text-white/70 mb-1">Total Habits Done</p>
+                                <p className="text-sm uppercase font-bold text-white/70 mb-1">Total Habits Done</p>
                                 <div className="flex items-baseline gap-2">
                                     <span className="text-3xl font-black">{totalLifetimeCompleted}</span>
                                     <CheckCircle2 className="w-4 h-4 text-success" />
@@ -73,7 +73,7 @@ const DashBoard = () => {
                             </div>
 
                             <div className="flex-1 md:flex-none bg-white/20 backdrop-blur-md rounded-2xl p-4 min-w-[140px]">
-                                <p className="text-[10px] uppercase font-bold text-white/70 mb-1">Consistency Score</p>
+                                <p className="text-sm uppercase font-bold text-white/70 mb-1">Consistency Score</p>
                                 <div className="flex items-baseline gap-2">
                                     <span className="text-3xl font-black">{Math.min(100, (totalLifetimeCompleted / (totalWeeks || 1) * 2)).toFixed(0)}%</span>
                                     <Flame className="w-4 h-4 text-warning" />
@@ -109,12 +109,25 @@ const DashBoard = () => {
                         : 0;
 
                     return (
-                        <div key={snap.id} className="mb-12 border-t-2 border-brand pt-8">
+                        <div key={snap.id} className="mb-12 border-t-2 border-brand pt-8 shadow-md rounded-2xl shadow-brand">
+
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent to-brand/20"></div>
+                                <div className="flex flex-col items-center">
+                                    <span className="text-sm font-black text-brand uppercase tracking-[0.2em]">Weekly Snapshot</span>
+                                    <h3 className="text-xl md:text-2xl font-black text-primary flex items-center gap-2">
+                                        {format(snapWeekStart, 'MMMM dd')}
+                                        <span className="text-brand">—</span>
+                                        {snap.week_end ? format(new Date(snap.week_end), 'MMMM dd') : ''}
+                                    </h3>
+                                </div>
+                                <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent to-brand/20"></div>
+                            </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                 <div className="glass-card p-4 flex items-center justify-between">
                                     <div>
-                                        <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Overall Progress</p>
+                                        <p className="text-sm font-bold text-muted uppercase tracking-wider">Overall Progress</p>
                                         <h4 className="text-2xl font-black text-brand">{totalProgressPercent}%</h4>
                                         <p className="text-xs text-secondary italic">Total efficiency this week</p>
                                     </div>
@@ -125,7 +138,7 @@ const DashBoard = () => {
 
                                 <div className="glass-card p-4 flex items-center justify-between">
                                     <div>
-                                        <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Active Tasks</p>
+                                        <p className="text-md font-bold text-muted uppercase tracking-wider">Active Tasks</p>
                                         <h4 className="text-2xl font-black text-primary">{totalTasks}</h4>
                                         <p className="text-xs text-secondary italic">Habits tracked</p>
                                     </div>
@@ -136,12 +149,12 @@ const DashBoard = () => {
                             <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
                                 {tasksStats.map((ts, idx) => (
                                     <div key={idx} className="min-w-[140px] p-3 rounded-xl bg-tertiary border border-secondary">
-                                        <p className="text-[10px] font-bold text-brand mb-1 truncate" title={ts.content}>
+                                        <p className="text-lg font-bold text-brand mb-1 truncate" title={ts.content}>
                                             {ts.content}
                                         </p>
                                         <div className="flex items-end gap-1">
                                             <span className="text-lg font-black text-primary">{ts.completedCount}</span>
-                                            <span className="text-[10px] text-muted mb-1">/ 7 days</span>
+                                            <span className="text-lg text-muted mb-1">/ 7 days</span>
                                         </div>
                                         <div className="w-full h-1 bg-primary rounded-full mt-2 overflow-hidden">
                                             <div
@@ -155,8 +168,8 @@ const DashBoard = () => {
 
                             <div className="mt-4 overflow-hidden rounded-xl border border-secondary bg-secondary shadow-sm">
                                 <div className="px-4 py-3 border-b border-primary bg-tertiary/50 flex flex-wrap items-center justify-between gap-2">
-                                    <span className="text-[11px] font-bold text-muted">DETAILED LOG</span>
-                                    <div className="px-3 py-1 rounded-full bg-brand/10 text-brand text-[10px] font-bold">
+                                    <span className="text-md font-bold text-muted">DETAILED LOG</span>
+                                    <div className="px-3 py-1 rounded-full bg-brand/10 text-brand text-lg font-bold">
                                         {format(snapWeekStart, 'MMM dd')} - {snap.week_end ? format(new Date(snap.week_end), 'MMM dd') : ''}
                                     </div>
                                 </div>
@@ -169,7 +182,7 @@ const DashBoard = () => {
                                         });
                                         return (
                                             <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-primary bg-primary gap-4">
-                                                <h4 className="text-xs font-semibold text-secondary min-w-[120px]">{task.content}</h4>
+                                                <h4 className="text-lg font-semibold text-secondary min-w-[120px]">{task.content}</h4>
                                                 <div className="flex justify-between gap-2">
                                                     {daysArray.map((completed, index) => (
                                                         <div key={index} className="flex flex-col items-center gap-1">
