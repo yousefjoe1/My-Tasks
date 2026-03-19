@@ -12,13 +12,13 @@ import { useToast } from "@/components/Toasts/useToast";
 
 const navLinks = [
   { name: "Main", href: "/" },
-  { name: "My Productivity", href: "/dashboard" },
+  { name: "My Progress", href: "/dashboard" },
 ];
 
 export default function Navbar() {
   const { user, loading: authLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { error, success, toast, toasts, removeToast } = useToast()
+  const { error } = useToast()
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
