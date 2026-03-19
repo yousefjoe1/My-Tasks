@@ -59,7 +59,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
         )}
         <div className="flex items-center justify-between p-4 border-b border-secondary bg-linear-to-r from-secondary to-primary">
           {isEditing ? (
-            <div className="flex items-center gap-3 flex-1">
+            <div className="flex items-center flex-wrap gap-3 flex-1">
               <input
                 type="text"
                 value={content}
@@ -69,7 +69,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                 autoFocus
                 placeholder="Enter task name..."
               />
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   onClick={handleSave}
                   className="px-4 py-2 text-sm bg-success text-white rounded-lg hover:bg-success/80 active:scale-95 transition-all font-medium shadow-sm"
@@ -88,7 +88,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between w-full gap-3">
+            <div className="flex items-center justify-between w-full gap-3 flex-wrap">
               <button
                 className="text-lg font-semibold text-primary hover:text-brand cursor-pointer transition-colors duration-200 py-1 rounded-lg hover:bg-brand/10"
                 onClick={() => setIsEditing(true)}
