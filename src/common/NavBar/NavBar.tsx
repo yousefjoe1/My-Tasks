@@ -34,6 +34,7 @@ export default function Navbar() {
       // }
       const { error: err } = await supabase.auth.signOut();
       if (err) {
+        error('error logging out')
         error(err.message)
       }
 
