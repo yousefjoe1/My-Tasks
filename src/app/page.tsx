@@ -12,6 +12,13 @@ import ErrorBoundary from '@/common/ErrorBoundry';
 import ToastContainer from '@/components/Toasts/ToastContainer';
 import { useToast } from '@/components/Toasts/useToast';
 
+const SUGGESTED_HABITS = [
+  { content: "💧 Drinking 2L Water", id: 's1' },
+  { content: "📖 Reading 15 Mins", id: 's2' },
+  { content: "🧘 Morning Meditation", id: 's3' },
+  { content: "🚶 10k Steps Walk", id: 's4' },
+];
+
 export default function Home() {
   const { error, success, toast, toasts, removeToast } = useToast()
   const { updateBlock, deleteBlock } = useWeeklyTasks({
@@ -43,6 +50,8 @@ export default function Home() {
               A simple weekly habit tracker that resets automatically every week
             </p>
           </div>
+
+
 
           <div className="space-y-4 relative">
             {
