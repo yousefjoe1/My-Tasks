@@ -153,7 +153,7 @@ export default function Navbar() {
       {/* html dialog */}
 
       <dialog ref={dialogRef}
-        className="fixed w-[95%] lg:w-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-brand-bg">
+        className="fixed w-[95%] lg:w-max top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-brand-bg">
         <LoginModal closeModal={() => dialogRef?.current?.close()} />
         <button
           className="p-3 rounded-full w-full text-brand-text bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
