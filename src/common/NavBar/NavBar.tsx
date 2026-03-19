@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
+import { useToast } from "@/components/Toasts/useToast";
 
 const navLinks = [
   { name: "Main", href: "/" },
@@ -17,6 +18,7 @@ const navLinks = [
 export default function Navbar() {
   const { user, loading: authLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { error, success, toast, toasts, removeToast } = useToast()
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -26,12 +28,17 @@ export default function Navbar() {
     setLoading(true);
     try {
       const saveDataBeforeLogout = await WeeklyTasksService.saveData(user?.id)
-      if (saveDataBeforeLogout != true) {
-        throw 'error'
+      console.log("🚀 ~ handleLogout ~ saveDataBeforeLogout:", saveDataBeforeLogout)
+      // if (saveDataBeforeLogout != true) {
+      //   throw 'error'
+      // }
+      const { error: err } = await supabase.auth.signOut();
+      if (err) {
+        error(err.message)
       }
-      const { error } = await supabase.auth.signOut();
 
-      if (error && error.status !== 404 && error.code !== 'session_not_found') {
+      if (err && err.status !== 404 && err.code !== 'session_not_found') {
+
         throw error;
       }
 
