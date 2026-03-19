@@ -33,6 +33,7 @@ export default function Navbar() {
       //   throw 'error'
       // }
       const { error: err } = await supabase.auth.signOut();
+      localStorage.removeItem('sb-atfsfrwxmhrzlvmwxayi-auth-token')
       if (err) {
         error('error logging out')
         error(err.message)
