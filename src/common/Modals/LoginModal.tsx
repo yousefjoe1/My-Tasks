@@ -53,7 +53,7 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
         }
     };
     return (
-        <div className="w-full max-w-md mx-auto p-8 rounded-2xl border border-brand-border shadow-2xl ring-1 ring-brand-border/50">
+        <div className="lg:max-w-md w-[95%] mx-auto p-8 rounded-2xl border border-brand-border shadow-2xl ring-1 ring-brand-border/50">
             <div className="flex flex-col items-center mb-8">
                 {/* Icon */}
                 <div className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-brand-primary/20">
