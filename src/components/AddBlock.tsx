@@ -25,6 +25,12 @@ export function AddBlock({ success, toast, error }: Toast) {
   const dispatch = useDispatch()
 
   const addNewTask = async (content: string) => {
+
+    if (!user) {
+      error('Please login to add a task');
+      return
+    }
+
     const newTask: WeeklyTask = {
       id: crypto.randomUUID(),
       content,

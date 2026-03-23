@@ -40,10 +40,6 @@ export default function Home() {
     <section className="min-h-screen bg-secondary py-8 pt-18">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
-
-      {/* alert note, form the next week you need to login, local will not be supported any more  */}
-      <h3 className='text-center text-primary text-xl bg-amber-600 p-2'>Note: From the next week you need to login, local will not be supported any more</h3>
-
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
           <div className="mb-8">

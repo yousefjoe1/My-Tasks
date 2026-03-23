@@ -1,7 +1,6 @@
 // services/weeklyTasksService.ts
 import { WeeklyTask } from '@/types'
 import { supabase } from '@/lib/supabase/client'
-import { LocalStorageStrategy } from '@/lib/storage/weeklyTasks/LocalStorageStrategy'
 /**
  * Service layer handles ALL data operations
  * Benefits:
@@ -27,17 +26,6 @@ export class WeeklyTasksService {
         }
     }
 
-    static async saveData(userId: string | undefined) {
-        try {
-            const tasks = await this.fetchCloudTasks(userId)
-            LocalStorageStrategy.saveAllData(tasks)
-            return true
-        } catch (error) {
-            console.log(error)
-            return { error: error }
-        }
-    }
-
     // Fetch tasks from appropriate source
     static async fetchTasks(userId: string | undefined): Promise<WeeklyTask[]> {
         if (userId) {
@@ -49,7 +37,7 @@ export class WeeklyTasksService {
             if (error) throw error
             return data || []
         } else {
-            return LocalStorageStrategy.getWeeklyTasks()
+            return []
         }
     }
 
@@ -66,12 +54,8 @@ export class WeeklyTasksService {
 
             if (error) throw error
 
-            // Sync to localStorage as backup
-            LocalStorageStrategy.addBlock(data)
-
             return data
         } else {
-            LocalStorageStrategy.addBlock(task)
             return task
         }
     }
@@ -92,8 +76,6 @@ export class WeeklyTasksService {
             if (error) throw error
         }
 
-        // Always sync to localStorage
-        LocalStorageStrategy.updateBlock(taskId, updates)
     }
 
     // Delete task
@@ -108,6 +90,5 @@ export class WeeklyTasksService {
             if (error) throw error
         }
 
-        LocalStorageStrategy.deleteBlock(taskId, userId)
     }
 }

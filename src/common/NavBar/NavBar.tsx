@@ -7,7 +7,6 @@ import LoginModal from "../Modals/LoginModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
-import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import { useToast } from "@/components/Toasts/useToast";
 
 const navLinks = [
@@ -27,11 +26,6 @@ export default function Navbar() {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const saveDataBeforeLogout = await WeeklyTasksService.saveData(user?.id)
-      console.log("🚀 ~ handleLogout ~ saveDataBeforeLogout:", saveDataBeforeLogout)
-      // if (saveDataBeforeLogout != true) {
-      //   throw 'error'
-      // }
       const { error: err } = await supabase.auth.signOut();
       localStorage.removeItem('sb-atfsfrwxmhrzlvmwxayi-auth-token')
       window.location.reload()

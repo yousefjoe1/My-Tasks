@@ -51,35 +51,38 @@ export const handleWeeklyReset = async (userId: string | undefined): Promise<{ s
 
 
     } else {
-        try {
-            const tasks = await WeeklyTasksService.fetchTasks(undefined)
-
-            if (!tasks || tasks.length === 0) return { success: true };
-
-            const snapshot = {
-                user_id: 'guest',
-                week_start: weekStart.toISOString(),
-                week_end: weekEnd.toISOString(),
-                week_data: tasks.map(t => ({ id: t.id, content: t.content, days: t.days })),
-                archived_at: new Date().toISOString()
-            };
-
-            const existingSnapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) || '[]');
-            existingSnapshots.push(snapshot);
-            localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(existingSnapshots));
-            const updatedTasks = tasks.map(task => ({
-                ...task,
-                days: resetDays
-            }));
-
-            // حفظ المهام بعد التصفير في الـ Local Storage بنفس المفتاح اللي الـ Service بتستخدمه
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-
-            return { success: true };
-        } catch (error) {
-            console.error("Error in weekly reset (Local):", error);
-            return { success: false };
-        }
-
+        return { success: false };
     }
+    //  else {
+    //     try {
+    //         const tasks = await WeeklyTasksService.fetchTasks(undefined)
+
+    //         if (!tasks || tasks.length === 0) return { success: true };
+
+    //         const snapshot = {
+    //             user_id: 'guest',
+    //             week_start: weekStart.toISOString(),
+    //             week_end: weekEnd.toISOString(),
+    //             week_data: tasks.map(t => ({ id: t.id, content: t.content, days: t.days })),
+    //             archived_at: new Date().toISOString()
+    //         };
+
+    //         const existingSnapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) || '[]');
+    //         existingSnapshots.push(snapshot);
+    //         localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(existingSnapshots));
+    //         const updatedTasks = tasks.map(task => ({
+    //             ...task,
+    //             days: resetDays
+    //         }));
+
+    //         // حفظ المهام بعد التصفير في الـ Local Storage بنفس المفتاح اللي الـ Service بتستخدمه
+    //         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+
+    //         return { success: true };
+    //     } catch (error) {
+    //         console.error("Error in weekly reset (Local):", error);
+    //         return { success: false };
+    //     }
+
+    // }
 };

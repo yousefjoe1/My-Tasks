@@ -5,10 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useDispatch } from "react-redux";
 import { setTasks, setLoading, updateTask, setError, removeTask, setSyncLoading } from "@/store/weeklyTasksSlice";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
-import { WeeklyTasksSync } from "@/services/weeklyTasksSyncService";
-import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import AsmahAllah from "@/features/Allah-names/services/allah-names";
-import { endOfWeek, startOfWeek, isSameWeek } from "date-fns";
+import { startOfWeek } from "date-fns";
 import { handleWeeklyReset } from "@/services/snapShotService";
 import { supabase } from "@/lib/supabase/client";
 
@@ -67,15 +65,15 @@ export function useWeeklyTasks({
   }
 
   const SyncFromLocalToCloud = async () => {
-    if (user?.id) {
-      const isSynced = LocalStorageStrategy.saveSyncState()
-      if (isSynced !== 'yes') {
-        dispatch(setSyncLoading(true))
-        await WeeklyTasksSync.addTheNewTasks(user?.id)
-        await WeeklyTasksSync.updateExistingTasks(user?.id)
-        await WeeklyTasksSync.deleteMissingTasks(user?.id)
-      }
-    }
+    // if (user?.id) {
+    //   const isSynced = LocalStorageStrategy.saveSyncState()
+    //   if (isSynced !== 'yes') {
+    //     dispatch(setSyncLoading(true))
+    //     await WeeklyTasksSync.addTheNewTasks(user?.id)
+    //     await WeeklyTasksSync.updateExistingTasks(user?.id)
+    //     await WeeklyTasksSync.deleteMissingTasks(user?.id)
+    //   }
+    // }
 
     await checkWeeklyResetWithCache(user?.id)
 
