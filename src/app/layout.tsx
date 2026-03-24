@@ -22,6 +22,8 @@ const geistMono = Geist_Mono({
 
 import type { Metadata } from "next";
 import { Mail, Phone } from "lucide-react";
+// import PushNotificationManager from "@/common/PushNotifications";
+import PushNotificationManager from "@/common/Notifications";
 
 export const metadata: Metadata = {
   title: {
@@ -77,7 +79,7 @@ export default function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               <Navbar />
-
+              <PushNotificationManager />
               {children}
             </AuthProvider>
           </ThemeProvider>
