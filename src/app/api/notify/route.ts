@@ -5,7 +5,7 @@ import webpush from 'web-push';
 webpush.setVapidDetails(
     'mailto:yousefmahmoud150@gmail.com',
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY! // تأكد من استخدام المفتاح الخاص الصحيح هنا
+    process.env.NEXT_PUBLIC_VAPID_PRIVATE_KEY! // تأكد من استخدام المفتاح الخاص الصحيح هنا
 );
 
 
