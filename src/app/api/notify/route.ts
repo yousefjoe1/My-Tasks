@@ -11,7 +11,7 @@ const AzkarMorning = [
 webpush.setVapidDetails(
     'mailto:yousefmahmoud150@gmail.com',
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!
+    process.env.NEXT_PUBLIC_VAPID_PRIVATE_KEY!
 );
 
 export async function GET() {
