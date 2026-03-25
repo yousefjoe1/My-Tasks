@@ -1,5 +1,6 @@
 'use server'
 
+import { createClient } from '@supabase/supabase-js'
 import webpush from 'web-push'
 
 webpush.setVapidDetails(
@@ -10,10 +11,33 @@ webpush.setVapidDetails(
 
 let subscription: webpush.PushSubscription | null = null  // ← use webpush type
 
+interface PushSubscription {
+    endpoint: string;
+    keys: {
+        p256dh: string;
+        auth: string;
+    };
+}
+
 export async function subscribeUser(sub: PushSubscription) {
-    // Cast browser type to webpush type
-    subscription = JSON.parse(JSON.stringify(sub)) as webpush.PushSubscription
-    return { success: true }
+    const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+    // We use .upsert() so if the user subscribes twice, 
+    // it just updates the existing record instead of creating a duplicate.
+    const { error } = await supabase
+        .from('push_subscriptions')
+        .upsert({
+            endpoint: sub.endpoint,
+            p256dh: sub.keys.p256dh,
+            auth: sub.keys.auth,
+        }, { onConflict: 'endpoint' });
+
+    if (error) {
+        console.error('Supabase Error:', error);
+        return { success: false };
+    }
+
+    return { success: true };
 }
 
 export async function unsubscribeUser() {
@@ -38,4 +62,5 @@ export async function sendNotification(message: string, sub: webpush.PushSubscri
         return { success: false }
     }
 }
+
 
