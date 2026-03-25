@@ -14,27 +14,7 @@ export async function GET() {
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // 1. حساب الوقت الحالي بتوقيت مصر (UTC+2)
-    const now = new Date();
-    const cairoHour = (now.getUTCHours() + 2) % 24;
 
-    // 2. تحديد محتوى الرسالة بناءً على وقت اليوم
-    let notificationContent = {
-        title: "تذكير المهام 📝",
-        body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!",
-    };
-
-    if (cairoHour >= 4 && cairoHour < 12) {
-        notificationContent = {
-            title: "أذكار الصباح ☀️",
-            body: "بسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم 3 مرات",
-        };
-    } else if (cairoHour >= 15 && cairoHour < 20) {
-        notificationContent = {
-            title: "أذكار المساء ✨",
-            body: "باسم الله الذي لا يضر مع اسمه شيء.. حان وقت أذكار المساء ومتابعة إنجازاتك.",
-        };
-    }
 
     // 3. جلب المشتركين
     const { data: subs, error } = await supabase.from('push_subscriptions').select('*');
@@ -48,7 +28,8 @@ export async function GET() {
                     keys: { auth: sub.auth, p256dh: sub.p256dh }
                 },
                 JSON.stringify({
-                    ...notificationContent,
+                    title: "Weekly Tasks",
+                    body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!",
                     icon: '/icon.png',
                     badge: '/badge.png', // أيقونة صغيرة تظهر في شريط الإشعارات
                     data: {
@@ -68,6 +49,5 @@ export async function GET() {
         success: true,
         notifiedCount: subs?.length || 0,
         timeSent: new Date().toISOString(),
-        cairoHour // مفيد للتأكد من التوقيت في الـ Logs
     });
 }
