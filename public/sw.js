@@ -26,23 +26,47 @@
 
 // public/sw.js
 
-self.addEventListener('notificationclick', function(event) {
-    event.notification.close(); // إغلاق الإشعار
+// self.addEventListener('notificationclick', function(event) {
+//     event.notification.close(); // إغلاق الإشعار
 
-    // التعامل مع ضغطة الزرار أو الإشعار نفسه
-    event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
-            // إذا كان الويب سايت مفتوح أصلاً، نركز عليه (Focus)
-            for (let i = 0; i < clientList.length; i++) {
-                let client = clientList[i];
-                if (client.url === '/' && 'focus' in client) {
-                    return client.focus();
-                }
-            }
-            // إذا لم يكن مفتوحاً، افتحه في نافذة جديدة
-            if (clients.openWindow) {
-                return clients.openWindow('/');
-            }
-        })
-    );
+//     // التعامل مع ضغطة الزرار أو الإشعار نفسه
+//     event.waitUntil(
+//         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+//             // إذا كان الويب سايت مفتوح أصلاً، نركز عليه (Focus)
+//             for (let i = 0; i < clientList.length; i++) {
+//                 let client = clientList[i];
+//                 if (client.url === '/' && 'focus' in client) {
+//                     return client.focus();
+//                 }
+//             }
+//             // إذا لم يكن مفتوحاً، افتحه في نافذة جديدة
+//             if (clients.openWindow) {
+//                 return clients.openWindow('/');
+//             }
+//         })
+//     );
+// });
+
+
+// الاستماع للضغط على الإشعار أو الزراير
+self.addEventListener('notificationclick', (event) => {
+  const notification = event.notification;
+
+  notification.close(); // قفل الإشعار فوراً
+
+  // لو ضغط على زرار "عرض المهام" أو ضغط على جسم الإشعار نفسه
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      // لو الموقع مفتوح في أي Tab، نركز عليه
+      for (let client of windowClients) {
+        if (client.url === '/' && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // لو مش مفتوح، نفتح نافذة جديدة
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+  );
 });

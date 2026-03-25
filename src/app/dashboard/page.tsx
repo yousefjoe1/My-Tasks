@@ -35,7 +35,7 @@ const DashBoard = () => {
     const totalWeeks = snapData?.length || 0;
 
     return (
-        <div className='flex flex-col gap-4 py-20 px-7'>
+        <div className='flex flex-col gap-4 py-20 px-7 min-h-screen'>
             {
                 loading && <div className='loader' />
             }

@@ -1,6 +1,6 @@
 'use client'
 
-import { sendNotification, subscribeUser, unsubscribeUser } from '@/app/actions'
+import { subscribeUser, unsubscribeUser } from '@/app/actions'
 import { useState, useEffect } from 'react'
 
 function urlBase64ToUint8Array(base64String: string) {
@@ -21,7 +21,6 @@ export default function PushNotificationManager() {
     const [subscription, setSubscription] = useState<PushSubscription | null>(
         null
     )
-    const [message, setMessage] = useState('')
 
     useEffect(() => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -64,42 +63,45 @@ export default function PushNotificationManager() {
     }
 
     if (!isSupported) {
-        return <p>Push notifications are not supported in this browser.</p>
+        return <div>
+            <p>Push notifications are not supported in this browser.</p>
+            <p>قم بتفعيل الاشعارات لتصلك تذكيرات مفيده جدا في حياتك اليوميه</p>
+        </div>
     }
 
     return (
-        <div className="mt-10 flex flex-wrap items-center gap-4 justify-center p-1 bg-white border-b border-slate-200 shadow-sm">
+        <div className="mt-10 flex flex-wrap items-center gap-4 justify-center p-4 bg-secondary border-b border-primary shadow-sm transition-colors duration-300">
             <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-50 rounded-lg">
-                    <span className="text-xl">🔔</span>
+                <div className="lg:p-2 p-1 bg-tertiary rounded-lg">
+                    <span className="lg:text-xl text-sm">🔔</span>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-800">Push Notifications</h3>
+                <h3 className="lg:text-lg text-sm font-semibold text-primary">Push Notifications</h3>
             </div>
 
             {subscription ? (
                 <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm border border-green-100">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        Active Subscription
+                    <div className="flex items-center gap-2 px-3 py-2 bg-tertiary text-secondary rounded-lg text-sm border border-secondary">
+                        <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                        <span className="text-secondary font-medium">Active Subscription</span>
                     </div>
 
                     <div className="flex gap-3">
                         <button
                             onClick={unsubscribeFromPush}
-                            className="px-4 py-2 bg-white border border-slate-200 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100 font-medium rounded-xl transition-all"
+                            className="px-4 py-2 bg-primary border border-secondary text-secondary hover:bg-error hover:text-white hover:border-transparent font-medium rounded-xl transition-all active:scale-95"
                         >
                             Disable
                         </button>
                     </div>
                 </div>
             ) : (
-                <div className="space-y-4">
-                    <p className="text-sm text-slate-500 leading-relaxed">
-                        Stay on top of your tasks. Get a daily reminder at 5:30 PM if you still have pending items.
+                <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl">
+                    <p className="text-sm text-muted leading-relaxed text-center sm:text-left flex-1">
+                        Stay on top of your tasks. Get reminders for your tasks and Azkar throughout the day.
                     </p>
                     <button
                         onClick={subscribeToPush}
-                        className="w-full px-4 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition-all active:scale-[0.98]"
+                        className="whitespace-nowrap px-6 py-2 bg-brand hover:opacity-90 text-white font-semibold rounded-xl transition-all active:scale-[0.98] shadow-md shadow-blue-500/20"
                     >
                         Enable Notifications
                     </button>

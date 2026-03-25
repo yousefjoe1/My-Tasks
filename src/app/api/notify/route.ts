@@ -37,10 +37,11 @@ export async function GET() {
         };
     } else if (cairoHour >= 15 && cairoHour < 20) {
         notificationContent = {
-            title: "أذكار المساء ✨",
+            title: "أذكار المساء 🌙",
             body: "باسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم 3 مرات",
         };
     } else if (cairoHour >= 19 && cairoHour < 23) {
+        // لو الساعه 7 مساءا 
         notificationContent = {
             title: "تذكير المهام 📝",
             body: "قربنا نخلص اليوم.",
@@ -61,11 +62,17 @@ export async function GET() {
                     ...notificationContent,
                     icon: '/icon.png',
                     badge: '/badge.png', // أيقونة صغيرة تظهر في شريط الإشعارات
+                    // vibrate: [200, 100, 200], // هيخلي الموبايل يهز فيعرفك إن فيه حاجة مهمة
+                    tag: 'task-reminder', // عشان لو فيه كذا إشعار ما يملوش الشاشة، يبدلوا بعض
+                    renotify: true, // يخلي الموبايل ينبهك حتى لو فيه إشعار قديم بنفس الـ tag
                     data: {
-                        url: '/' // الرابط الذي سيفتح عند الضغط على الإشعار
+                        url: '/'
                     },
                     actions: [
-                        { action: 'open_tasks', title: 'فتح المهام 🚀' }
+                        {
+                            action: 'open_tasks',
+                            title: 'عرض المهام 🚀',
+                        }
                     ]
                 })
             ).catch(err => console.error("Push failed for one user:", err))
