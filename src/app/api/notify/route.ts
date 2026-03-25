@@ -37,7 +37,8 @@ export async function GET() {
     }
 
     // 3. جلب المشتركين
-    const { data: subs } = await supabase.from('push_subscriptions').select('*');
+    const { data: subs, error } = await supabase.from('push_subscriptions').select('*');
+    console.log("🚀 ~ GET ~ error:", error)
 
     if (subs && subs.length > 0) {
         const pushPromises = subs.map(sub =>
