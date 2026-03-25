@@ -81,9 +81,9 @@ export default function RootLayout({
               <Navbar />
               <PushNotificationManager />
               {children}
-            </AuthProvider>
-          </ThemeProvider>
-        </StoreProvider>
+            </AuthProvider >
+          </ThemeProvider >
+        </StoreProvider >
         <div className="mt-6 text-center text-muted text-lg">
           <p>📅 Weekly tasks automatically reset every Monday</p>
           <p className="mt-1">💾 Data is saved locally in your browser and synced to cloud after you login</p>
@@ -96,7 +96,7 @@ export default function RootLayout({
           <a className='flex items-center justify-center gap-2' href="mailto:yousefmahmoud150@gmail.com">Email: yousefmahmoud150@gmail.com <Mail /> </a>
           <a className='flex items-center justify-center gap-2' href="https://wa.me/201554464169">Whats App: 01554464169 <Phone /> </a>
         </section>
-      </body>
-    </html>
+      </body >
+    </html >
   );
 }
