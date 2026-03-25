@@ -1,37 +1,17 @@
-// import { createClient } from '@supabase/supabase-js';
-// import webpush from 'web-push';
-
-// export async function GET() {
-//     const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-//     const { data: subs } = await supabase.from('push_subscriptions').select('*');
-
-//     if (subs) {
-//         subs.forEach(sub => {
-//             webpush.sendNotification(
-//                 {
-//                     endpoint: sub.endpoint,
-//                     keys: { auth: sub.auth, p256dh: sub.p256dh }
-//                 },
-//                 JSON.stringify({
-//                     title: "Don't forget your tasks! 📝",
-//                     body: `You have tasks waiting for you in your Weekly Tracker.`,
-//                     icon: '/icon.png'
-//                 })
-//             ).catch(err => console.error("Push failed for one user:", err));
-//         });
-//     }
-
-//     return Response.json({ success: true, notifiedCount: subs?.length });
-// }
-
 import { createClient } from '@supabase/supabase-js';
 import webpush from 'web-push';
 
-// 1. CRITICAL: Add this block at the top
+
+const AzkarMorning = [
+
+]
+
+
+// إعداد مفاتيح VAPID
 webpush.setVapidDetails(
     'mailto:yousefmahmoud150@gmail.com',
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.NEXT_PUBLIC_VAPID_PRIVATE_KEY!
+    process.env.VAPID_PRIVATE_KEY!
 );
 
 export async function GET() {
@@ -40,10 +20,37 @@ export async function GET() {
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    // 1. حساب الوقت الحالي بتوقيت مصر (UTC+2)
+    const now = new Date();
+    const cairoHour = (now.getUTCHours() + 2) % 24;
+
+    // 2. تحديد محتوى الرسالة بناءً على وقت اليوم
+    let notificationContent = {
+        title: "تذكير المهام 📝",
+        body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!",
+    };
+
+    if (cairoHour >= 4 && cairoHour < 12) {
+        notificationContent = {
+            title: "أذكار الصباح ☀️",
+            body: "بسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم 3 مرات",
+        };
+    } else if (cairoHour >= 15 && cairoHour < 20) {
+        notificationContent = {
+            title: "أذكار المساء ✨",
+            body: "باسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم 3 مرات",
+        };
+    } else if (cairoHour >= 19 && cairoHour < 23) {
+        notificationContent = {
+            title: "تذكير المهام 📝",
+            body: "قربنا نخلص اليوم.",
+        };
+    }
+
+    // 3. جلب المشتركين
     const { data: subs } = await supabase.from('push_subscriptions').select('*');
 
     if (subs && subs.length > 0) {
-        // 2. Use map + Promise.all so the server waits for all sends
         const pushPromises = subs.map(sub =>
             webpush.sendNotification(
                 {
@@ -51,13 +58,14 @@ export async function GET() {
                     keys: { auth: sub.auth, p256dh: sub.p256dh }
                 },
                 JSON.stringify({
-                    title: "Don't forget your tasks! 📝",
-                    body: `You have tasks waiting for you in your Weekly Tracker.`,
+                    ...notificationContent,
                     icon: '/icon.png',
-                    // Adding the action buttons we discussed
-                    data: { url: '/' },
+                    badge: '/badge.png', // أيقونة صغيرة تظهر في شريط الإشعارات
+                    data: {
+                        url: '/' // الرابط الذي سيفتح عند الضغط على الإشعار
+                    },
                     actions: [
-                        { action: 'open_tasks', title: 'View Tasks' }
+                        { action: 'open_tasks', title: 'فتح المهام 🚀' }
                     ]
                 })
             ).catch(err => console.error("Push failed for one user:", err))
@@ -69,6 +77,7 @@ export async function GET() {
     return Response.json({
         success: true,
         notifiedCount: subs?.length || 0,
-        timeSent: new Date().toISOString()
+        timeSent: new Date().toISOString(),
+        cairoHour // مفيد للتأكد من التوقيت في الـ Logs
     });
 }

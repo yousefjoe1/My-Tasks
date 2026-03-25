@@ -63,40 +63,47 @@ export default function PushNotificationManager() {
         await unsubscribeUser()
     }
 
-    // components/PushNotificationManager.tsx
-    async function sendTestNotification() {
-        if (subscription) {
-            // Pass the current subscription object to the action
-            const serializedSub = JSON.parse(JSON.stringify(subscription));
-            await sendNotification(message, serializedSub);
-            setMessage('');
-        }
-    }
-
     if (!isSupported) {
         return <p>Push notifications are not supported in this browser.</p>
     }
 
     return (
-        <div className='pt-10'>
-            <h3>Push Notifications</h3>
+        <div className="mt-10 flex flex-wrap items-center gap-4 justify-center p-1 bg-white border-b border-slate-200 shadow-sm">
+            <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-lg">
+                    <span className="text-xl">🔔</span>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-800">Push Notifications</h3>
+            </div>
+
             {subscription ? (
-                <>
-                    <p>You are subscribed to push notifications.</p>
-                    <button onClick={unsubscribeFromPush}>Unsubscribe</button>
-                    <input
-                        type="text"
-                        placeholder="Enter notification message"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                    />
-                    <button onClick={sendTestNotification}>Send Test</button>
-                </>
+                <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm border border-green-100">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        Active Subscription
+                    </div>
+
+                    <div className="flex gap-3">
+                        <button
+                            onClick={unsubscribeFromPush}
+                            className="px-4 py-2 bg-white border border-slate-200 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100 font-medium rounded-xl transition-all"
+                        >
+                            Disable
+                        </button>
+                    </div>
+                </div>
             ) : (
-                <>
-                    <p>You are not subscribed to push notifications.</p>
-                    <button onClick={subscribeToPush}>Subscribe</button>
-                </>
+                <div className="space-y-4">
+                    <p className="text-sm text-slate-500 leading-relaxed">
+                        Stay on top of your tasks. Get a daily reminder at 5:30 PM if you still have pending items.
+                    </p>
+                    <button
+                        onClick={subscribeToPush}
+                        className="w-full px-4 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition-all active:scale-[0.98]"
+                    >
+                        Enable Notifications
+                    </button>
+                </div>
             )}
         </div>
     )
