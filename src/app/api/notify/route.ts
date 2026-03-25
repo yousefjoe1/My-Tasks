@@ -1,13 +1,33 @@
+// import { createClient } from '@supabase/supabase-js';
+// import webpush from 'web-push';
+
+// export async function GET() {
+//     const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+//     const { data: subs } = await supabase.from('push_subscriptions').select('*');
+
+//     if (subs) {
+//         subs.forEach(sub => {
+//             webpush.sendNotification(
+//                 {
+//                     endpoint: sub.endpoint,
+//                     keys: { auth: sub.auth, p256dh: sub.p256dh }
+//                 },
+//                 JSON.stringify({
+//                     title: "Don't forget your tasks! 📝",
+//                     body: `You have tasks waiting for you in your Weekly Tracker.`,
+//                     icon: '/icon.png'
+//                 })
+//             ).catch(err => console.error("Push failed for one user:", err));
+//         });
+//     }
+
+//     return Response.json({ success: true, notifiedCount: subs?.length });
+// }
+
 import { createClient } from '@supabase/supabase-js';
 import webpush from 'web-push';
 
-
-const AzkarMorning = [
-
-]
-
-
-// إعداد مفاتيح VAPID
+// 1. CRITICAL: Add this block at the top
 webpush.setVapidDetails(
     'mailto:yousefmahmoud150@gmail.com',
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
@@ -20,40 +40,10 @@ export async function GET() {
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // 1. حساب الوقت الحالي بتوقيت مصر (UTC+2)
-    const now = new Date();
-    const cairoHour = (now.getUTCHours() + 2) % 24;
-
-    // 2. تحديد محتوى الرسالة بناءً على وقت اليوم
-    let notificationContent = {
-        title: "تذكير المهام 📝",
-        body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!",
-    };
-
-    if (cairoHour >= 4 && cairoHour < 12) {
-        notificationContent = {
-            title: "أذكار الصباح ☀️",
-            body: "بسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم 3 مرات",
-        };
-    } else if (cairoHour >= 15 && cairoHour < 20) {
-        notificationContent = {
-            title: "أذكار المساء 🌙",
-            body: "باسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم 3 مرات",
-        };
-    } else if (cairoHour >= 19 && cairoHour < 23) {
-        // لو الساعه 7 مساءا 
-        notificationContent = {
-            title: "تذكير المهام 📝",
-            body: "قربنا نخلص اليوم.",
-        };
-    }
-
-
-
-    // 3. جلب المشتركين
     const { data: subs } = await supabase.from('push_subscriptions').select('*');
 
     if (subs && subs.length > 0) {
+        // 2. Use map + Promise.all so the server waits for all sends
         const pushPromises = subs.map(sub =>
             webpush.sendNotification(
                 {
@@ -61,20 +51,13 @@ export async function GET() {
                     keys: { auth: sub.auth, p256dh: sub.p256dh }
                 },
                 JSON.stringify({
-                    ...notificationContent,
+                    title: "تذكر اذكار الصباح والمساء",
+                    body: `بسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم 3 مرات`,
                     icon: '/icon.png',
-                    badge: '/badge.png', // أيقونة صغيرة تظهر في شريط الإشعارات
-                    // vibrate: [200, 100, 200], // هيخلي الموبايل يهز فيعرفك إن فيه حاجة مهمة
-                    tag: 'task-reminder', // عشان لو فيه كذا إشعار ما يملوش الشاشة، يبدلوا بعض
-                    renotify: true, // يخلي الموبايل ينبهك حتى لو فيه إشعار قديم بنفس الـ tag
-                    data: {
-                        url: '/'
-                    },
+                    // Adding the action buttons we discussed
+                    data: { url: '/' },
                     actions: [
-                        {
-                            action: 'open_tasks',
-                            title: 'عرض المهام 🚀',
-                        }
+                        { action: 'open_tasks', title: 'View Tasks' }
                     ]
                 })
             ).catch(err => console.error("Push failed for one user:", err))
@@ -86,7 +69,6 @@ export async function GET() {
     return Response.json({
         success: true,
         notifiedCount: subs?.length || 0,
-        timeSent: new Date().toISOString(),
-        cairoHour // مفيد للتأكد من التوقيت في الـ Logs
+        timeSent: new Date().toISOString()
     });
 }
