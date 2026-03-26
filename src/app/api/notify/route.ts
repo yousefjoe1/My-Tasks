@@ -27,19 +27,16 @@ export async function GET() {
                     endpoint: sub.endpoint,
                     keys: { auth: sub.auth, p256dh: sub.p256dh }
                 },
-                JSON.stringify({
-                    title: "Weekly Tasks",
-                    body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!",
-                    icon: '/icon.png',
-                    badge: '/badge.png', // أيقونة صغيرة تظهر في شريط الإشعارات
-                    data: {
-                        url: '/' // الرابط الذي سيفتح عند الضغط على الإشعار
-                    },
-                    actions: [
-                        { action: 'open_tasks', title: 'فتح المهام 🚀' }
-                    ]
-                })
-            ).catch(err => console.error("Push failed for one user:", err))
+                JSON.stringify({ title: "Weekly Tasks", body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!" })
+            ).catch(err => {
+                console.error("Push failed:", err.statusCode, err.body, sub.endpoint);
+                // Auto-delete expired subscriptions
+                if (err.statusCode === 410) {
+                    return supabase.from('push_subscriptions')
+                        .delete()
+                        .eq('endpoint', sub.endpoint);
+                }
+            })
         );
 
         await Promise.all(pushPromises);
