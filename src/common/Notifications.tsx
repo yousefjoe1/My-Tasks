@@ -63,7 +63,7 @@ export default function PushNotificationManager() {
     }
 
     if (!isSupported) {
-        return <div>
+        return <div className='mt-10'>
             <p>Push notifications are not supported in this browser.</p>
             <p>قم بتفعيل الاشعارات لتصلك تذكيرات مفيده جدا في حياتك اليوميه</p>
         </div>
@@ -75,7 +75,7 @@ export default function PushNotificationManager() {
                 <div className="lg:p-2 p-1 bg-tertiary rounded-lg">
                     <span className="lg:text-xl text-sm">🔔</span>
                 </div>
-                <h3 className="lg:text-lg text-sm font-semibold text-primary">Push Notifications</h3>
+                <h3 className="lg:text-lg text-sm font-semibold text-primary">الاشعارات</h3>
             </div>
 
             {subscription ? (
@@ -97,13 +97,13 @@ export default function PushNotificationManager() {
             ) : (
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl">
                     <p className="text-sm text-muted leading-relaxed text-center sm:text-left flex-1">
-                        Stay on top of your tasks. Get reminders for your tasks and Azkar throughout the day.
+                        ابق على اطلاع دائم بمهامك. احصل على تذكيرات لمهامك والأذكار طوال اليوم.
                     </p>
                     <button
                         onClick={subscribeToPush}
                         className="whitespace-nowrap px-6 py-2 bg-brand hover:opacity-90 text-white font-semibold rounded-xl transition-all active:scale-[0.98] shadow-md shadow-blue-500/20"
                     >
-                        Enable Notifications
+                        تفعيل الاشعارات
                     </button>
                 </div>
             )}

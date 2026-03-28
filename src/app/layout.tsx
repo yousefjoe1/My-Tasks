@@ -24,6 +24,7 @@ import type { Metadata } from "next";
 import { Mail, Phone } from "lucide-react";
 // import PushNotificationManager from "@/common/PushNotifications";
 import PushNotificationManager from "@/common/Notifications";
+import InstallPWA from "@/common/DownloadButtonPwa";
 
 export const metadata: Metadata = {
   title: {
@@ -61,6 +62,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="My Tasks" />
+      <link rel="apple-touch-icon" href="/web-app-manifest-192x192.png" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -70,6 +75,7 @@ export default function RootLayout({
             <AuthProvider>
               <Navbar />
               <PushNotificationManager />
+              <InstallPWA />
               {children}
             </AuthProvider >
           </ThemeProvider >
