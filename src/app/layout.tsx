@@ -62,7 +62,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       <meta name="apple-mobile-web-app-title" content="My Tasks" />
       <link rel="apple-touch-icon" href="/web-app-manifest-192x192.png" />
@@ -82,7 +82,6 @@ export default function RootLayout({
         </StoreProvider >
         <div className="mt-6 text-center text-muted text-lg">
           <p>📅 Weekly tasks automatically reset every Monday</p>
-          <p className="mt-1">💾 Data is saved locally in your browser and synced to cloud after you login</p>
         </div>
 
 
