@@ -3,6 +3,7 @@
     { "path": "/api/notify", "schedule": "0 3 * * *" }, 
     { "path": "/api/notify", "schedule": "0 8 * * *" },
     { "path": "/api/notify", "schedule": "0 14 * * *" },
+    { "path": "/api/notify", "schedule": "0 12 * * *" },
     { "path": "/api/notify", "schedule": "0 17 * * *" }, 
     { "path": "/api/notify", "schedule": "0 21 * * *" }
   ]

@@ -6,18 +6,32 @@ export default function InstallPWA() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [isIOS, setIsIOS] = useState(false);
+    const [isInstalled, setIsInstalled] = useState(false);
 
     useEffect(() => {
-        // التحقق لو الجهاز iPhone/iPad
-        const userAgent = window.navigator.userAgent.toLowerCase();
+        // 1. التحقق لو التطبيق مفتوح كـ PWA فعلاً (مثبت)
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            || (window.navigator as any).standalone
+            || document.referrer.includes('android-app://');
+
         // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIsInstalled(isStandalone);
+
+        // 2. التحقق لو الجهاز iPhone/iPad
+        const userAgent = window.navigator.userAgent.toLowerCase();
         setIsIOS(/iphone|ipad|ipod/.test(userAgent));
 
-        // حفظ حدث التنزيل التلقائي (لأندرويد وكروم)
-        window.addEventListener('beforeinstallprompt', (e) => {
+        // 3. حفظ حدث التنزيل التلقائي
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const handler = (e: any) => {
             e.preventDefault();
             setDeferredPrompt(e);
-        });
+        };
+
+        window.addEventListener('beforeinstallprompt', handler);
+
+        return () => window.removeEventListener('beforeinstallprompt', handler);
     }, []);
 
     const handleInstallClick = async () => {
@@ -26,11 +40,15 @@ export default function InstallPWA() {
         } else if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') setDeferredPrompt(null);
-        } else {
-            alert('التطبيق مثبت بالفعل أو متصفحك لا يدعم التنزيل المباشر.');
+            if (outcome === 'accepted') {
+                setDeferredPrompt(null);
+                setIsInstalled(true);
+            }
         }
     };
+
+    // لو التطبيق مثبت بالفعل، لا تعرض أي شيء (Return null)
+    if (isInstalled) return null;
 
     return (
         <div className="p-2 bg-tertiary border border-secondary shadow-sm transition-colors duration-300">
