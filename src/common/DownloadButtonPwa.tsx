@@ -43,7 +43,7 @@ export default function InstallPWA() {
                     className="px-6 py-2 bg-brand text-white font-bold rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center gap-2"
                 >
                     <span>تنزيل التطبيق الآن</span>
-                    <span className="text-lg">📥</span>
+                    <span className="text-lg">📲</span>
                 </button>
             </div>
         </div>
