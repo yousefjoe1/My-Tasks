@@ -82,7 +82,7 @@ export default function PushNotificationManager() {
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="flex items-center gap-2 px-3 py-2 bg-tertiary text-secondary rounded-lg text-sm border border-secondary">
                         <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                        <span className="text-secondary font-medium">Active Subscription</span>
+                        <span className="text-secondary font-medium">الاشعارات مفعله</span>
                     </div>
 
                     <div className="flex gap-3">
@@ -90,7 +90,8 @@ export default function PushNotificationManager() {
                             onClick={unsubscribeFromPush}
                             className="px-4 py-2 bg-primary border border-secondary text-secondary hover:bg-error hover:text-white hover:border-transparent font-medium rounded-xl transition-all active:scale-95"
                         >
-                            Disable
+                            تعطيل الاشعارات
+
                         </button>
                     </div>
                 </div>
