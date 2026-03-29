@@ -173,20 +173,28 @@ export async function GET() {
         body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!",
     };
 
-    // نظام الـ Random المؤقت
-    if (cairoHour === 23) {
-        notificationContent = { title: "نهاية اليوم 💪", body: "افتكر مهماتك ي بطل.. راجع اللي خلص واللي لسه بكره." };
+    // نظام الـ Random المكتمل (6 مواعيد)
+    if (cairoHour === 23) { // 11 مساءً
+        notificationContent = {
+            title: "نهاية اليوم 💪",
+            body: "افتكر مهماتك ي بطل.. راجع اللي خلص واللي لسه بكره."
+        };
+    } else if (cairoHour === 14) { // 2 ظهراً (توقيت مصر)
+        notificationContent = {
+            title: "مراجعة منتصف اليوم 🕒",
+            body: "ها يا بطل، طمني عملت إيه في مهام النهاردة؟ لسه فيه وقت تخلص الباقي."
+        };
     } else if (cairoHour === 19) { // 7 مساءً
         notificationContent = {
             title: "وقت الرياضة 🏃‍♂️",
             body: sport[Math.floor(Math.random() * sport.length)],
         };
-    } else if (cairoHour === 16 || cairoHour === 5) {
+    } else if (cairoHour === 16 || cairoHour === 5) { // 4 عصراً و 5 فجراً
         notificationContent = {
             title: cairoHour === 5 ? "أذكار الصباح ☀️" : "أذكار المساء ✨",
             body: azkarDayAndNight[Math.floor(Math.random() * azkarDayAndNight.length)],
         };
-    } else if (cairoHour === 10) {
+    } else if (cairoHour === 10) { // 10 صباحاً
         notificationContent = {
             title: "بداية اليوم 🚀",
             body: `الحمد لله، إن شاء الله خير. ${zikr[Math.floor(Math.random() * zikr.length)]}`,
