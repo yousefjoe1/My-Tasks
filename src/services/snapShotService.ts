@@ -1,9 +1,7 @@
 import { supabase } from '@/lib/supabase/client';
-import { WeeklyTasksService } from './weeklyTasksService';
 
 // services/weeklyService.ts
 import { startOfWeek, endOfWeek, subWeeks } from "date-fns";
-import { SNAPSHOT_KEY, STORAGE_KEY } from '@/lib/storage/weeklyTasks/LocalStorageStrategy';
 
 export const handleWeeklyReset = async (userId: string | undefined): Promise<{ success: boolean; }> => {
     const lastWeekDate = subWeeks(new Date(), 1);
@@ -36,7 +34,7 @@ export const handleWeeklyReset = async (userId: string | undefined): Promise<{ s
             if (snapshotError) throw snapshotError;
 
             const { error: updateError } = await supabase
-                .from('weekly_tasks ')
+                .from('weekly_tasks')
                 .update({ days: resetDays })
                 .eq('userId', userId);
 

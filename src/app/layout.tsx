@@ -81,7 +81,7 @@ export default function RootLayout({
           </ThemeProvider >
         </StoreProvider >
         <div className="mt-6 text-center text-muted text-lg">
-          <p>📅 Weekly tasks automatically reset every Monday</p>
+          <p>📅 Weekly tasks automatically reset every Saturday</p>
         </div>
 
 

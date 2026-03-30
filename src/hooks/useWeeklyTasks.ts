@@ -86,40 +86,63 @@ export function useWeeklyTasks({
 
     if (userId) {
 
-
       const now = new Date();
-      const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
 
-      const localLastReset = localStorage.getItem(`last_reset_${userId}`);
-
-      if (localLastReset === currentWeekStart) {
+      // 1. التأكد إن النهاردة السبت (6 هو رقم يوم السبت في JavaScript)
+      // لو مش السبت، اخرج فوراً وما تعملش أي حاجة
+      if (now.getDay() !== 6) {
         return;
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('last_snapshot_week')
-        .eq('id', userId)
-        .single();
+      // 2. تحديد "معرف الأسبوع" (بداية الأسبوع الحالي)
+      const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
 
-      const dbLastReset = profile?.last_snapshot_week;
+      // 3. شيك على الـ LocalStorage الأول (عشان السرعة)
+      const localLastReset = localStorage.getItem(`last_reset_${userId}`);
+      if (localLastReset === currentWeekStart) {
+        console.log("الريسيت تم بالفعل على هذا الجهاز لهذا الأسبوع.");
+        return;
+      }
 
-      if (dbLastReset !== currentWeekStart) {
-        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
-        const result = await handleWeeklyReset(userId);
+      try {
+        // 4. لو مش موجود في LocalStorage، شيك على الداتابيز (الحقيقة النهائية)
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('last_snapshot_week')
+          .eq('id', userId)
+          .single();
 
-        if (result?.success) {
-          await supabase
-            .from('profiles')
-            .update({ last_snapshot_week: currentWeekStart })
-            .eq('id', userId);
+        if (profileError) throw profileError;
 
+        const dbLastReset = profile?.last_snapshot_week;
+
+        // 5. لو الداتابيز بتقول إن الريسيت لسه ما حصلش للأسبوع ده
+        if (dbLastReset !== currentWeekStart) {
+          console.log("بدء عملية الريسيت للأسبوع الجديد...");
+
+          const result = await handleWeeklyReset(userId);
+
+          if (result?.success) {
+            // تحديث الداتابيز أولاً
+            const { error: updateError } = await supabase
+              .from('profiles')
+              .update({ last_snapshot_week: currentWeekStart })
+              .eq('id', userId);
+
+            if (updateError) throw updateError;
+
+            // ثم تحديث LocalStorage
+            localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+            console.log("تم الريسيت وتحديث البيانات بنجاح.");
+          }
         } else {
-          error(`هناك خطأ ما في تجديد ايام المهمات`)
+          // 6. لو الداتابيز قالت إنه حصل (بس الجهاز ده مكنش يعرف)
+          // نحدث الـ LocalStorage عشان المرة الجاية ما يسألش الداتابيز
+          localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+          console.log("الداتابيز محدثة بالفعل، تم مزامنة الجهاز الحالي.");
         }
-      } else {
-        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
-        console.log("DB was already updated. Synced LocalStorage.");
+      } catch (err) {
+        console.error("خطأ في عملية التحقق من الريسيت:", err);
       }
     }
 
