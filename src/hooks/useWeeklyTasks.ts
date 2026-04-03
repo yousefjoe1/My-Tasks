@@ -26,7 +26,20 @@ export function useWeeklyTasks({
 
   const { user } = useAuth();
 
-
+  const seedEssentialTasks = async () => {
+    const defaults = [
+      { content: "📖 الورد القرآني (صفحة)", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false } },
+      { content: "اذكار الصباح", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false } },
+      { content: "اذكار المساء", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false } },
+      { content: "شويه رياضه", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false } }
+    ];
+    dispatch(setLoading(true))
+    for (const habit of defaults) {
+      const newTask = { id: crypto.randomUUID(), ...habit } as WeeklyTask;
+      await WeeklyTasksService.addTask(newTask, user?.id as string, true);
+    }
+    getTasks();
+  };
 
 
   const getTasks = useCallback(async () => {
@@ -65,15 +78,6 @@ export function useWeeklyTasks({
   }
 
   const SyncFromLocalToCloud = async () => {
-    // if (user?.id) {
-    //   const isSynced = LocalStorageStrategy.saveSyncState()
-    //   if (isSynced !== 'yes') {
-    //     dispatch(setSyncLoading(true))
-    //     await WeeklyTasksSync.addTheNewTasks(user?.id)
-    //     await WeeklyTasksSync.updateExistingTasks(user?.id)
-    //     await WeeklyTasksSync.deleteMissingTasks(user?.id)
-    //   }
-    // }
 
     await checkWeeklyResetWithCache(user?.id)
 
@@ -157,6 +161,7 @@ export function useWeeklyTasks({
   return {
     updateBlock,
     deleteBlock,
-    getTasks
+    getTasks,
+    seedEssentialTasks
   };
 }

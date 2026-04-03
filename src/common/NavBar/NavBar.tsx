@@ -12,6 +12,7 @@ import { useToast } from "@/components/Toasts/useToast";
 const navLinks = [
   { name: "Main", href: "/" },
   { name: "My Progress", href: "/dashboard" },
+  { name: "Powerful Day ⚡", href: "/powerful-day" },
 ];
 
 export default function Navbar() {
@@ -62,7 +63,7 @@ export default function Navbar() {
                 href="/"
                 className="text-2xl font-bold text-brand hover:opacity-80 transition-opacity"
               >
-                Productivity
+                Just Today
               </Link>
             </div>
 

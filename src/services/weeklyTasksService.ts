@@ -26,6 +26,18 @@ export class WeeklyTasksService {
         }
     }
 
+    // services/weeklyTasksService.ts
+    static async getEssentialTasks(userId: string) {
+        const { data, error } = await supabase
+            .from('weekly_tasks')
+            .select('*')
+            .eq('userId', userId)
+            .eq('is_essential', true); // الفلتر السحري بتاعنا
+
+        if (error) throw error;
+        return data;
+    }
+
     // Fetch tasks from appropriate source
     static async fetchTasks(userId: string | undefined): Promise<WeeklyTask[]> {
         if (userId) {
@@ -42,13 +54,13 @@ export class WeeklyTasksService {
     }
 
     // Add new task
-    static async addTask(task: WeeklyTask, userId: string | undefined): Promise<WeeklyTask> {
+    static async addTask(task: WeeklyTask, userId: string | undefined, is_essential?: boolean): Promise<WeeklyTask> {
         if (userId) {
             const { id, ...insertData } = task
 
             const { data, error } = await supabase
                 .from('weekly_tasks')
-                .insert({ ...insertData, userId })
+                .insert({ ...insertData, userId, is_essential })
                 .select()
                 .single()
 

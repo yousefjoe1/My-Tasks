@@ -6,6 +6,8 @@ export interface WeeklyTask {
   };
   created_at?: string;
   updated_at?: string;
+  is_essential?: boolean;
+  description?: string;
 }
 
 

@@ -86,7 +86,7 @@ export default function RootLayout({
 
 
         {/* My information developed by*/}
-        <section className='mt-y p-4 flex flex-col gap-4 text-center text-muted text-lg'>
+        <section className='mt-y p-5 flex flex-col justify-center items-center gap-4 text-center text-muted text-lg'>
           <h4>Developed By: <b>Youssef Mahmoud</b> </h4>
           <a className='flex items-center justify-center gap-2' href="mailto:yousefmahmoud150@gmail.com">Email: yousefmahmoud150@gmail.com <Mail /> </a>
           <a className='flex items-center justify-center gap-2' href="https://wa.me/201554464169">Whats App: 01554464169 <Phone /> </a>

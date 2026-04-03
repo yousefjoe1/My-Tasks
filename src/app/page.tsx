@@ -7,17 +7,10 @@ import WeeklyTable from '@/components/blocks/WeeklyTable';
 import { WeeklyTask } from '@/types';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import ErrorBoundary from '@/common/ErrorBoundry';
 import ToastContainer from '@/components/Toasts/ToastContainer';
 import { useToast } from '@/components/Toasts/useToast';
-
-const SUGGESTED_HABITS = [
-  { content: "💧 Drinking 2L Water", id: 's1' },
-  { content: "📖 Reading 15 Mins", id: 's2' },
-  { content: "🧘 Morning Meditation", id: 's3' },
-  { content: "🚶 10k Steps Walk", id: 's4' },
-];
 
 export default function Home() {
   const { error, success, toast, toasts, removeToast } = useToast()
@@ -34,7 +27,9 @@ export default function Home() {
       deleteBlock(id)
     }
     , [deleteBlock])
-
+  const normalTasks = useMemo(() =>
+    tasks?.filter((t: WeeklyTask) => t.is_essential !== true) || [],
+    [tasks]);
 
   return (
     <section className="min-h-screen bg-secondary py-8 pt-18">
@@ -64,7 +59,7 @@ export default function Home() {
             }
             <AddBlock success={success} toast={toast} error={error} />
             {
-              tasks?.map((block) => (
+              normalTasks?.map((block) => (
                 <ErrorBoundary
                   key={block.id}
                   fallback={<p className="p-2 bg-gray-100 text-red-500">Failed to load this task.</p>}

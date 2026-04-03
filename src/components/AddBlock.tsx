@@ -1,4 +1,5 @@
-import { Loader2 } from "lucide-react";
+'use client';
+import { Loader2, Plus, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,74 +9,130 @@ import { RootState } from "@/store/store";
 import { useAuth } from "@/contexts/AuthContext";
 import AsmahAllah from "@/features/Allah-names/services/allah-names";
 
-
 interface Toast {
   success: (m: string) => void;
   toast: (m: string, d: string) => void;
   error: (m: string) => void;
+  isEssentialPage?: boolean
 }
 
-
-export function AddBlock({ success, toast, error }: Toast) {
+export function AddBlock({ success, toast, error, isEssentialPage = false }: Toast) {
   const { user } = useAuth();
-
-  const [taskName, setTaskName] = useState('')
+  const [isOpen, setIsOpen] = useState(false); // التحكم في ظهور الفورم
+  const [taskName, setTaskName] = useState('');
+  const [description, setDescription] = useState('');
   const { tasks, loading } = useSelector((state: RootState) => state.weeklyTasks);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const addNewTask = async (content: string) => {
-
     if (!user) {
       error('Please login to add a task');
-      return
+      return;
     }
 
     const newTask: WeeklyTask = {
       id: crypto.randomUUID(),
       content,
+      description,
       days: {},
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      is_essential: isEssentialPage
     };
-    dispatch(setLoading(true))
+
+    dispatch(setLoading(true));
     try {
-      const newTaskData = await WeeklyTasksService.addTask(newTask, user?.id)
-      dispatch(setTasks([...tasks, newTaskData]))
-      success('Task added successfully')
+      const newTaskData = await WeeklyTasksService.addTask(newTask, user?.id);
+      dispatch(setTasks([...tasks, newTaskData]));
+      success('Task added successfully');
+
       const item = await AsmahAllah.getCurrentName();
       AsmahAllah.updateIndex();
-      toast(item.name, item.details)
-      setTaskName('')
-    } catch (error) {
-      dispatch(setError({ id: newTask.id, message: error instanceof Error ? error.message : 'Failed to add task' }))
+      toast(item.name, item.details);
+
+      setTaskName('');
+      setDescription('');
+      setIsOpen(false); // إغلاق الفورم بعد النجاح
+    } catch (err) {
+      dispatch(setError({ id: newTask.id, message: err instanceof Error ? err.message : 'Failed to add task' }));
     }
-  }
+  };
 
   return (
-    <section title="Add Task Section" className="p-4 border border-brand-primary rounded-lg shadow-sm space-y-3">
-
-      <div>
-        <label htmlFor="task">Task Name</label>
-        <input disabled={loading} type="text" id="task" onChange={(e) => setTaskName(e.target.value)} value={taskName} className="p-3 border border-primary w-full rounded-lg hover:bg-secondary transition-colors text-center" />
-      </div>
-      <div className="grid grid-cols-1 gap-2">
+    <div className="w-full space-y-3 overflow-hidden">
+      {/* زر الفتح الأساسي - يظهر فقط عندما تكون الفورم مغلقة */}
+      {!isOpen ? (
         <button
-          disabled={loading}
-          onClick={() => {
-            if (taskName.length < 5) {
-              error('Task name must be at least 5 characters long');
-              return
-            }
-            addNewTask(taskName);
-          }}
-          className="p-3 border flex justify-center bg-brand-secondary border-primary w-full rounded-lg hover:bg-brand-border-secondary transition-colors text-center"
+          onClick={() => setIsOpen(true)}
+          className="flex items-center justify-center gap-2 w-full p-2 glass-card border-brand-primary text-primary hover:bg-brand-secondary transition-all duration-300 group"
         >
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : ''}
-          <h6 className="text-primary">+ Add Task</h6>
+          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+          <span className="font-bold">إضافة مهمة جديدة</span>
         </button>
+      ) : (
+        /* القسم الخاص بالفورم مع Animation الـ Accordion */
+        <section
+          className={`
+            p-2 glass-card border-brand-primary rounded-2xl shadow-lg space-y-4
+            animate-in fade-in slide-in-from-top-4 duration-300
+          `}
+        >
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-bold text-brand ">
+              {isEssentialPage ? "✨ مهمة اساسية جديدة" : "📝 مهمة أسبوعية"}
+            </h3>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-1 hover:bg-brand-error/10 hover:text-brand-error rounded-full transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
 
-      </div>
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <label htmlFor="task" className="text-xs font-bold text-secondary px-1 ">اسم المهمة</label>
+              <input
+                disabled={loading}
+                type="text"
+                id="task"
+                onChange={(e) => setTaskName(e.target.value)}
+                value={taskName}
+                placeholder="مثلاً: قراءة سورة البقرة"
+                className="p-3 bg-tertiary border-none text-primary w-full rounded-xl focus:ring-2 focus:ring-brand outline-none transition-all"
+              />
+            </div>
 
-    </section>
+            <div className="space-y-1">
+              <label htmlFor="description" className="text-xs font-bold text-secondary px-1 ">الوصف (اختياري)</label>
+              <textarea
+                disabled={loading}
+                id="description"
+                onChange={(e) => setDescription(e.target.value)}
+                value={description}
+                rows={2}
+                placeholder="تفاصيل إضافية تساعدك على الإنجاز..."
+                className="p-3 bg-tertiary border-none text-primary w-full rounded-xl focus:ring-2 focus:ring-brand outline-none text-sm transition-all resize-none"
+              />
+            </div>
+
+            <button
+              disabled={loading}
+              onClick={() => {
+                if (taskName.length < 5) {
+                  error('اسم المهمة يجب أن يكون 5 أحرف على الأقل');
+                  return;
+                }
+                addNewTask(taskName);
+              }}
+              className="mt-2 p-2 lg:text-2xl text-sm bg-brand text-white w-full rounded-xl font-bold shadow-lg shadow-brand/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex justify-center items-center gap-2"
+            >
+              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
+              <span>تأكيد الإضافة</span>
+            </button>
+          </div>
+        </section>
+      )}
+    </div>
   );
 }

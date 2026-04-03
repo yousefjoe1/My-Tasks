@@ -20,6 +20,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(task.content);
+  const [description, setDescription] = useState(task.description);
   const weekDays = getWeekDays();
   const weekDates = getWeekDates();
 
@@ -37,7 +38,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
   };
 
   const handleSave = () => {
-    onUpdate(task.id, { content: content });
+    onUpdate(task.id, { content: content, description: description });
     setIsEditing(false);
   };
 
@@ -52,23 +53,34 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
   return (
     <>
-      <div className="group relative mb-8 bg-primary rounded-xl shadow-sm border border-primary hover:shadow-md transition-all duration-200">
+      <div className="group relative bg-primary rounded-xl shadow-sm border border-primary hover:shadow-md transition-all duration-200">
         {/* Header Section */}
         {error[task.id] && (
           <p className="text-red-500 text-sm mt-1">{error[task.id]}</p>
         )}
-        <div className="flex items-center justify-between p-4 border-b border-secondary bg-linear-to-r from-secondary to-primary">
+        <div className="flex items-center justify-between p-2 bg-linear-to-r from-secondary to-primary">
           {isEditing ? (
             <div className="flex items-center flex-wrap gap-3 flex-1">
-              <input
-                type="text"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                onKeyDown={handleKeyPress}
-                className="flex-1 px-4 py-2 text-lg font-semibold border border-brand rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-brand bg-primary text-primary transition-all placeholder:text-muted"
-                autoFocus
-                placeholder="Enter task name..."
-              />
+              <div className="flex flex-col w-full gap-3">
+                <input
+                  type="text"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  className="flex-1 px-4 py-2 text-lg font-semibold border border-brand rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-brand bg-primary text-primary transition-all placeholder:text-muted"
+                  autoFocus
+                  placeholder="Enter task name..."
+                />
+                <input
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  className="flex-1 px-4 py-2 text-lg font-semibold border border-brand rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-brand bg-primary text-primary transition-all placeholder:text-muted"
+                  autoFocus
+                  placeholder="Enter task description..."
+                />
+              </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={handleSave}
@@ -105,8 +117,12 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
           )}
         </div>
 
-        <h3 className="truncate p-2 text-xl my-5">Task Name: {content || "Untitled Task"}</h3>
-
+        <h3 className="p-2 lg:text-xl mb-2">Task Name: {content || "Untitled Task"}</h3>
+        {task.description && (
+          <p className="text-muted text-sm mt-1 italic">
+            {task.description}
+          </p>
+        )}
 
         {/* Table Section */}
         {
@@ -123,7 +139,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                 {weekDays.map((day, index) => (
                   <th
                     key={day}
-                    className="p-4 border-r border-secondary last:border-r-0 text-center"
+                    className="p-2 border-r border-secondary last:border-r-0 text-center"
                   >
 
                     <div className="flex flex-col">
@@ -144,7 +160,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                   <td
                     key={day}
                     className={[
-                      "p-4 border-r border-secondary last:border-r-0 align-middle transition-colors",
+                      "p-2 border-r border-secondary last:border-r-0 align-middle transition-colors",
                       task.days?.[day]
                         ? "bg-success/10 dark:bg-success/20"
                         : "bg-primary",
