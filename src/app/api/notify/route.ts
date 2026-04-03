@@ -179,27 +179,33 @@ export async function GET() {
         body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!",
     };
 
+    let url = '/'
+
     // نظام الـ Random المكتمل (6 مواعيد)
     if (cairoHour === 23) { // 11 مساءً
         notificationContent = {
             title: "نهاية اليوم 💪",
             body: "افتكر مهماتك ي بطل.. راجع اللي خلص واللي لسه بكره."
         };
+        url = '/'
     } else if (cairoHour === 14) { // 2 ظهراً (توقيت مصر)
         notificationContent = {
             title: "مراجعة منتصف اليوم 🕒",
             body: "ها يا بطل، طمني عملت إيه في مهام النهاردة؟ لسه فيه وقت تخلص الباقي."
         };
+        url = '/'
     } else if (cairoHour === 19) { // 7 مساءً
         notificationContent = {
             title: "وقت الرياضة 🏃‍♂️",
             body: sport[Math.floor(Math.random() * sport.length)],
         };
+        url = '/powerful-day'
     } else if (cairoHour === 16 || cairoHour === 5) { // 4 عصراً و 5 فجراً
         notificationContent = {
             title: cairoHour === 5 ? "أذكار الصباح ☀️" : "أذكار المساء ✨",
             body: azkarDayAndNight[Math.floor(Math.random() * azkarDayAndNight.length)],
         };
+        url = '/powerful-day'
     } else if (cairoHour === 10) { // 10 صباحاً
         notificationContent = {
             title: "بداية اليوم 🚀",
@@ -219,7 +225,7 @@ export async function GET() {
                     badge: '/badge.png',
                     tag: 'task-reminder',
                     renotify: true,
-                    data: { url: '/' }
+                    data: { url: url }
                 })
             ).catch(async (err) => {
                 // تنظيف الاشتراكات المنتهية 410
