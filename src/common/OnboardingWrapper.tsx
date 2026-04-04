@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { ChevronRight, Bell, Target, Zap, HelpCircle, X } from 'lucide-react';
+import { ChevronRight, Bell, Target, Zap, HelpCircle, X, LayoutDashboard, ShieldCheck } from 'lucide-react';
 
 export default function OnboardingWrapper() {
     const [showModal, setShowModal] = useState(false);
@@ -13,7 +13,7 @@ export default function OnboardingWrapper() {
             icon: <Zap className="text-brand w-14 h-14" />
         },
         {
-            title: "5 تنبيهات ذكية",
+            title: "تنبيهات ذكية",
             desc: "عشان يومك يفضل ماشي صح، هنفكرك في أوقات محددة بأهم العادات زي الأذكار والرياضة.",
             icon: <Bell className="text-brand-success w-14 h-14" />
         },
@@ -21,6 +21,17 @@ export default function OnboardingWrapper() {
             title: "بساطة في التتبع",
             desc: "كل اللي عليك إنك تفتح التطبيق وتعلم على اليوم.. وبس! التكرار هو سر القوة.",
             icon: <Target className="text-brand w-14 h-14" />
+        },
+        // السلايدز الجديدة
+        {
+            title: "لوحة تحكم (Dashboard) متكاملة",
+            desc: "تقدر تتابع تقدمك وتشوف كل إنجازاتك والأسابيع اللي فاتت في مكان واحد عشان تتحمس تكمل.",
+            icon: <LayoutDashboard className="text-brand w-14 h-14" />
+        },
+        {
+            title: "عاداتك الأساسية دايماً قدامك",
+            desc: "خصصنا صفحة للمهام الأساسية عشان تضمن إنك محافظ على أصل يومك مهما حصل.",
+            icon: <ShieldCheck className="text-brand-success w-14 h-14" />
         }
     ];
 

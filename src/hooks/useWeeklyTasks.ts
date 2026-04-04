@@ -92,7 +92,7 @@ export function useWeeklyTasks({
     const now = new Date();
 
     // 1. تحديد بداية الأسبوع الحالي (مثلاً لو النهاردة الأحد، هيرجع تاريخ الاثنين اللي فات)
-    const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
+    const currentWeekStart = startOfWeek(now, { weekStartsOn: 6 }).toISOString();
 
     // 2. شيك على الـ LocalStorage (الخط الدفاعي الأول)
     const localLastReset = localStorage.getItem(`last_reset_${userId}`);

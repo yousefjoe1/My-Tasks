@@ -3,7 +3,7 @@ import { Mail, Phone, Linkedin, Globe, Heart } from "lucide-react";
 
 export default function Footer() {
     return (
-        <footer className="mt-20 pb-10 px-4">
+        <footer className="pb-10 px-4">
             <div className="max-w-6xl mx-auto">
                 {/* الخط الفاصل الجمالي */}
                 <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-brand-border to-transparent mb-12 opacity-50" />

@@ -4,83 +4,59 @@ import { supabase } from '@/lib/supabase/client';
 import { startOfWeek, endOfWeek, subWeeks } from "date-fns";
 
 export const handleWeeklyReset = async (userId: string | undefined): Promise<{ success: boolean; }> => {
-    const lastWeekDate = subWeeks(new Date(), 1);
-    const weekStart = startOfWeek(lastWeekDate, { weekStartsOn: 1 });
-    const weekEnd = endOfWeek(lastWeekDate, { weekStartsOn: 1 });
-    const resetDays = { Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false, Sun: false };
-    if (userId) {
-        try {
+    if (!userId) return { success: false };
 
-            const { data: tasks, error: fetchError } = await supabase
-                .from('weekly_tasks')
-                .select('*')
-                .eq('userId', userId);
+    try {
+        const now = new Date();
+        // بداية الأسبوع الحالي اللي احنا فيه دلوقتي
+        const currentWeekStart = startOfWeek(now, { weekStartsOn: 6 });
 
-            if (fetchError || !tasks) throw fetchError;
+        // نهاية الأسبوع اللي فات هي بالضبط قبل بداية الأسبوع الحالي بـ ملي ثانية
+        const lastWeekEnd = new Date(currentWeekStart.getTime() - 1);
+        const lastWeekStart = startOfWeek(lastWeekEnd, { weekStartsOn: 6 });
 
-            const snapshot = {
-                user_id: userId,
-                week_start: weekStart.toISOString(),
-                week_end: weekEnd.toISOString(),
-                week_data: tasks.map(t => ({
-                    id: t.id,
-                    content: t.content,
-                    days: t.days
-                })),
-                archived_at: new Date().toISOString()
-            };
+        const resetDays = { Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false, Sun: false };
 
-            const { error: snapshotError } = await supabase.from('weekly_snapshots').insert(snapshot);
-            if (snapshotError) throw snapshotError;
+        // 1. جلب المهام الحالية
+        const { data: tasks, error: fetchError } = await supabase
+            .from('weekly_tasks')
+            .select('*')
+            .eq('userId', userId); // تأكد من اسم العمود userId أو user_id
 
-            const { error: updateError } = await supabase
-                .from('weekly_tasks')
-                .update({ days: resetDays })
-                .eq('userId', userId);
+        if (fetchError) throw fetchError;
 
-            if (updateError) throw updateError;
+        // لو مفيش مهام، مفيش داعي للأرشفة، بس نرجع success
+        if (!tasks || tasks.length === 0) return { success: true };
 
-            return { success: true };
-        } catch (error) {
-            console.error("Error in weekly reset:", error);
-            return { success: false };
-        }
+        // 2. تجهيز السناب شوت
+        const snapshot = {
+            user_id: userId,
+            week_start: lastWeekStart.toISOString(),
+            week_end: lastWeekEnd.toISOString(),
+            week_data: tasks.map(t => ({
+                id: t.id,
+                content: t.content,
+                days: t.days
+            })),
+            archived_at: now.toISOString()
+        };
 
+        // 3. تنفيذ العمليات في الداتابيز
+        // أرشفة الأسبوع القديم
+        const { error: snapshotError } = await supabase.from('weekly_snapshots').insert(snapshot);
+        if (snapshotError) throw snapshotError;
 
+        // تصفير الأيام للأسبوع الجديد
+        const { error: updateError } = await supabase
+            .from('weekly_tasks')
+            .update({ days: resetDays })
+            .eq('userId', userId);
 
-    } else {
+        if (updateError) throw updateError;
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error in weekly reset:", error);
         return { success: false };
     }
-    //  else {
-    //     try {
-    //         const tasks = await WeeklyTasksService.fetchTasks(undefined)
-
-    //         if (!tasks || tasks.length === 0) return { success: true };
-
-    //         const snapshot = {
-    //             user_id: 'guest',
-    //             week_start: weekStart.toISOString(),
-    //             week_end: weekEnd.toISOString(),
-    //             week_data: tasks.map(t => ({ id: t.id, content: t.content, days: t.days })),
-    //             archived_at: new Date().toISOString()
-    //         };
-
-    //         const existingSnapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) || '[]');
-    //         existingSnapshots.push(snapshot);
-    //         localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(existingSnapshots));
-    //         const updatedTasks = tasks.map(task => ({
-    //             ...task,
-    //             days: resetDays
-    //         }));
-
-    //         // حفظ المهام بعد التصفير في الـ Local Storage بنفس المفتاح اللي الـ Service بتستخدمه
-    //         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-
-    //         return { success: true };
-    //     } catch (error) {
-    //         console.error("Error in weekly reset (Local):", error);
-    //         return { success: false };
-    //     }
-
-    // }
 };
