@@ -36,7 +36,7 @@ export default function Home() {
     <section className="min-h-screen bg-secondary py-8 pt-18">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-[90%] mx-auto px-4">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
           <div className="mb-8 flex justify-between items-center">
 

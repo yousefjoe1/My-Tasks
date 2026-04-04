@@ -74,17 +74,10 @@ const DashBoard = () => {
                     loading && <div className='loader' />
                 }
 
-                {
-                    snapData && snapData.length === 0 && (
-                        <div>
-                            <h2 className='text-2xl text-brand-text'>No History</h2>
-                        </div>
-                    )
-                }
 
                 {/* --- Global Stats Hero Card --- */}
                 {snapData && snapData.length > 0 && (
-                    <div className="relative overflow-hidden rounded-3xl bg-brand-secondary p-8 text-white shadow-2xl shadow-brand/20 mb-8">
+                    <div className="relative overflow-hidden rounded-3xl bg-brand-secondary p-8 text-primary border shadow-2xl shadow-brand/20 mb-8">
                         {/* خلفية جمالية خفيفة */}
                         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
 
@@ -94,25 +87,25 @@ const DashBoard = () => {
                                     <Trophy className="w-10 h-10 text-warning" />
                                     Your Legend
                                 </h1>
-                                <p className="text-white/80 font-medium">Tracking your journey through {totalWeeks} archived weeks</p>
+                                <p className="text-primary/80 font-medium">Tracking your journey through {totalWeeks} archived weeks</p>
                             </div>
 
                             <div className="flex gap-4 w-full md:w-auto">
-                                <div className="flex-1 md:flex-none bg-white/20 backdrop-blur-md rounded-2xl p-4 min-w-[140px]">
-                                    <p className="text-sm uppercase font-bold text-white/70 mb-1">Total Habits Done</p>
+                                <div className="flex-1 md:flex-none bg-primary/20 border-2 border-primary backdrop-blur-md rounded-2xl p-4 min-w-[140px]">
+                                    <p className="text-sm uppercase font-bold text-primary/70 mb-1">Total Habits Done</p>
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-3xl font-black">{totalLifetimeCompleted}</span>
                                         <CheckCircle2 className="w-4 h-4 text-success" />
                                     </div>
                                 </div>
 
-                                <div className="flex-1 md:flex-none bg-white/20 backdrop-blur-md rounded-2xl p-4 min-w-[140px]">
-                                    <p className="text-sm uppercase font-bold text-white/70 mb-1">Consistency Score</p>
+                                {/* <div className="flex-1 md:flex-none bg-white/20 backdrop-blur-md rounded-2xl p-4 min-w-[140px]">
+                                    <p className="text-sm uppercase font-bold text-primary/70 mb-1">Consistency Score</p>
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-3xl font-black">{Math.min(100, (totalLifetimeCompleted / (totalWeeks || 1) * 2)).toFixed(0)}%</span>
                                         <Flame className="w-4 h-4 text-warning" />
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -143,7 +136,7 @@ const DashBoard = () => {
                             : 0;
 
                         return (
-                            <div key={snap.id} className="mb-12 border-t-2 border-brand pt-8 shadow-md rounded-2xl shadow-brand">
+                            <div key={snap.id} className="mb-12 border-2 p-1 border-primary pt-8 shadow-md rounded-3xl shadow-brand">
 
                                 <div className="flex items-center gap-4 mb-8">
                                     <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent to-brand/20"></div>
