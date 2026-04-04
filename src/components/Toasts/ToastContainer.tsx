@@ -26,7 +26,7 @@ const ToastContainer = ({ toasts, removeToast }: { toasts: Toast[]; removeToast:
             {toasts.map(toast => {
                 const config: Record<ToastType, ToastConfig> = {
                     success: { icon: CheckCircle, bg: 'bg-green-400' },
-                    error: { icon: AlertCircle, bg: 'bg-red-500' },
+                    error: { icon: AlertCircle, bg: 'bg-red-400 text-white' },
                     warning: { icon: AlertTriangle, bg: 'bg-yellow-500' },
                     info: { icon: Info, bg: 'bg-blue-500' }
                 };

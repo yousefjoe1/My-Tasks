@@ -53,7 +53,7 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
         }
     };
     return (
-        <div className="lg:max-w-md w-[95%] mx-auto p-8 rounded-2xl border border-brand-border shadow-2xl ring-1 ring-brand-border/50">
+        <div className="lg:max-w-md bg-brand-bg w-[95%] mx-auto p-8 rounded-2xl border border-brand-border">
             <div className="flex flex-col items-center mb-8">
                 {/* Icon */}
                 <div className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-brand-primary/20">
@@ -123,7 +123,7 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
             <div className="mt-6 text-center">
                 <button
                     onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-sm text-brand-text-muted hover:text-brand-primary transition-colors"
+                    className="text-sm text-brand-primary transition-colors"
                 >
                     {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
                 </button>

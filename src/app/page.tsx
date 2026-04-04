@@ -11,6 +11,7 @@ import { useCallback, useMemo } from 'react';
 import ErrorBoundary from '@/common/ErrorBoundry';
 import ToastContainer from '@/components/Toasts/ToastContainer';
 import { useToast } from '@/components/Toasts/useToast';
+import OnboardingWrapper from '@/common/OnboardingWrapper';
 
 export default function Home() {
   const { error, success, toast, toasts, removeToast } = useToast()
@@ -19,7 +20,7 @@ export default function Home() {
     success,
     toast,
   });
-  const { tasks, loading, syncLoading } = useSelector((state: RootState) => state.weeklyTasks);
+  const { tasks, loading } = useSelector((state: RootState) => state.weeklyTasks);
 
 
   const handleDelete = useCallback(
@@ -37,26 +38,23 @@ export default function Home() {
 
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">
-              Weekly Tasks
-            </h1>
-            <p className="text-secondary">
-              A simple weekly habit tracker that resets automatically every week
-            </p>
+          <div className="mb-8 flex justify-between items-center">
+
+            <div>
+              <h1 className="text-3xl font-bold text-primary mb-2">
+                Weekly Tasks
+              </h1>
+              <p className="text-secondary">
+                A simple weekly habit tracker that resets automatically every week
+              </p>
+
+            </div>
+            <OnboardingWrapper />
           </div>
 
 
 
           <div className="space-y-4 relative">
-            {
-              syncLoading && <div className='z-10 rounded-xl absolute inset-0 h-full w-full flex flex-col items-center justify-start bg-brand-text-secondary/50'>
-                <div className="loader"></div>
-                <h2 className='bg-brand-secondary p-3 lg:text-3xl rounded-2xl'>
-                  Kindly wait until Syncing Finish
-                </h2>
-              </div>
-            }
             <AddBlock success={success} toast={toast} error={error} />
             {
               normalTasks?.map((block) => (

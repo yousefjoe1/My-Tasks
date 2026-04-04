@@ -93,7 +93,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                     setContent(task.content);
                     setIsEditing(false);
                   }}
-                  className="px-4 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-secondary active:scale-95 transition-all font-medium shadow-sm"
+                  className="px-4 py-2 text-sm bg-secondary text-primary rounded-lg hover:bg-secondary active:scale-95 transition-all font-medium shadow-sm"
                 >
                   Cancel
                 </button>

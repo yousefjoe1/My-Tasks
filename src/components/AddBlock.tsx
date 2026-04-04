@@ -64,16 +64,16 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center justify-center gap-2 w-full p-2 glass-card border-brand-primary text-primary hover:bg-brand-secondary transition-all duration-300 group"
+          className="flex items-center justify-center gap-2 w-full p-2 glass-card border-brand-primary text-primary hover:bg-brand-secondary transition-all duration-300 group bg-brand "
         >
-          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-          <span className="font-bold">إضافة مهمة جديدة</span>
+          <Plus className="w-5 h-5  group-hover:rotate-90 transition-transform duration-300 text-white" />
+          <span className="font-bold text-white">إضافة مهمة جديدة</span>
         </button>
       ) : (
         /* القسم الخاص بالفورم مع Animation الـ Accordion */
         <section
           className={`
-            p-2 glass-card border-brand-primary rounded-2xl shadow-lg space-y-4
+            p-2 border border-primary rounded-2xl space-y-4
             animate-in fade-in slide-in-from-top-4 duration-300
           `}
         >
@@ -125,10 +125,10 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
                 }
                 addNewTask(taskName);
               }}
-              className="mt-2 p-2 lg:text-2xl text-sm bg-brand text-white w-full rounded-xl font-bold shadow-lg shadow-brand/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex justify-center items-center gap-2"
+              className="mt-2 p-2 lg:text-xl text-sm bg-brand text-white w-full rounded-xl font-bold shadow-lg shadow-brand/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex justify-center items-center gap-2"
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
-              <span>تأكيد الإضافة</span>
+              <span> إضافة</span>
             </button>
           </div>
         </section>

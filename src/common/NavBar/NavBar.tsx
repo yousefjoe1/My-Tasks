@@ -1,6 +1,6 @@
 'use client'
-import { useRef, useState } from "react";
-import { LoaderIcon, LogIn, LogOut, Menu, X } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { LoaderIcon, LogIn, LogOut, Menu, X, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import ToggleMode from "./ToggleMode";
 import LoginModal from "../Modals/LoginModal";
@@ -18,56 +18,55 @@ const navLinks = [
 export default function Navbar() {
   const { user, loading: authLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { error } = useToast()
-
+  const [showConfirm, setShowConfirm] = useState(false); // حالة إظهار التأكيد
+  const { error } = useToast();
   const dialogRef = useRef<HTMLDialogElement>(null);
-
+  const confirmRef = useRef<HTMLDivElement>(null); // للتعامل مع الإغلاق عند الضغط بره
   const [loading, setLoading] = useState(false);
+
+  // إغلاق قائمة التأكيد لو ضغطت في أي مكان بره
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (confirmRef.current && !confirmRef.current.contains(event.target as Node)) {
+        setShowConfirm(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     setLoading(true);
     try {
       const { error: err } = await supabase.auth.signOut();
-      localStorage.removeItem('sb-atfsfrwxmhrzlvmwxayi-auth-token')
-      window.location.reload()
+      localStorage.removeItem('sb-atfsfrwxmhrzlvmwxayi-auth-token');
+
       if (err) {
-        error('error logging out')
-        error(err.message)
+        error(err.message);
+      } else {
+        window.location.reload();
       }
-
-      if (err && err.status !== 404 && err.code !== 'session_not_found') {
-
-        throw error;
-      }
-
-      console.log("Logged out successfully");
     } catch (err) {
       console.error("Logout error details:", err);
     } finally {
       LocalStorageStrategy.resetSync();
       localStorage.removeItem('supabase.auth.token');
-
       setLoading(false);
+      setShowConfirm(false);
     }
   };
-
 
   return (
     <>
       <nav className="fixed w-full top-0 z-50 bg-primary border-b border-primary shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo/Brand */}
             <div className="shrink-0">
-              <Link
-                href="/"
-                className="text-2xl font-bold text-brand hover:opacity-80 transition-opacity"
-              >
+              <Link href="/" className="text-2xl font-bold text-brand hover:opacity-80 transition-opacity">
                 Just Today
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               {navLinks.map((link) => (
                 <Link
@@ -81,54 +80,71 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-2 rounded-lg text-primary hover:bg-secondary transition-colors"
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <div className="space-x-4 flex items-center">
+
+            <div className="space-x-4 flex items-center relative">
               <ToggleMode />
 
-              {
-                authLoading ? <LoaderIcon className="animate-spin" /> :
-                  <>
-                    {
-                      user == null ?
-                        <button
-                          title="Log in"
-                          className=" p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
+              {authLoading ? (
+                <LoaderIcon className="animate-spin" />
+              ) : (
+                <>
+                  {user == null ? (
+                    <button
+                      title="Log in"
+                      className="p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
+                      onClick={() => dialogRef?.current?.showModal()}
+                    >
+                      <LogIn />
+                    </button>
+                  ) : (
+                    <div className="relative" ref={confirmRef}>
+                      <button
+                        title="Logout"
+                        className={`p-3 rounded-full transition-colors shadow-lg border border-primary ${showConfirm ? 'bg-tertiary border-brand' : 'bg-secondary hover:bg-tertiary'
+                          }`}
+                        onClick={() => setShowConfirm(!showConfirm)}
+                      >
+                        <LogOut />
+                      </button>
 
-                          onClick={() => dialogRef?.current?.showModal()}>
-                          <LogIn />
-                        </button>
-                        :
-                        <button
-                          title="Logout"
-                          disabled={loading}
-                          className="p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
-
-                          onClick={handleLogout}>
-
-                          {loading ? <LoaderIcon className="animate-spin" /> : <LogOut className="" />}
-                        </button>
-
-                    }
-                  </>
-              }
-
+                      {/* ديف التأكيد الصغير */}
+                      {showConfirm && (
+                        <div className="absolute right-0 mt-3 w-48 glass-card border-brand-primary p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200 z-50">
+                          <p className="text-xs text-primary font-bold mb-3 text-center italic">هل تريد تسجيل الخروج؟</p>
+                          <div className="flex flex-col gap-2">
+                            <button
+                              disabled={loading}
+                              onClick={handleLogout}
+                              className="w-full py-2 bg-brand-error/10 text-brand-error hover:bg-brand-error hover:text-white rounded-lg text-xs font-black transition-all flex justify-center items-center gap-2"
+                            >
+                              {loading ? <LoaderIcon className="animate-spin h-3 w-3" /> : "نعم، خروج"}
+                            </button>
+                            <button
+                              onClick={() => setShowConfirm(false)}
+                              className="w-full py-2 bg-tertiary text-primary hover:bg-secondary rounded-lg text-xs font-medium transition-all"
+                            >
+                              إلغاء
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className="md:hidden pb-4 space-y-2">
+            <div className="md:hidden pb-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -144,17 +160,18 @@ export default function Navbar() {
         </div>
       </nav>
 
-
       {/* html dialog */}
-
-      <dialog ref={dialogRef}
-        className="fixed w-[95%] lg:w-max top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-brand-bg">
-        <LoginModal closeModal={() => dialogRef?.current?.close()} />
-        <button
-          className="p-3 rounded-full w-full text-brand-text bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
-          onClick={() => dialogRef?.current?.close()}>Close</button>
+      <dialog ref={dialogRef} className="fixed w-[95%] bg-transparent lg:w-max top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 outline-none backdrop:bg-black/40 backdrop:backdrop-blur-sm">
+        <div className="flex flex-col gap-3">
+          <LoginModal closeModal={() => dialogRef?.current?.close()} />
+          <button
+            className="p-3 rounded-2xl w-full text-brand-error bg-secondary hover:bg-brand-error/10 transition-colors shadow-lg border border-primary font-bold"
+            onClick={() => dialogRef?.current?.close()}
+          >
+            إغلاق
+          </button>
+        </div>
       </dialog>
-
     </>
   );
 }

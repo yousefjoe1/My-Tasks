@@ -102,7 +102,7 @@ export default function PushNotificationManager() {
                     </p>
                     <button
                         onClick={subscribeToPush}
-                        className="whitespace-nowrap px-6 py-2 bg-brand hover:opacity-90 text-white font-semibold rounded-xl transition-all active:scale-[0.98] shadow-md shadow-blue-500/20"
+                        className="whitespace-nowrap px-6 py-2 hover:opacity-90 text-primary font-semibold rounded-xl transition-all active:scale-[0.98]bg-primary border border-primary"
                     >
                         تفعيل الاشعارات
                     </button>
