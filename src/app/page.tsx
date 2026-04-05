@@ -36,12 +36,12 @@ export default function Home() {
     <section className="min-h-screen bg-secondary py-8 pt-18">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
-      <div className="max-w-[90%] mx-auto px-4">
+      <div className="max-w-[95%] mx-auto">
         <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
           <div className="mb-8 flex justify-between items-center">
 
             <div>
-              <h1 className="text-3xl font-bold text-primary mb-2">
+              <h1 className="lg:text-3xl text-xl font-bold text-primary mb-2">
                 Weekly Tasks
               </h1>
             </div>

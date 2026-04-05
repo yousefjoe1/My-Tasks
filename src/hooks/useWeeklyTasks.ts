@@ -25,6 +25,7 @@ export function useWeeklyTasks({
   const dispatch = useDispatch()
 
   const { user } = useAuth();
+  console.log("🚀 ~ useWeeklyTasks ~ user:", user)
 
   const seedEssentialTasks = async () => {
     const defaults = [
@@ -78,8 +79,12 @@ export function useWeeklyTasks({
   }
 
   const Sync = async () => {
+    try {
+      await checkAndSyncReset(user?.id as string)
 
-    await checkAndSyncReset(user?.id as string)
+    } catch (error) {
+      console.error("Sync Error:", error);
+    }
 
     getTasks()
     dispatch(setSyncLoading(false))
@@ -87,54 +92,30 @@ export function useWeeklyTasks({
 
 
   const checkAndSyncReset = async (userId: string) => {
-    // 1. شيك على اللوكال الأول (عشان السرعة)
+    // 1. اخرج فوراً لو مفيش userId عشان تتجنب إرسال "undefined" للداتابيز
+    if (!userId || userId === "undefined") return;
+
+    // 2. شيك على اللوكال ستورج
     const localLastReset = localStorage.getItem(`last_reset_${userId}`);
     const now = new Date();
 
-    // إذا كان اللوكال بيقول إننا عملنا ريسيت في نفس الأسبوع، اخرج فوراً
     if (localLastReset && isSameWeek(new Date(localLastReset), now, { weekStartsOn: 6 })) {
       return { alreadyDone: true };
     }
 
     try {
-      // 2. إذا اللوكال قديم أو مش موجود، اسأل الداتابيز
+      // 3. اسأل الداتابيز (دلوقتي الـ userId مضمون إنه موجود)
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('last_snapshot_week')
-        .eq('id', userId)
-        .maybeSingle(); // استخدام maybeSingle لتجنب خطأ PGRST116
+        .eq('id', userId) // هنا الـ id هيكون سليم
+        .maybeSingle();
 
       if (error) throw error;
 
-      // 3. قارن تاريخ الداتابيز بالتاريخ الحالي
-      if (profile?.last_snapshot_week) {
-        const dbLastReset = new Date(profile.last_snapshot_week);
-
-        if (isSameWeek(dbLastReset, now, { weekStartsOn: 6 })) {
-          // الجهاز التاني عملها خلاص! حدث اللوكال عندك واقفل
-          localStorage.setItem(`last_reset_${userId}`, dbLastReset.toISOString());
-          return { success: true, syncedFromDB: true };
-        }
-      }
-
-      // 4. لو وصلنا هنا، يبقى لا اللوكال ولا الداتابيز فيهم ريسيت للأسبوع ده
-      // نادى دالة الأرشفة والريسيت اللي عملناها
-      const result = await handleWeeklyReset(userId);
-
-      if (result.success) {
-        // مهم جداً: حدث تاريخ الأرشفة في الداتابيز عشان الجهاز التاني يشوفه
-        await supabase
-          .from('profiles')
-          .update({ last_snapshot_week: now.toISOString() })
-          .eq('id', userId);
-
-        localStorage.setItem(`last_reset_${userId}`, now.toISOString());
-      }
-
-      return result;
-
+      // ... بقية الكود الخاص بك
     } catch (e) {
-      console.error("Sync Error:", e);
+      console.error("Sync Error Details:", e);
       return { success: false };
     }
   };
