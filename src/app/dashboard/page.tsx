@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { WeeklyTasksSync } from '@/services/weeklyTasksSyncService';
 import { getWeekDays } from '@/lib/utils';
 import { format } from 'date-fns';
-import { CheckCircle2, Flame, Target, Trophy } from 'lucide-react';
+import { CheckCircle2, Target, Trophy } from 'lucide-react';
 
 const DashBoard = () => {
     const { user, loading: authLoading } = useAuth(); // تأكد إن useAuth بترجع حالة تحميل الـ Auth

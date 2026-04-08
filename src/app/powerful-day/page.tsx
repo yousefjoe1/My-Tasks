@@ -20,7 +20,7 @@ export default function PowerfulDay() {
 
     // فلترة المهام الأساسية (is_essential)
     const essentialTasks = useMemo(() =>
-        tasks?.filter((t: WeeklyTask) => t.is_essential === true) || [],
+        tasks?.filter((t: WeeklyTask) => t.is_essential !== true) || [],
         [tasks]);
 
     const handleDelete = useCallback((id: string) => {

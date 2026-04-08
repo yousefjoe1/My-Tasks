@@ -20,7 +20,7 @@ export default function Home() {
     success,
     toast,
   });
-  const { tasks, loading } = useSelector((state: RootState) => state.weeklyTasks);
+  const { tasks, loading, syncLoading } = useSelector((state: RootState) => state.weeklyTasks);
 
 
   const handleDelete = useCallback(
@@ -29,7 +29,7 @@ export default function Home() {
     }
     , [deleteBlock])
   const normalTasks = useMemo(() =>
-    tasks?.filter((t: WeeklyTask) => t.is_essential !== true) || [],
+    tasks?.filter((t: WeeklyTask) => t.is_essential == true) || [],
     [tasks]);
 
   return (
@@ -52,6 +52,12 @@ export default function Home() {
 
           <div className="space-y-4 relative">
             <AddBlock success={success} toast={toast} error={error} />
+            {
+              syncLoading &&
+              <div className="rounded-2xl flex justify-center items-center inset-0 w-full h-full bg-brand-text-muted/50">
+                <div className="loader-2" />
+              </div>
+            }
             {
               normalTasks?.map((block) => (
                 <ErrorBoundary

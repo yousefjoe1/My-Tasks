@@ -1,6 +1,6 @@
 'use client'
 import { useRef, useState, useEffect } from "react";
-import { LoaderIcon, LogIn, LogOut, Menu, X, AlertCircle } from "lucide-react";
+import { LoaderIcon, LogIn, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import ToggleMode from "./ToggleMode";
 import LoginModal from "../Modals/LoginModal";
@@ -10,9 +10,9 @@ import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStra
 import { useToast } from "@/components/Toasts/useToast";
 
 const navLinks = [
-  { name: "Main", href: "/" },
+  { name: "Powerful Day ⚡", href: "/" },
   { name: "My Progress", href: "/dashboard" },
-  { name: "Powerful Day ⚡", href: "/powerful-day" },
+  { name: "General Tasks", href: "/powerful-day" },
 ];
 
 export default function Navbar() {

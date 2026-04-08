@@ -5,6 +5,10 @@
   --color-brand-bg: #ffffff;
   --color-brand-secondary: #f9fafb;
   --color-brand-tertiary: #f3f4f6;
+  --color-primary-2: #60a5fa;
+  /* أزرق سماوي هادئ */
+  --color-primary-2-dark: #3b82f6;
+  /* درجة أغمق للحافة */
 
   --color-brand-text: #0f172a;
   --color-brand-text-secondary: #4b5563;
@@ -23,6 +27,8 @@
   --color-brand-bg: #111827;
   --color-brand-secondary: #1f2937;
   --color-brand-tertiary: #374151;
+  --color-primary-2: #60a5fa;
+  --color-primary-2-dark: #3b82f6;
 
   --color-brand-text: #f9fafb;
   --color-brand-text-secondary: #e5e7eb;
@@ -81,6 +87,96 @@
     @apply rounded-2xl shadow-xl transition-all duration-300;
   }
 }
+
+.pushable {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+  transition: filter 250ms;
+  user-select: none;
+  touch-action: manipulation;
+  width: 100%;
+  /* عشان ياخد عرض الحاوية */
+}
+
+.shadow-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: hsl(0deg 0% 0% / 0.25);
+  will-change: transform;
+  transform: translateY(2px);
+  transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
+}
+
+.edge-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  /* بيستخدم لون البراند بس بيغمقه شوية عشان يبان إنه حافة 3D */
+  background: linear-gradient(to left,
+      color-mix(in srgb, var(--color-brand-primary), black 30%) 0%,
+      color-mix(in srgb, var(--color-brand-primary), black 10%) 8%,
+      color-mix(in srgb, var(--color-brand-primary), black 10%) 92%,
+      color-mix(in srgb, var(--color-brand-primary), black 30%) 100%);
+}
+
+.front-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  padding: 10px 20px;
+  /* صغرنا الـ padding شوية عشان يبقى أرق */
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  /* بيستخدم لون الـ Primary اللي أنت معرفه في كل مود */
+  background: var(--color-brand-primary);
+  will-change: transform;
+  transform: translateY(-4px);
+  transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
+}
+
+.pushable:hover {
+  filter: brightness(110%);
+}
+
+.pushable:hover .front-btn {
+  transform: translateY(-6px);
+  transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.pushable:active .front-btn {
+  transform: translateY(-2px);
+  transition: transform 34ms;
+}
+
+.pushable:hover .shadow-btn {
+  transform: translateY(4px);
+  transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.pushable:active .shadow-btn {
+  transform: translateY(1px);
+  transition: transform 34ms;
+}
+
+.pushable:focus:not(:focus-visible) {
+  outline: none;
+}
+
 
 /* Custom Utility Classes mapped to your brand variables */
 .bg-primary {

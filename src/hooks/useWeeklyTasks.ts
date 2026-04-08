@@ -6,8 +6,7 @@ import { useDispatch } from "react-redux";
 import { setTasks, setLoading, updateTask, setError, removeTask, setSyncLoading } from "@/store/weeklyTasksSlice";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import AsmahAllah from "@/features/Allah-names/services/allah-names";
-import { isSameWeek, startOfWeek } from "date-fns";
-import { handleWeeklyReset } from "@/services/snapShotService";
+import { isSameWeek, } from "date-fns";
 import { supabase } from "@/lib/supabase/client";
 
 
@@ -25,7 +24,6 @@ export function useWeeklyTasks({
   const dispatch = useDispatch()
 
   const { user } = useAuth();
-  console.log("🚀 ~ useWeeklyTasks ~ user:", user)
 
   const seedEssentialTasks = async () => {
     const defaults = [
@@ -79,6 +77,8 @@ export function useWeeklyTasks({
   }
 
   const Sync = async () => {
+    dispatch(setSyncLoading(true))
+
     try {
       await checkAndSyncReset(user?.id as string)
 

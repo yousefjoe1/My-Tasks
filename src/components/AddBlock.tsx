@@ -1,5 +1,5 @@
 'use client';
-import { Loader2, Plus, X, ChevronDown } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import { useDispatch, useSelector } from "react-redux";
@@ -62,12 +62,13 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
     <div className="w-full space-y-3 overflow-hidden">
       {/* زر الفتح الأساسي - يظهر فقط عندما تكون الفورم مغلقة */}
       {!isOpen ? (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="flex items-center justify-center gap-2 w-full p-2 glass-card border-brand-primary text-primary hover:bg-brand-secondary transition-all duration-300 group bg-brand "
-        >
-          <Plus className="w-5 h-5  group-hover:rotate-90 transition-transform duration-300 text-white" />
-          <span className="font-bold text-white">إضافة مهمة جديدة</span>
+        <button onClick={() => setIsOpen(true)} className="pushable group mt-6">
+          <span className="shadow-btn"></span>
+          <span className="edge-btn"></span>
+          <span className="front-btn">
+            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300 text-white" />
+            <span>إضافة مهمة جديدة</span>
+          </span>
         </button>
       ) : (
         /* القسم الخاص بالفورم مع Animation الـ Accordion */
@@ -125,10 +126,14 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
                 }
                 addNewTask(taskName);
               }}
-              className="mt-2 p-2 lg:text-xl text-sm bg-brand text-white w-full rounded-xl font-bold shadow-lg shadow-brand/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex justify-center items-center gap-2"
+              className="pushable"
             >
-              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
-              <span> إضافة</span>
+              <span className="shadow-btn"></span>
+              <span className="edge-btn" style={{ background: 'linear-gradient(to left, #064e3b 0%, #059669 8%, #059669 92%, #064e3b 100%)' }}></span>
+              <span className="front-btn" style={{ background: '#10b981' }}>
+                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
+                <span>إضافة</span>
+              </span>
             </button>
           </div>
         </section>
