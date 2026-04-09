@@ -12,7 +12,7 @@ import { useToast } from "@/components/Toasts/useToast";
 const navLinks = [
   { name: "Powerful Day ⚡", href: "/" },
   { name: "My Progress", href: "/dashboard" },
-  { name: "General Tasks", href: "/powerful-day" },
+  { name: "General Tasks", href: "/general-tasks" },
 ];
 
 export default function Navbar() {
@@ -116,7 +116,7 @@ export default function Navbar() {
 
                       {/* ديف التأكيد الصغير */}
                       {showConfirm && (
-                        <div className="absolute right-0 mt-3 w-48 glass-card border-brand-primary p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200 z-50">
+                        <div className="absolute left-0 mt-3 w-48 glass-card border-brand-primary p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200 z-50">
                           <p className="text-xs text-primary font-bold mb-3 text-center italic">هل تريد تسجيل الخروج؟</p>
                           <div className="flex flex-col gap-2">
                             <button

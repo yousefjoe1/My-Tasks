@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { ChevronRight, Bell, Target, Zap, HelpCircle, X, LayoutDashboard, ShieldCheck } from 'lucide-react';
+import { ChevronRight, Bell, Target, Zap, HelpCircle, X, LayoutDashboard, ShieldCheck, Smartphone } from 'lucide-react';
 
 export default function OnboardingWrapper() {
     const [showModal, setShowModal] = useState(false);
@@ -30,9 +30,14 @@ export default function OnboardingWrapper() {
         },
         {
             title: "عاداتك الأساسية دايماً قدامك",
-            desc: "خصصنا صفحة للمهام الأساسية عشان تضمن إنك محافظ على أصل يومك مهما حصل.",
+            desc: "خصصنا الصفحة الرئيسية للمهام الأساسية عشان تضمن إنك محافظ على أصل يومك مهما حصل.",
             icon: <ShieldCheck className="text-brand-success w-14 h-14" />
-        }
+        },
+        {
+            title: "تطبيقك معاك في كل مكان",
+            desc: "تقدر تثبت التطبيق على شاشة موبايلك أو الكمبيوتر بكل سهولة ، عشان توصله أسرع .",
+            icon: <Smartphone className="text-brand w-14 h-14" />
+        },
     ];
 
     const handleNext = () => {
@@ -79,7 +84,7 @@ export default function OnboardingWrapper() {
                             <h2 className="text-2xl font-black text-primary tracking-tight">
                                 {slides[step].title}
                             </h2>
-                            <p className="text-primary text-sm leading-relaxed px-2 font-medium">
+                            <p className="text-primary text-lg leading-relaxed px-2 font-medium">
                                 {slides[step].desc}
                             </p>
                         </div>

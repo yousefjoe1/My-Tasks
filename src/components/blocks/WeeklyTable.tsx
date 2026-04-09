@@ -120,9 +120,9 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
           )}
         </div>
 
-        <h3 className="p-2 lg:text-xl mb-2">Task Name: {content || "Untitled Task"}</h3>
+        <h3 className="p-2 lg:text-xl mb-2">- {content || "Untitled Task"}</h3>
         {task.description && (
-          <p className="text-muted text-sm mt-1 italic">
+          <p className="text-muted text-sm m-1 italic">
             {task.description}
           </p>
         )}

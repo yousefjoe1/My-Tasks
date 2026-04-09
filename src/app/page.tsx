@@ -33,7 +33,7 @@ export default function Home() {
     [tasks]);
 
   return (
-    <section className="min-h-screen bg-secondary py-8 pt-18">
+    <section className="min-h-screen bg-secondary py-8 pt-5">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
       <div className="max-w-[95%] mx-auto">
@@ -54,10 +54,11 @@ export default function Home() {
             <AddBlock success={success} toast={toast} error={error} />
             {
               syncLoading &&
-              <div className="rounded-2xl flex justify-center items-center inset-0 w-full h-full bg-brand-text-muted/50">
-                <div className="loader-2" />
+              <div className="flex justify-center items-center">
+                <div className="loader-v3" />
               </div>
             }
+
             {
               normalTasks?.map((block) => (
                 <ErrorBoundary
