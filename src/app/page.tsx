@@ -37,7 +37,7 @@ export default function Home() {
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
       <div className="max-w-[95%] mx-auto">
-        <div className="bg-primary rounded-lg shadow-sm border border-primary p-6">
+        <div className="bg-primary rounded-2xl shadow-sm p-6">
           <div className="mb-8 flex justify-between items-center">
 
             <div>

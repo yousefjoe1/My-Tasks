@@ -5,6 +5,7 @@ import React, { useRef, useState } from "react";
 import { Edit, Loader, Trash } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import TodayBadge from "@/common/TodayBadge";
 
 
 interface WeeklyTableProps {
@@ -50,6 +51,8 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
       setIsEditing(false);
     }
   };
+  const today = new Date();
+  const todayDayName = today.toLocaleDateString('en-US', { weekday: 'short' }); // "Wed" not "Wednesday"
 
   return (
     <>
@@ -160,34 +163,33 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                   <td
                     key={day}
                     className={[
-                      "p-2 border-r border-secondary last:border-r-0 align-middle transition-colors",
+                      "p-2 border-r relative border-secondary last:border-r-0 align-middle transition-colors",
                       task.days?.[day]
                         ? "bg-success/10 dark:bg-success/20"
                         : "bg-primary",
                     ].join(" ")}
                   >
-                    <button
-                      className={[
-                        "w-full h-full cursor-pointer transition-all duration-200 flex items-center justify-center group",
-                        "hover:bg-tertiary active:scale-95 min-h-[48px] rounded",
-                        task.days?.[day]
-                          ? "hover:bg-success/20"
-                          : "hover:bg-secondary",
-                      ].join(" ")}
-                      onClick={() => toggleDay(day)}
-                    >
-                      <div
-                        className={[
-                          "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200",
-                          "group-hover:scale-110 group-active:scale-95",
-                          task.days?.[day]
-                            ? "bg-success border-success text-white shadow-sm"
-                            : "border-muted text-transparent hover:border-success bg-brand-success/30",
-                        ].join(" ")}
+                    <div className="flex justify-center mb-3">
+                      {day === todayDayName && <TodayBadge />}
+
+                    </div>
+                    <div className="flex justify-center items-center">
+
+                      <button
+                        className={`day-btn-3d ${task.days?.[day] ? 'day-btn-3d-on' : 'day-btn-3d-off'}`}
+                        onClick={() => toggleDay(day)}
                       >
-                        <span className="font-bold text-sm">✓</span>
-                      </div>
-                    </button>
+                        <span className="day-btn-3d-shadow"></span>
+                        <span className="day-btn-3d-edge"></span>
+                        <div className="day-btn-3d-front">
+                          {task.days?.[day] ? (
+                            <span className="text-sm font-bold">✓</span>
+                          ) : (
+                            <span className="text-[10px] opacity-40">○</span>
+                          )}
+                        </div>
+                      </button>
+                    </div>
                   </td>
                 ))}
               </tr>

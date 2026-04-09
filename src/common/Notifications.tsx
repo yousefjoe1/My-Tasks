@@ -82,7 +82,7 @@ export default function PushNotificationManager() {
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="flex items-center gap-2 px-3 py-2 bg-tertiary text-secondary rounded-lg text-sm border border-secondary">
                         <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                        <span className="text-secondary font-medium">الاشعارات مفعله</span>
+                        <span className="text-secondary font-medium">هفكرك إن شاء الله</span>
                     </div>
 
                     <div className="flex gap-3">
@@ -104,7 +104,7 @@ export default function PushNotificationManager() {
                         onClick={subscribeToPush}
                         className="whitespace-nowrap px-6 py-2 hover:opacity-90 text-primary font-semibold rounded-xl transition-all active:scale-[0.98]bg-primary border border-primary"
                     >
-                        تفعيل الاشعارات
+                        تحب افكرك ؟
                     </button>
                 </div>
             )}

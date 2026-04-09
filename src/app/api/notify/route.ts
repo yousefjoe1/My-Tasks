@@ -70,7 +70,7 @@ const zikr = [
     "اللهم اني اعوذ بك من زوال نعمتك , وتحول عافيتك , وفجاءة نقمتك , وجميع سخطك",
     "اللهم اني اعوذ بك من الجبن , واعوذ بك من البخل , واعوذ بك من الهرم , واعوذ بك من فتنة الدنيا وعذاب القبر",
     "اللهم إني اسألك الهدي و التقي و العفاف و الغني",
-    ""
+    "اللهم صل وسلم وبارك على سيدنا محمد"
 ];
 
 
@@ -81,89 +81,6 @@ const sport = [
     "الفرق بين اللي وصل واللي لسه، هو إن اللي وصل مابطلش.. كمل يا بطل.",
     "صحتك هي رأس مالك الحقيقي، 10 دقايق رياضة كفيلة تغير مودك ويومك."
 ];
-
-// const morningIndex = 0;
-// const zikrIndex = 0;
-// const sportIndex = 0;
-
-
-// export async function GET() {
-//     const supabase = await createClient(
-//         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//         process.env.SUPABASE_SERVICE_ROLE_KEY!
-//     );
-
-//     // 1. حساب الوقت الحالي بتوقيت مصر (UTC+2)
-//     const now = new Date();
-//     const cairoHour = (now.getUTCHours() + 2) % 24;
-
-//     // 2. تحديد محتوى الرسالة بناءً على الـ Conditions المطلوبة
-//     let notificationContent = {
-//         title: "تذكير المهام 📝",
-//         body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!",
-//     };
-
-//     if (cairoHour === 23) { // 11 مساءً
-//         notificationContent = {
-//             title: "نهاية اليوم 💪",
-//             body: "افتكر مهماتك ي بطل.. راجع اللي خلص واللي لسه بكره.",
-//         };
-//     } else if (cairoHour === 16) { // 4 مساءً
-//         notificationContent = {
-//             title: "أذكار المساء ✨",
-//             body: "بسم الله الذي لا يضر مع اسمه شيئ في الارض ولا في السماء وهو السميع العليم (3 مرات)",
-//         };
-//     } else if (cairoHour === 5) { // 5 فجراً
-//         notificationContent = {
-//             title: "أذكار الصباح ☀️",
-//             body: "بسم الله الذي لا يضر مع اسمه شيئ في الارض ولا في السماء وهو السميع العليم (3 مرات)",
-//         };
-//     } else if (cairoHour === 10) { // 10 صباحاً
-//         notificationContent = {
-//             title: "بداية اليوم 🚀",
-//             body: "الحمد لله، إن شاء الله خير. حافظ على صلواتك وزد في حسناتك بذكر الله.",
-//         };
-//     }
-
-//     // 3. جلب المشتركين
-//     const { data: subs, error } = await supabase.from('push_subscriptions').select('*');
-//     if (error) console.error("Supabase Error:", error);
-
-//     if (subs && subs.length > 0) {
-//         const pushPromises = subs.map(sub =>
-//             webpush.sendNotification(
-//                 {
-//                     endpoint: sub.endpoint,
-//                     keys: { auth: sub.auth, p256dh: sub.p256dh }
-//                 },
-//                 JSON.stringify({
-//                     ...notificationContent,
-//                     icon: '/icon.png',
-//                     badge: '/badge.png',
-//                     vibrate: [200, 100, 200],
-//                     tag: 'task-reminder',
-//                     renotify: true,
-//                     data: { url: '/' }
-//                 })
-//             ).catch(async (err) => {
-//                 console.error("Push failed:", err.statusCode, sub.endpoint);
-//                 // حذف الاشتراكات المنتهية (410) أو غير الموجودة (404)
-//                 if (err.statusCode === 410 || err.statusCode === 404) {
-//                     await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
-//                 }
-//             })
-//         );
-
-//         await Promise.all(pushPromises);
-//     }
-
-//     return Response.json({
-//         success: true,
-//         notifiedCount: subs?.length || 0,
-//         cairoHour,
-//         timeSent: now.toISOString(),
-//     });
-// }
 
 export async function GET() {
     const supabase = await createClient(
@@ -193,19 +110,19 @@ export async function GET() {
             title: "مراجعة منتصف اليوم 🕒",
             body: "ها يا بطل، طمني عملت إيه في مهام النهاردة؟ لسه فيه وقت تخلص الباقي."
         };
-        url = '/'
+        url = '/general-tasks'
     } else if (cairoHour === 19) { // 7 مساءً
         notificationContent = {
             title: "وقت الرياضة 🏃‍♂️",
             body: sport[Math.floor(Math.random() * sport.length)],
         };
-        url = '/powerful-day'
+        url = '/'
     } else if (cairoHour === 16 || cairoHour === 5) { // 4 عصراً و 5 فجراً
         notificationContent = {
             title: cairoHour === 5 ? "أذكار الصباح ☀️" : "أذكار المساء ✨",
             body: azkarDayAndNight[Math.floor(Math.random() * azkarDayAndNight.length)],
         };
-        url = '/powerful-day'
+        url = '/general-tasks'
     } else if (cairoHour === 10) { // 10 صباحاً
         notificationContent = {
             title: "بداية اليوم 🚀",

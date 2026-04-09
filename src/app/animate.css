@@ -42,3 +42,94 @@
 .animate-toast-in {
     animation: slideIn 0.5s ease-out forwards;
 }
+
+/* New 3D Soft Style - Class: day-btn-3d */
+.day-btn-3d {
+    position: relative;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    user-select: none;
+    width: 36px;
+    height: 36px;
+    transition: filter 250ms;
+    margin: 0 auto;
+}
+
+/* الظل الخارجي الناعم */
+.day-btn-3d-shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    background: hsl(0deg 0% 0% / 0.15);
+    /* ظل خفيف جداً */
+    transform: translateY(2px);
+    filter: blur(2px);
+    will-change: transform;
+    transition: transform 200ms cubic-bezier(.3, .7, .4, 1);
+}
+
+/* سُمك الزرار (الحافة السفلية) */
+.day-btn-3d-edge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+}
+
+/* واجهة الزرار */
+.day-btn-3d-front {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    color: white;
+    will-change: transform;
+    transform: translateY(-5px);
+    /* الرفعة البارزة */
+    transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ألوان حالة OFF */
+.day-btn-3d-off .day-btn-3d-edge {
+    background: color-mix(in srgb, var(--color-brand-tertiary), black 20%);
+}
+
+.day-btn-3d-off .day-btn-3d-front {
+    background: var(--color-brand-tertiary);
+    color: var(--color-brand-text-muted);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ألوان حالة ON (Success) */
+.day-btn-3d-on .day-btn-3d-edge {
+    background: color-mix(in srgb, var(--color-brand-success), black 25%);
+}
+
+.day-btn-3d-on .day-btn-3d-front {
+    background: var(--color-brand-success);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        /* لمعة فوق */
+        inset 0 -1px 1px rgba(0, 0, 0, 0.1);
+    /* عمق خفيف تحت */
+}
+
+/* التفاعل */
+.day-btn-3d:hover .day-btn-3d-front {
+    transform: translateY(-6px);
+    filter: brightness(110%);
+}
+
+.day-btn-3d:active .day-btn-3d-front {
+    transform: translateY(-1px);
+}
