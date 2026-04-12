@@ -12,10 +12,11 @@ import ErrorBoundary from '@/common/ErrorBoundry';
 import ToastContainer from '@/components/Toasts/ToastContainer';
 import { useToast } from '@/components/Toasts/useToast';
 import OnboardingWrapper from '@/common/OnboardingWrapper';
+import { Loader2 } from 'lucide-react';
 
 export default function Home() {
   const { error, success, toast, toasts, removeToast } = useToast()
-  const { updateBlock, deleteBlock } = useWeeklyTasks({
+  const { updateBlock, deleteBlock, seedEssentialTasks } = useWeeklyTasks({
     error,
     success,
     toast,
@@ -37,7 +38,7 @@ export default function Home() {
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
       <div className="max-w-[95%] mx-auto">
-        <div className="bg-primary rounded-2xl shadow-sm p-6">
+        <div className="rounded-2xl shadow-sm p-6">
           <div className="mb-8 flex justify-between items-center">
 
             <div>
@@ -49,9 +50,32 @@ export default function Home() {
           </div>
 
 
+          <div className="mb-5 bg-primary rounded-2xl p-1 flex flex-col justify-between items-center gap-4 border-b border-secondary">
+            <div className="text-center md:text-left">
+              <h1 className="lg:text-4xl text-2xl font-black text-primary tracking-tight mb-2">
+                ⚡ Powerful Day
+              </h1>
+              <p className="text-secondary font-medium">
+                المهام الاساسية لبناء نسختك الأفضل
+              </p>
+            </div>
 
-          <div className="space-y-4 relative">
-            <AddBlock success={success} toast={toast} error={error} />
+            {normalTasks.length === 0 && !loading && (
+              <button
+                disabled={loading}
+                onClick={seedEssentialTasks}
+                className="bg-brand text-white lg:px-6 px-3 text-sm py-2 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg shadow-brand/20"
+              >
+                اضافة المهام الاساسية + {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              </button>
+            )}
+            <AddBlock success={success} toast={toast} error={error} isEssentialPage={true} />
+
+          </div>
+
+
+
+          <div className="space-y-4 relative bg-primary rounded-2xl p-3">
             {
               syncLoading &&
               <div className="flex justify-center items-center">

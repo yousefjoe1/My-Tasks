@@ -34,7 +34,7 @@ export default function PowerfulDay() {
             <div className="max-w-[90%] mx-auto">
                 <div className="glass-card p-2 border-primary">
 
-                    <div className="mb-5 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-secondary pb-6">
+                    {/* <div className="mb-5 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-secondary pb-6">
                         <div className="text-center md:text-left">
                             <h1 className="lg:text-4xl text-2xl font-black text-primary tracking-tight mb-2">
                                 ⚡ Powerful Day
@@ -53,7 +53,7 @@ export default function PowerfulDay() {
                                 اضافة المهام الاساسية + {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                             </button>
                         )}
-                    </div>
+                    </div> */}
 
                     <div className="space-y-6 relative">
                         {syncLoading && (

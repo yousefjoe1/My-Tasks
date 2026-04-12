@@ -8,6 +8,18 @@ export interface WeeklyTask {
   updated_at?: string;
   is_essential?: boolean;
   description?: string;
+  sub_tasks?: SubTask[];
+}
+
+export interface SubTask {
+  id?: string;
+  task_id?: string;
+  content: string;
+  // بنخزن حالة كل يوم للمهمة الفرعية
+  days_completed: {
+    [key: string]: boolean;
+  };
+  created_at?: string;
 }
 
 

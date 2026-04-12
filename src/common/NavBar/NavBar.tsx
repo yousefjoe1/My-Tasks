@@ -10,9 +10,9 @@ import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStra
 import { useToast } from "@/components/Toasts/useToast";
 
 const navLinks = [
-  { name: "Powerful Day ⚡", href: "/" },
-  { name: "My Progress", href: "/dashboard" },
   { name: "General Tasks", href: "/general-tasks" },
+  { name: "My Progress", href: "/dashboard" },
+  { name: "Powerful Day ⚡", href: "/" },
 ];
 
 export default function Navbar() {

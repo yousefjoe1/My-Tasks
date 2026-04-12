@@ -1,5 +1,5 @@
 // services/weeklyTasksService.ts
-import { WeeklyTask } from '@/types'
+import { SubTask, WeeklyTask } from '@/types'
 import { supabase } from '@/lib/supabase/client'
 /**
  * Service layer handles ALL data operations
@@ -43,7 +43,10 @@ export class WeeklyTasksService {
         if (userId) {
             const { data, error } = await supabase
                 .from('weekly_tasks')
-                .select('*')
+                .select(`
+                    *,
+                    sub_tasks (*) 
+                `)
                 .eq('userId', userId)
 
             if (error) throw error
@@ -56,19 +59,45 @@ export class WeeklyTasksService {
     // Add new task
     static async addTask(task: WeeklyTask, userId: string | undefined, is_essential?: boolean): Promise<WeeklyTask> {
         if (userId) {
-            const { id, ...insertData } = task
+            // 1. استخراج الـ sub_tasks من الـ task object قبل الحفظ في الجدول الرئيسي
+            // لأن جدول weekly_tasks مفيش فيه عمود اسمه sub_tasks
+            const { id, sub_tasks, ...insertData } = task;
 
-            const { data, error } = await supabase
+            // 2. حفظ المهمة الأساسية
+            const { data: mainTask, error: mainError } = await supabase
                 .from('weekly_tasks')
-                .insert({ ...insertData, userId, is_essential })
+                .insert({
+                    ...insertData,
+                    userId,
+                    is_essential: is_essential
+                })
                 .select()
-                .single()
+                .single();
 
-            if (error) throw error
+            if (mainError) throw mainError;
 
-            return data
+            // 3. إذا كان هناك مهام فرعية، قم بحفظها وربطها بالـ task_id
+            if (sub_tasks && sub_tasks.length > 0) {
+                const subTasksToInsert = sub_tasks.map((st: SubTask) => ({
+                    task_id: mainTask.id, // الربط مع المهمة اللي لسه مخلوقة
+                    content: st.content,
+                    days_completed: st.days_completed || { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
+                }));
+
+                const { data: insertedSubTasks, error: subError } = await supabase
+                    .from('sub_tasks')
+                    .insert(subTasksToInsert)
+                    .select();
+
+                if (subError) throw subError;
+
+                // أرجع المهمة الأساسية مضافاً إليها المهام الفرعية اللي اتحفظت
+                return { ...mainTask, sub_tasks: insertedSubTasks };
+            }
+
+            return mainTask;
         } else {
-            return task
+            return task;
         }
     }
 

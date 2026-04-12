@@ -6,6 +6,7 @@ import { Edit, Loader, Trash } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import TodayBadge from "@/common/TodayBadge";
+import SubTask from "@/common/Tasks/SubTask";
 
 
 interface WeeklyTableProps {
@@ -126,6 +127,16 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
             {task.description}
           </p>
         )}
+
+        {
+          task.sub_tasks && task.sub_tasks.length > 0 && (
+            <div className="flex flex-col gap-2">
+              {task.sub_tasks.map((subTask, key) => (
+                <SubTask key={subTask.id} subTask={subTask} />
+              ))}
+            </div>
+          )
+        }
 
         {/* Table Section */}
         {
