@@ -118,7 +118,17 @@ export class WeeklyTasksService {
         }
 
     }
+    static async updateSubTask(
+        subTaskId: string,
+        updates: Partial<SubTask>
+    ): Promise<void> {
+        const { error } = await supabase
+            .from('sub_tasks')
+            .update(updates)
+            .eq('id', subTaskId);
 
+        if (error) throw error;
+    }
     // Delete task
     static async deleteTask(taskId: string, userId: string | undefined): Promise<void> {
         if (userId) {

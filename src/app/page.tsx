@@ -38,7 +38,7 @@ export default function Home() {
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
       <div className="max-w-[95%] mx-auto">
-        <div className="rounded-2xl shadow-sm p-6">
+        <div className="rounded-2xl shadow-sm">
           <div className="mb-8 flex justify-between items-center">
 
             <div>

@@ -1,12 +1,15 @@
-import { WeeklyTask } from "@/types";
+import { SubTask, WeeklyTask } from "@/types";
 import { getWeekDates, getWeekDays } from "@/lib/utils";
 import { format } from "date-fns";
 import React, { useRef, useState } from "react";
-import { Edit, Loader, Trash } from "lucide-react";
-import { useSelector } from "react-redux";
+import { Edit, Loader, Trash, X } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import TodayBadge from "@/common/TodayBadge";
-import SubTask from "@/common/Tasks/SubTask";
+import { WeeklyTasksService } from "@/services/weeklyTasksService";
+import { updateSubTaskAction } from "@/store/weeklyTasksSlice";
+import SubTaskCard from "@/common/Tasks/SubTask";
+import UpdateMainTaskModal from "@/common/Tasks/UpdateMainTaskModal";
 
 
 interface WeeklyTableProps {
@@ -20,13 +23,38 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
   const { error } = useSelector((state: RootState) => state.weeklyTasks)
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState(task.content);
-  const [description, setDescription] = useState(task.description);
   const weekDays = getWeekDays();
   const weekDates = getWeekDates();
 
+  const [updateSubTaskLoading, setUpdateSubTaskLoading] = useState(false);
+
   const deleteDialogRef = useRef<HTMLDialogElement | null>(null)
+
+  const dispatch = useDispatch();
+
+  const handleSubTaskToggle = async (subTask: SubTask, newState: boolean) => {
+    setUpdateSubTaskLoading(true);
+    const todayKey = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+
+    const updatedDays = {
+      ...(subTask.days_completed || {}),
+      [todayKey]: newState
+    };
+
+    try {
+      await WeeklyTasksService.updateSubTask(subTask.id!, { days_completed: updatedDays });
+
+      dispatch(updateSubTaskAction({
+        taskId: task.id,
+        subTaskId: subTask.id!,
+        updates: { days_completed: updatedDays }
+      }));
+
+    } catch (err) {
+      console.error("Failed to update subtask:", err);
+    }
+    setUpdateSubTaskLoading(false);
+  };
 
 
   const toggleDay = (day: string) => {
@@ -39,21 +67,13 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
     });
   };
 
-  const handleSave = () => {
-    onUpdate(task.id, { content: content, description: description });
-    setIsEditing(false);
-  };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSave();
-    } else if (e.key === "Escape") {
-      setContent(task.content);
-      setIsEditing(false);
-    }
-  };
   const today = new Date();
   const todayDayName = today.toLocaleDateString('en-US', { weekday: 'short' }); // "Wed" not "Wednesday"
+
+  const isToday = (day: string) => {
+    return day === todayDayName;
+  }
 
   return (
     <>
@@ -63,80 +83,38 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
           <p className="text-red-500 text-sm mt-1">{error[task.id]}</p>
         )}
         <div className="flex items-center justify-between p-2 bg-linear-to-r from-secondary to-primary">
-          {isEditing ? (
-            <div className="flex items-center flex-wrap gap-3 flex-1">
-              <div className="flex flex-col w-full gap-3">
-                <input
-                  type="text"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  className="flex-1 px-4 py-2 text-lg font-semibold border border-brand rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-brand bg-primary text-primary transition-all placeholder:text-muted"
-                  autoFocus
-                  placeholder="Enter task name..."
-                />
-                <input
-                  type="text"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  className="flex-1 px-4 py-2 text-lg font-semibold border border-brand rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-brand bg-primary text-primary transition-all placeholder:text-muted"
-                  autoFocus
-                  placeholder="Enter task description..."
-                />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={handleSave}
-                  className="px-4 py-2 text-sm bg-success text-white rounded-lg hover:bg-success/80 active:scale-95 transition-all font-medium shadow-sm"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => {
-                    setContent(task.content);
-                    setIsEditing(false);
-                  }}
-                  className="px-4 py-2 text-sm bg-secondary text-primary rounded-lg hover:bg-secondary active:scale-95 transition-all font-medium shadow-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between w-full gap-3 flex-wrap">
-              <button
-                className="text-lg font-semibold text-primary hover:text-brand cursor-pointer transition-colors duration-200 py-1 rounded-lg hover:bg-brand/10"
-                onClick={() => setIsEditing(true)}
-              >
-                <Edit />
-              </button>
-              <button
-                onClick={() => deleteDialogRef.current?.showModal()}
-                className="transition-all duration-200 px-1 py-1 text-sm bg-error text-white rounded-lg hover:bg-red-600 active:scale-95 font-medium shadow-sm"
-              >
-                <Trash size={18} />
-              </button>
-            </div>
-          )}
+          <div className="flex items-center justify-between w-full gap-3 flex-wrap">
+            <UpdateMainTaskModal task={task} onUpdate={onUpdate} />
+            <button
+              onClick={() => deleteDialogRef.current?.showModal()}
+              className="transition-all duration-200 px-1 py-1 text-sm bg-error text-white rounded-lg hover:bg-red-600 active:scale-95 font-medium shadow-sm"
+            >
+              <Trash size={18} />
+            </button>
+          </div>
+
         </div>
 
-        <h3 className="p-2 lg:text-xl mb-2">- {content || "Untitled Task"}</h3>
+        <h3 className="p-2 lg:text-xl mb-2">- {task.content || "Untitled Task"}</h3>
         {task.description && (
           <p className="text-muted text-sm m-1 italic">
             {task.description}
           </p>
         )}
 
-        {
-          task.sub_tasks && task.sub_tasks.length > 0 && (
-            <div className="flex flex-col gap-2">
-              {task.sub_tasks.map((subTask, key) => (
-                <SubTask key={subTask.id} subTask={subTask} />
-              ))}
-            </div>
-          )
-        }
+        {task.sub_tasks && task.sub_tasks.length > 0 ? (
+          task.sub_tasks.map((st) => (
+            <SubTaskCard
+              key={st.id}
+              subTask={st}
+              dayKey={todayDayName} // اليوم الحالي اللي انت عرفته فوق بـ "Wed" مثلاً
+              onToggle={(id, state) => handleSubTaskToggle(st, state)}
+              loading={updateSubTaskLoading}
+            />
+          ))
+        ) : (
+          <p className="text-xs text-muted italic p-1">لا توجد مهام فرعية.</p>
+        )}
 
         {/* Table Section */}
         {
@@ -180,6 +158,8 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                         : "bg-primary",
                     ].join(" ")}
                   >
+
+
                     <div className="flex justify-center mb-3">
                       {day === todayDayName && <TodayBadge />}
 
@@ -187,8 +167,11 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                     <div className="flex justify-center items-center">
 
                       <button
-                        className={`day-btn-3d ${task.days?.[day] ? 'day-btn-3d-on' : 'day-btn-3d-off'}`}
+                        className={`day-btn-3d ${task.days?.[day] ? 'day-btn-3d-on' : 'day-btn-3d-off'}
+                        ${!isToday(day) ? 'opacity-50' : ''}
+                        `}
                         onClick={() => toggleDay(day)}
+                        disabled={!isToday(day)}
                       >
                         <span className="day-btn-3d-shadow"></span>
                         <span className="day-btn-3d-edge"></span>
@@ -196,7 +179,15 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                           {task.days?.[day] ? (
                             <span className="text-sm font-bold">✓</span>
                           ) : (
-                            <span className="text-[10px] opacity-40">○</span>
+                            <span className="text-[10px]">
+
+                              {!isToday(day) ?
+                                <X color="red" /> :
+                                <span className="text-2xl">
+                                  🎯
+                                </span>
+                              }
+                            </span>
                           )}
                         </div>
                       </button>

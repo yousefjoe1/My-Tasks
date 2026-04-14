@@ -6,7 +6,8 @@ import { useDispatch } from "react-redux";
 import { setTasks, setLoading, updateTask, setError, removeTask, setSyncLoading } from "@/store/weeklyTasksSlice";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import AsmahAllah from "@/features/Allah-names/services/allah-names";
-import { isSameWeek, } from "date-fns";
+import { startOfWeek } from "date-fns";
+import { handleWeeklyReset } from "@/services/snapShotService";
 import { supabase } from "@/lib/supabase/client";
 
 
@@ -77,46 +78,73 @@ export function useWeeklyTasks({
   }
 
   const Sync = async () => {
-    dispatch(setSyncLoading(true))
 
-    try {
-      await checkAndSyncReset(user?.id as string)
-
-    } catch (error) {
-      console.error("Sync Error:", error);
-    }
+    await checkWeeklyResetWithCache(user?.id)
 
     getTasks()
     dispatch(setSyncLoading(false))
   }
 
 
-  const checkAndSyncReset = async (userId: string) => {
-    // 1. اخرج فوراً لو مفيش userId عشان تتجنب إرسال "undefined" للداتابيز
-    if (!userId || userId === "undefined") return;
+  const checkWeeklyResetWithCache = async (userId: string | undefined) => {
+    if (!userId) return;
 
-    // 2. شيك على اللوكال ستورج
-    const localLastReset = localStorage.getItem(`last_reset_${userId}`);
     const now = new Date();
 
-    if (localLastReset && isSameWeek(new Date(localLastReset), now, { weekStartsOn: 6 })) {
-      return { alreadyDone: true };
+    // 1. تحديد بداية الأسبوع الحالي (مثلاً لو النهاردة الأحد، هيرجع تاريخ الاثنين اللي فات)
+    const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
+
+    // 2. شيك على الـ LocalStorage (الخط الدفاعي الأول)
+    const localLastReset = localStorage.getItem(`last_reset_${userId}`);
+    if (localLastReset === currentWeekStart) {
+      // لو التاريخ المتخزن هو نفسه بداية الأسبوع الحالي، يبقى اليوزر عمل ريسيت خلاص
+      return;
     }
 
     try {
-      // 3. اسأل الداتابيز (دلوقتي الـ userId مضمون إنه موجود)
-      const { data: profile, error } = await supabase
+      // 3. اسحب بيانات البروفايل
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('last_snapshot_week')
-        .eq('id', userId) // هنا الـ id هيكون سليم
+        .eq('id', userId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (profileError) throw profileError;
 
-      // ... بقية الكود الخاص بك
-    } catch (e) {
-      console.error("Sync Error Details:", e);
-      return { success: false };
+      // 4. حالة اليوزر الجديد (أول مرة يفتح التطبيق)
+      if (!profile) {
+        await supabase
+          .from('profiles')
+          .insert({ id: userId, last_snapshot_week: currentWeekStart });
+
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        return;
+      }
+
+      const dbLastReset = profile?.last_snapshot_week;
+
+      // 5. المقارنة السحرية: لو التاريخ اللي في الداتابيز مختلف عن بداية الأسبوع الحالي
+      // ده معناه إن اليوزر بقاله أسبوع أو أكتر ما فتحش التطبيق، ولازم نصفر العدادات
+      if (dbLastReset !== currentWeekStart) {
+        console.log("اكتشاف أسبوع جديد.. جاري تصفير المهام...");
+
+        const result = await handleWeeklyReset(userId);
+
+        if (result?.success) {
+          // تحديث الداتابيز بالتاريخ الجديد (بداية الأسبوع اللي احنا فيه دلوقتي)
+          await supabase
+            .from('profiles')
+            .update({ last_snapshot_week: currentWeekStart })
+            .eq('id', userId);
+
+          localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        }
+      } else {
+        // لو الداتابيز متحدثة بس الـ LocalStorage لا (مثلاً مسح الكاش أو فتح من جهاز تاني)
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+      }
+    } catch (err) {
+      console.error("خطأ في المزامنة الأسبوعية:", err);
     }
   };
 

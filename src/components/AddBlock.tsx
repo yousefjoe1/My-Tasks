@@ -90,7 +90,7 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
           <span className="edge-btn"></span>
           <span className="front-btn">
             <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300 text-white" />
-            <span>إضافة مهمة جديدة</span>
+            <span>إضافة إنجاز جديد</span>
           </span>
         </button>
       ) : (
@@ -175,7 +175,7 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
             </div>
 
             {/* زر الحفظ النهائي */}
-            {/* <button
+            <button
               disabled={loading}
               onClick={() => {
                 if (taskName.length < 5) {
@@ -190,9 +190,9 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
               <span className="edge-btn" style={{ background: 'linear-gradient(to left, #064e3b 0%, #059669 8%, #059669 92%, #064e3b 100%)' }}></span>
               <span className="front-btn" style={{ background: '#10b981' }}>
                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
-                <span>إضافة المهمة </span>
+                <span>إضافة  </span>
               </span>
-            </button> */}
+            </button>
           </div>
         </section>
       )}
