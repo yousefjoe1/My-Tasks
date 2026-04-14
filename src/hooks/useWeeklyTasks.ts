@@ -85,66 +85,60 @@ export function useWeeklyTasks({
     dispatch(setSyncLoading(false))
   }
 
-
   const checkWeeklyResetWithCache = async (userId: string | undefined) => {
     if (!userId) return;
 
     const now = new Date();
-
-    // 1. تحديد بداية الأسبوع الحالي (مثلاً لو النهاردة الأحد، هيرجع تاريخ الاثنين اللي فات)
     const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
 
-    // 2. شيك على الـ LocalStorage (الخط الدفاعي الأول)
+    // Fast local cache check (first line of defense)
     const localLastReset = localStorage.getItem(`last_reset_${userId}`);
     if (localLastReset === currentWeekStart) {
-      // لو التاريخ المتخزن هو نفسه بداية الأسبوع الحالي، يبقى اليوزر عمل ريسيت خلاص
       return;
     }
 
     try {
-      // 3. اسحب بيانات البروفايل
-      const { data: profile, error: profileError } = await supabase
+      // === ATOMIC WEEKLY RESET CHECK + CLAIM ===
+      // Only ONE device will successfully update the last_snapshot_week
+      const { data, error: updateError } = await supabase
         .from('profiles')
-        .select('last_snapshot_week')
+        .update({ last_snapshot_week: currentWeekStart })
         .eq('id', userId)
+        .not('last_snapshot_week', 'eq', currentWeekStart)   // ← This prevents duplicate resets
+        .select('id')
         .maybeSingle();
 
-      if (profileError) throw profileError;
-
-      // 4. حالة اليوزر الجديد (أول مرة يفتح التطبيق)
-      if (!profile) {
-        await supabase
-          .from('profiles')
-          .insert({ id: userId, last_snapshot_week: currentWeekStart });
-
+      if (updateError) {
+        console.error("Error claiming weekly reset:", updateError);
+        // Still update local cache to avoid retrying too aggressively
         localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
         return;
       }
 
-      const dbLastReset = profile?.last_snapshot_week;
-
-      // 5. المقارنة السحرية: لو التاريخ اللي في الداتابيز مختلف عن بداية الأسبوع الحالي
-      // ده معناه إن اليوزر بقاله أسبوع أو أكتر ما فتحش التطبيق، ولازم نصفر العدادات
-      if (dbLastReset !== currentWeekStart) {
-        console.log("اكتشاف أسبوع جديد.. جاري تصفير المهام...");
-
-        const result = await handleWeeklyReset(userId);
-
-        if (result?.success) {
-          // تحديث الداتابيز بالتاريخ الجديد (بداية الأسبوع اللي احنا فيه دلوقتي)
-          await supabase
-            .from('profiles')
-            .update({ last_snapshot_week: currentWeekStart })
-            .eq('id', userId);
-
-          localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
-        }
-      } else {
-        // لو الداتابيز متحدثة بس الـ LocalStorage لا (مثلاً مسح الكاش أو فتح من جهاز تاني)
+      // If no row was updated → another device already performed the reset
+      if (!data) {
+        console.log("Another device already handled the weekly reset");
         localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        return;
       }
+
+      // === THIS DEVICE WON THE RACE → Perform the actual reset ===
+      console.log("اكتشاف أسبوع جديد.. جاري تصفير المهام (هذا الجهاز فاز)...");
+
+      const result = await handleWeeklyReset(userId);
+
+      if (result?.success) {
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        console.log("Weekly reset completed successfully");
+      } else {
+        console.error("Weekly reset failed after claiming it");
+        // Optional: You can revert the profile update here if you want (rare case)
+      }
+
     } catch (err) {
       console.error("خطأ في المزامنة الأسبوعية:", err);
+      // Fallback: update localStorage anyway so we don't spam the DB
+      localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
     }
   };
 
