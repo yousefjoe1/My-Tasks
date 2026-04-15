@@ -4,9 +4,13 @@ import { SubTask, WeeklyTask } from '@/types'
 import SubTaskCard from './SubTask';
 import { useDispatch } from 'react-redux';
 import { WeeklyTasksService } from '@/services/weeklyTasksService';
-import { updateSubTaskAction } from '@/store/weeklyTasksSlice';
+import { removeSubTaskAction, updateSubTaskAction } from '@/store/weeklyTasksSlice';
+import AddSubTask from './AddSubTask';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
 const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (taskId: string, updates: Partial<WeeklyTask>) => void }) => {
+    const { loading } = useSelector((state: RootState) => state.weeklyTasks);
 
     const detailsModalRef = useRef<HTMLDialogElement | null>(null);
     const today = new Date();
@@ -53,6 +57,42 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
         setUpdateSubTaskLoading(false);
     };
 
+    const handleUpdateSubTaskContent = async (subTaskId: string, newContent: string) => {
+        setUpdateSubTaskLoading(true);
+
+        try {
+            await WeeklyTasksService.updateSubTask(subTaskId, { content: newContent });
+
+            dispatch(updateSubTaskAction({
+                taskId: task.id,
+                subTaskId: subTaskId,
+                updates: { content: newContent }
+            }));
+        } catch (err) {
+            console.error("Failed to update subtask content:", err);
+            throw err; // Re-throw to handle in SubTaskCard
+        } finally {
+            setUpdateSubTaskLoading(false);
+        }
+    };
+    const handleDeleteSubTask = async (subTaskId: string) => {
+        setUpdateSubTaskLoading(true);
+
+        try {
+            await WeeklyTasksService.deleteSubTask(subTaskId); // You'll need to implement this in your service
+
+            dispatch(removeSubTaskAction({
+                taskId: task.id,
+                subTaskId: subTaskId
+            }));
+        } catch (err) {
+            console.error("Failed to delete subtask:", err);
+            throw err;
+        } finally {
+            setUpdateSubTaskLoading(false);
+        }
+    };
+
     return (
         <div>
             <button
@@ -66,9 +106,9 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
             {/* Modal لإدارة المهام الفرعية */}
             <dialog
                 ref={detailsModalRef}
-                className="fixed inset-0 z-50 bg-transparent p-0 backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+                className="fixed inset-0 z-50 mx-auto bg-transparent p-0 backdrop:bg-black/60 backdrop:backdrop-blur-sm"
             >
-                <div className="bg-primary border border-secondary w-[95vw] max-w-lg mx-auto mt-[10vh] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                <div className="bg-primary border border-secondary max-w-lg mx-auto mt-[10vh] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
                     {/* Header */}
                     <div className="p-6 bg-secondary/50 border-b border-secondary flex justify-between items-center">
                         <div>
@@ -105,10 +145,11 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 <button
+                                    disabled={loading}
                                     onClick={handleSave}
-                                    className="px-4 py-2 text-sm bg-success text-white rounded-lg hover:bg-success/80 active:scale-95 transition-all font-medium shadow-sm"
+                                    className={`px-4 py-2 text-sm flex items-center justify-center gap-2 ${loading ? 'bg-secondary' : 'bg-success'} text-white rounded-lg hover:bg-success/80 active:scale-95 transition-all font-medium shadow-sm ${loading ? 'opacity-50' : ''}`}
                                 >
-                                    Save
+                                    Save {loading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
                                 </button>
                                 <button
                                     onClick={() => {
@@ -120,9 +161,18 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
                                 </button>
                             </div>
                         </div>
-                        {/* <div className="flex items-center gap-2 mb-4">
-                            <span className="text-sm font-bold">مهام اليوم</span>
+                        <div className="flex items-center gap-2 mb-1">
+                            {/* <TodayBadge /> */}
+                            <span className="text-sm font-bold text-primary">مهام اليوم الفرعية</span>
                         </div>
+
+                        <AddSubTask
+                            taskId={task.id}
+                            onSubTaskAdded={() => {
+                                // Optional: Scroll to new subtask or refresh
+                                console.log('New subtask added!');
+                            }}
+                        />
 
                         <div className="grid gap-3">
                             {task.sub_tasks?.map(st => (
@@ -131,10 +181,12 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
                                     subTask={st}
                                     dayKey={todayDayName}
                                     onToggle={(id, state) => handleSubTaskToggle(st, state)}
+                                    onUpdateContent={handleUpdateSubTaskContent}
+                                    onDelete={handleDeleteSubTask} // Add this line
                                     loading={updateSubTaskLoading}
                                 />
                             ))}
-                        </div> */}
+                        </div>
                     </div>
                 </div>
             </dialog>

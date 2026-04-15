@@ -142,4 +142,39 @@ export class WeeklyTasksService {
         }
 
     }
+
+    // Delete sub task
+    static async deleteSubTask(subTaskId: string): Promise<void> {
+        const { error } = await supabase
+            .from('sub_tasks')
+            .delete()
+            .eq('id', subTaskId);
+
+        if (error) throw error;
+    }
+
+
+
+
+
+    // 🔥 NEW: Create SubTask
+    static async createSubTask(taskId: string, subTaskData: Partial<SubTask>): Promise<SubTask> {
+        const { content, days_completed, ...rest } = subTaskData;
+
+        const { data: newSubTask, error: insertError } = await supabase
+            .from('sub_tasks')
+            .insert({
+                task_id: taskId,
+                content: content!,
+                days_completed: days_completed || {},
+                ...rest
+            })
+            .select()
+            .single();
+
+        if (insertError) throw insertError;
+
+        return newSubTask;
+    }
+
 }

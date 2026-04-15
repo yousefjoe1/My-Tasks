@@ -77,7 +77,26 @@ export const weeklyTasksSlice = createSlice({
         },
         setSyncLoading: (state, action: PayloadAction<boolean>) => {
             state.syncLoading = action.payload
+        },
+
+        removeSubTaskAction: (state, action: PayloadAction<{ taskId: string, subTaskId: string }>) => {
+            const { taskId, subTaskId } = action.payload;
+
+            // 1. بندور على التاسك الأساسية
+            const task = state.tasks.find(t => t.id === taskId);
+
+            if (task && task.sub_tasks) {
+                // 2. بندور على الساب تاسك جواها
+                const subTaskIndex = task.sub_tasks.findIndex(st => st.id === subTaskId);
+
+                if (subTaskIndex !== -1) {
+                    // 3. بنحذف الساب تاسك
+                    task.sub_tasks.splice(subTaskIndex, 1);
+                }
+            }
+            state.loading = false;
         }
+
     }
 })
 
@@ -90,7 +109,8 @@ export const {
     removeTask,
     setLoading,
     setError,
-    setSyncLoading
+    setSyncLoading,
+    removeSubTaskAction
 } = weeklyTasksSlice.actions
 
 export default weeklyTasksSlice.reducer
