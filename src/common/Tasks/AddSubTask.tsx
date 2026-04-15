@@ -101,7 +101,7 @@ const AddSubTask: React.FC<AddSubTaskProps> = ({ taskId, onSubTaskAdded }) => {
                         onClick={handleSubmit}
                         disabled={!newSubTaskContent.trim() || loading}
                         className="p-2 rounded-xl bg-success/15 text-success hover:bg-success 
-                                   hover:text-white active:scale-95 transition-all font-medium 
+                                   text-white border active:scale-95 transition-all font-medium 
                                    disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? (
@@ -114,7 +114,7 @@ const AddSubTask: React.FC<AddSubTaskProps> = ({ taskId, onSubTaskAdded }) => {
                     <button
                         onClick={handleCancel}
                         disabled={loading}
-                        className="p-2 rounded-xl text-muted-foreground hover:bg-secondary/50 
+                        className="p-2 rounded-xl text-red-400 border border-red-400 hover:bg-secondary/50 
                                    hover:text-primary active:scale-95 transition-all"
                     >
                         <X className="w-4 h-4" />

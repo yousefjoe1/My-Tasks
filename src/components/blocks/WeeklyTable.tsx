@@ -2,7 +2,7 @@ import { SubTask, WeeklyTask } from "@/types";
 import { getWeekDates, getWeekDays } from "@/lib/utils";
 import { format } from "date-fns";
 import React, { useRef, useState } from "react";
-import { Edit, Loader, Trash, X } from "lucide-react";
+import { Loader, Trash, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import TodayBadge from "@/common/TodayBadge";
