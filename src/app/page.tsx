@@ -75,7 +75,7 @@ export default function Home() {
                 }}
                 className="bg-brand text-white lg:px-6 px-3 text-sm py-2 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg shadow-brand/20"
               >
-                اضافة المهام الاساسية + {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                اضافة الانجازات الاساسية + {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               </button>
             )}
             <AddBlock success={success} toast={toast} error={error} isEssentialPage={true} />

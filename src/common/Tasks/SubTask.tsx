@@ -76,7 +76,7 @@ const SubTaskCard = ({
         <div className='bg-primary-2/10 w-fit rounded-2xl m-2 p-1 px-3 flex'>
             <button
                 onClick={() => onToggle(subTask.id!, !isCompleted)}
-                className={`
+                className={` flex-1
                     flex items-center gap-3 justify-between rounded-xl cursor-pointer
                     transition-all duration-300 group ${isCompleted
                         ? 'border border-primary-2/20'
@@ -92,7 +92,7 @@ const SubTaskCard = ({
                         onChange={(e) => setEditContent(e.target.value)}
                         onKeyDown={handleKeyPress}
                         onBlur={handleSave}
-                        className={`
+                        className={` flex-1
                             text-sm mx-2 font-medium bg-transparent border-0 text-primary outline-none
                             focus:ring-2 focus:ring-primary-2/50 rounded px-1 py-0.5
                             ${isCompleted ? 'line-through opacity-70' : ''}
@@ -115,7 +115,7 @@ const SubTaskCard = ({
                         {loading ? (
                             <Loader2 className="w-4 h-4 text-white animate-spin" />
                         ) : (
-                            <div className={`
+                            <div className={` flex-1
                                 w-6 h-6 rounded-lg border-2 flex items-center justify-center
                                 transition-all duration-300
                                 ${isCompleted

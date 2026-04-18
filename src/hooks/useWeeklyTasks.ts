@@ -43,9 +43,10 @@ export function useWeeklyTasks({
 
 
   const getTasks = useCallback(async () => {
-    dispatch(setLoading(true))
+    dispatch(setSyncLoading(true))
     const tasks = await WeeklyTasksService.fetchTasks(user?.id)
     dispatch(setTasks(tasks))
+    dispatch(setSyncLoading(false))
   }, [user, dispatch])
 
 
@@ -78,10 +79,10 @@ export function useWeeklyTasks({
   }
 
   const Sync = async () => {
-
+    dispatch(setSyncLoading(true))
     await checkWeeklyResetWithCache(user?.id)
 
-    getTasks()
+    await getTasks()
     dispatch(setSyncLoading(false))
   }
 
