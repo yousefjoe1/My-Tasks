@@ -13,6 +13,7 @@ import ToastContainer from '@/components/Toasts/ToastContainer';
 import { useToast } from '@/components/Toasts/useToast';
 import OnboardingWrapper from '@/common/OnboardingWrapper';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
   const { error, success, toast, toasts, removeToast } = useToast()
@@ -22,6 +23,8 @@ export default function Home() {
     toast,
   });
   const { tasks, loading, syncLoading } = useSelector((state: RootState) => state.weeklyTasks);
+
+  const { user } = useAuth();
 
 
   const handleDelete = useCallback(
@@ -63,7 +66,13 @@ export default function Home() {
             {normalTasks.length === 0 && !loading && (
               <button
                 disabled={loading}
-                onClick={seedEssentialTasks}
+                onClick={() => {
+                  if (user) {
+                    seedEssentialTasks()
+                  } else {
+                    error('يرجى تسجيل الدخول اولا')
+                  }
+                }}
                 className="bg-brand text-white lg:px-6 px-3 text-sm py-2 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg shadow-brand/20"
               >
                 اضافة المهام الاساسية + {loading && <Loader2 className="w-4 h-4 animate-spin" />}

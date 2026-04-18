@@ -1,3 +1,5 @@
+import { useToast } from '@/components/Toasts/useToast';
+import { useWeeklyTasks } from '@/hooks/useWeeklyTasks';
 import { supabase } from '@/lib/supabase/client';
 import React, { useState } from 'react';
 
@@ -19,6 +21,9 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
     const [password, setPassword] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
     const [message, setMessage] = useState<Message | null>(null);
+    const { error: toastError, success: toastSuccess } = useToast()
+
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,6 +39,7 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
                 });
                 if (error) throw error;
                 setMessage({ type: 'success', text: 'Registration successful! Check your email for verification.' });
+                toastSuccess('Registration successful! Check your email for verification.')
             } else {
                 // LOGIN LOGIC
                 const { error } = await supabase.auth.signInWithPassword({
@@ -42,9 +48,11 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
                 });
                 if (error) throw error;
                 setMessage({ type: 'success', text: 'Welcome back!' });
+                toastSuccess('Welcome back!')
                 closeModal()
             }
         } catch (error: unknown) {
+            toastError('Something went wrong')
             const err = error as Error;
             console.log("🚀 ~ handleSubmit ~ error:", error)
             setMessage({ type: 'error', text: err.message });
