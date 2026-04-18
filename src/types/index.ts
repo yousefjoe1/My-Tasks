@@ -1,28 +1,25 @@
-export interface WeeklyTask {
-  id: string;
-  content: string;
-  days?: {
-    [key: string]: boolean;
-  };
-  created_at?: string;
-  updated_at?: string;
-  is_essential?: boolean;
-  description?: string;
-  sub_tasks?: SubTask[];
-}
-
+// 1. تعريف المهمة الفرعية
 export interface SubTask {
   id?: string;
   task_id?: string;
   content: string;
-  // بنخزن حالة كل يوم للمهمة الفرعية
-  days_completed: {
-    [key: string]: boolean;
-  };
+  days_completed: Record<string, boolean>;
   created_at?: string;
 }
 
+// 2. تعريف المهمة الرئيسية (تأكد أن هذه الواجهة تشمل الـ sub_tasks)
+export interface WeeklyTask {
+  id: string;
+  content: string;
+  days?: Record<string, boolean>;
+  created_at?: string;
+  updated_at?: string;
+  is_essential?: boolean;
+  description?: string;
+  sub_tasks?: SubTask[]; // تأكد أن هذا موجود هنا
+}
 
+// 3. تعريف الـ Snapshot (التعديل المهم هنا)
 export interface WeeklySnapshot {
   id?: string;
   user_id: string | undefined;
@@ -30,22 +27,19 @@ export interface WeeklySnapshot {
   created_at?: string;
   week_start?: string;
   week_end?: string;
-  week_data: {
-    id: string;
-    content: string;
-    days?: Record<string, boolean>;
-  }[];
+  // التعديل: بدلاً من تعريف object داخلي، استخدم الواجهة WeeklyTask[] مباشرة
+  week_data: WeeklyTask[];
 }
 
+// 4. تعريفات أخرى
 export interface User {
   id: string;
   email?: string;
 }
 
-
 export interface SupabaseTaskUpdate {
   content?: string;
   days?: Record<string, boolean>;
-  updated_at: string; // ISO string
+  updated_at: string;
   userId?: string;
 }

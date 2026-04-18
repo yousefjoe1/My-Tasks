@@ -1,5 +1,5 @@
 'use client';
-import { WeeklySnapshot } from '@/types'
+import { SubTask, WeeklySnapshot } from '@/types'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext';
 import { WeeklyTasksSync } from '@/services/weeklyTasksSyncService';
@@ -179,6 +179,7 @@ const DashBoard = () => {
                                             <p className="text-lg font-bold text-brand mb-1 truncate" title={ts.content}>
                                                 {ts.content}
                                             </p>
+
                                             <div className="flex items-end gap-1">
                                                 <span className="text-lg font-black text-primary">{ts.completedCount}</span>
                                                 <span className="text-lg text-muted mb-1">/ 7 days</span>
@@ -207,9 +208,24 @@ const DashBoard = () => {
                                                 const dayKey = day as keyof typeof task.days;
                                                 return task?.days?.[dayKey] ?? false;
                                             });
+
+
                                             return (
                                                 <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-primary bg-primary gap-4">
                                                     <h4 className="text-lg font-semibold text-secondary min-w-[120px]">{task.content}</h4>
+                                                    {task.sub_tasks && task.sub_tasks.length > 0 && (
+                                                        <div className="pl-4 mt-2 border-l-2 border-brand/30 space-y-1">
+                                                            {task.sub_tasks.map((st: SubTask) => (
+                                                                <div key={st.id} className="flex justify-between items-center text-sm">
+                                                                    <span className="text-muted">{st.content}</span>
+                                                                    <span className="text-xs font-bold text-success">
+                                                                        {Object.keys(st.days_completed || {}).length} days
+                                                                    </span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
                                                     <div className="flex justify-between gap-2">
                                                         {daysArray.map((completed, index) => (
                                                             <div key={index} className="flex flex-col items-center gap-1">
