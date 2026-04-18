@@ -18,6 +18,7 @@ function urlBase64ToUint8Array(base64String: string) {
 
 export default function PushNotificationManager() {
     const [isSupported, setIsSupported] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [subscription, setSubscription] = useState<PushSubscription | null>(
         null
     )
@@ -40,6 +41,7 @@ export default function PushNotificationManager() {
     }
 
     async function subscribeToPush() {
+        setLoading(true)
         if (Notification.permission === 'denied') {
             alert('Notifications are blocked. Please click the lock icon in the address bar to allow them!');
             return;
@@ -54,12 +56,15 @@ export default function PushNotificationManager() {
         setSubscription(sub)
         const serializedSub = JSON.parse(JSON.stringify(sub))
         await subscribeUser(serializedSub)
+        setLoading(false)
     }
 
     async function unsubscribeFromPush() {
+        setLoading(true)
         await subscription?.unsubscribe()
         setSubscription(null)
         await unsubscribeUser()
+        setLoading(false)
     }
 
     if (!isSupported) {
@@ -75,7 +80,7 @@ export default function PushNotificationManager() {
                 <div className="lg:p-2 p-1 bg-tertiary rounded-lg">
                     <span className="lg:text-xl text-sm">🔔</span>
                 </div>
-                <h3 className="lg:text-lg text-sm font-semibold text-primary">الاشعارات</h3>
+                <h3 className="lg:text-lg text-sm font-semibold text-primary">التذكير</h3>
             </div>
 
             {subscription ? (
@@ -87,10 +92,11 @@ export default function PushNotificationManager() {
 
                     <div className="flex gap-3">
                         <button
+                            disabled={loading}
                             onClick={unsubscribeFromPush}
                             className="px-4 py-2 bg-primary border border-secondary text-secondary hover:bg-error hover:text-white hover:border-transparent font-medium rounded-xl transition-all active:scale-95"
                         >
-                            تعطيل الاشعارات
+                            {loading ? 'جاري التعطيل...' : 'تعطيل التذكيرات'}
 
                         </button>
                     </div>
@@ -101,10 +107,11 @@ export default function PushNotificationManager() {
                         ابق على اطلاع دائم بمهامك. احصل على تذكيرات لمهامك والأذكار طوال اليوم.
                     </p>
                     <button
+                        disabled={loading}
                         onClick={subscribeToPush}
                         className="whitespace-nowrap px-6 py-2 hover:opacity-90 text-primary font-semibold rounded-xl transition-all active:scale-[0.98]bg-primary border border-primary"
                     >
-                        تحب افكرك ؟
+                        {loading ? 'جاري التفعيل...' : 'تحب افكرك ؟'}
                     </button>
                 </div>
             )}
