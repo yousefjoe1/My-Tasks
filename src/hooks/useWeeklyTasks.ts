@@ -28,10 +28,46 @@ export function useWeeklyTasks({
 
   const seedEssentialTasks = async () => {
     const defaults = [
-      { content: "📖 الورد القرآني (صفحة)", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [] },
-      { content: "اذكار الصباح", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [] },
-      { content: "اذكار المساء", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [] },
-      { content: "شويه رياضه", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [] }
+      {
+        content: "📖 الورد القرآني", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [
+          {
+            content: "صفحه من البقره",
+            days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
+          }
+        ]
+      },
+      {
+        content: "اذكار الصباح", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [
+          {
+            content: "بسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم  3 مرات",
+            days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
+          },
+          {
+            content: "المعوذات 3 مرات",
+            days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
+          },
+        ]
+      },
+      {
+        content: "اذكار المساء", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [
+          {
+            content: "بسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم  3 مرات",
+            days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
+          },
+          {
+            content: "المعوذات 3 مرات",
+            days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
+          },
+        ]
+      },
+      {
+        content: "شويه رياضه", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [
+          {
+            content: "شويه إطاله",
+            days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
+          },
+        ]
+      }
     ];
     dispatch(setLoading(true))
     for (const habit of defaults) {

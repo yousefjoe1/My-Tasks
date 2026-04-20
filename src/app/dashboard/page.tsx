@@ -59,7 +59,7 @@ const DashBoard = () => {
     }
 
     return (
-        <div className='flex flex-col gap-4 py-20 px-7 min-h-screen'>
+        <div className='flex flex-col gap-4 py-20 lg:px-7 px-1 min-h-screen'>
             {/* باقي الـ JSX بتاعك زي ما هو */}
             {snapData && snapData.length === 0 && (
                 <div className="text-center py-10">
@@ -202,6 +202,7 @@ const DashBoard = () => {
                                         </div>
                                     </div>
 
+
                                     <div className="p-4 space-y-3">
                                         {snap.week_data.map((task, i) => {
                                             const daysArray = weekDays.map(day => {
@@ -211,25 +212,32 @@ const DashBoard = () => {
 
 
                                             return (
-                                                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-primary bg-primary gap-4">
-                                                    <h4 className="text-lg font-semibold text-secondary min-w-[120px]">{task.content}</h4>
-                                                    {task.sub_tasks && task.sub_tasks.length > 0 && (
-                                                        <div className="pl-4 mt-2 border-l-2 border-brand/30 space-y-1">
-                                                            {task.sub_tasks.map((st: SubTask) => (
-                                                                <div key={st.id} className="flex justify-between items-center text-sm">
-                                                                    <span className="text-muted">{st.content}</span>
-                                                                    <span className="text-xs font-bold text-success">
-                                                                        {Object.keys(st.days_completed || {}).length} days
-                                                                    </span>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
+                                                <div key={i} className="flex flex-col sm:flex-row justify-between p-3 rounded-lg border border-primary bg-primary gap-4">
+
+                                                    <div className=''>
+                                                        <h4 className="text-lg font-semibold text-secondary min-w-[120px]">{task.content}</h4>
+                                                        <h3 className="text-sm font-bold text-secondary">
+                                                            انجازت اضافية للانجاز الرئيسي
+                                                        </h3>
+                                                        {task.sub_tasks && task.sub_tasks.length > 0 && (
+                                                            <div className="pl-4 mt-2 space-y-1">
+                                                                {task.sub_tasks.map((st: SubTask) => (
+                                                                    <div key={st.id} className="flex justify-between items-center text-sm border border-brand rounded-2xl p-1 gap-2">
+                                                                        <span className="text-muted">{st.content}</span>
+                                                                        <span className="text-xs font-bold text-success">
+                                                                            {Object.keys(st.days_completed || {}).length} days
+                                                                        </span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+
+                                                    </div>
 
                                                     <div className="flex justify-between gap-2">
                                                         {daysArray.map((completed, index) => (
                                                             <div key={index} className="flex flex-col items-center gap-1">
-                                                                <div className={`w-7 h-7 rounded-md flex items-center justify-center transition-all ${completed ? 'bg-success text-white' : 'bg-tertiary text-muted opacity-20'}`}>
+                                                                <div className={`w-7 h-7 rounded-md flex items-center justify-center transition-all  border ${completed ? 'bg-success text-white' : 'bg-tertiary text-muted opacity-20'}`}>
                                                                     {completed && <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>}
                                                                 </div>
                                                                 <span className="text-[8px] font-bold text-muted uppercase">{weekDays[index][0]}</span>
