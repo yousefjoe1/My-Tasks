@@ -8,47 +8,6 @@ webpush.setVapidDetails(
     process.env.NEXT_PUBLIC_VAPID_PRIVATE_KEY!
 );
 
-// export async function GET() {
-//     const supabase = await createClient(
-//         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//         process.env.SUPABASE_SERVICE_ROLE_KEY!
-//     );
-
-
-
-//     // 3. جلب المشتركين
-//     const { data: subs, error } = await supabase.from('push_subscriptions').select('*');
-//     console.log("🚀 ~ GET ~ error:", error)
-
-//     if (subs && subs.length > 0) {
-//         const pushPromises = subs.map(sub =>
-//             webpush.sendNotification(
-//                 {
-//                     endpoint: sub.endpoint,
-//                     keys: { auth: sub.auth, p256dh: sub.p256dh }
-//                 },
-//                 JSON.stringify({ title: "Weekly Tasks", body: "لا تنسَ مراجعة قائمة مهامك لهذا اليوم!" })
-//             ).catch(err => {
-//                 console.error("Push failed:", err.statusCode, err.body, sub.endpoint);
-//                 // Auto-delete expired subscriptions
-//                 if (err.statusCode === 410) {
-//                     return supabase.from('push_subscriptions')
-//                         .delete()
-//                         .eq('endpoint', sub.endpoint);
-//                 }
-//             })
-//         );
-
-//         await Promise.all(pushPromises);
-//     }
-
-//     return Response.json({
-//         success: true,
-//         notifiedCount: subs?.length || 0,
-//         timeSent: new Date().toISOString(),
-//     });
-// }
-
 
 const azkarDayAndNight = [
     "بسم الله الذي لا يضر مع اسمه شيئ في الارض ولا في السماء وهو السميع العليم (3 مرات)",
@@ -128,6 +87,41 @@ export async function GET() {
             title: "بداية اليوم 🚀",
             body: `الحمد لله، إن شاء الله خير. ${zikr[Math.floor(Math.random() * zikr.length)]}`,
         };
+    } else if (cairoHour === 13) { // الساعة 1 ظهراً
+        try {
+            const response = await fetch('https://api.alquran.cloud/v1/ayah/random');
+            const json = await response.json();
+            const ayah = json.data;
+
+            notificationContent = {
+                title: `${ayah.surah.name} - آية ${ayah.numberInSurah}`,
+                body: ayah.text
+            };
+            url = '/';
+        } catch (error) {
+            // Fallback: لو الـ API وقع لاي سبب، نبعت حاجة ثابتة عشان الإشعار ميقفش
+            notificationContent = {
+                title: "آية قرآنية 📖",
+                body: "ألا بذكر الله تطمئن القلوب"
+            };
+        }
+    } else if (cairoHour === 18) { // الساعة 6 مساءً
+        try {
+            const response = await fetch('https://api.alquran.cloud/v1/ayah/random');
+            const json = await response.json();
+            const ayah = json.data;
+
+            notificationContent = {
+                title: `آية المساء | ${ayah.surah.name}`,
+                body: ayah.text
+            };
+            url = '/';
+        } catch (error) {
+            notificationContent = {
+                title: "تذكير إيماني 🌙",
+                body: "ألا بذكر الله تطمئن القلوب"
+            };
+        }
     }
 
     const { data: subs } = await supabase.from('push_subscriptions').select('*');
