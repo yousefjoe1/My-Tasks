@@ -111,7 +111,7 @@ const SubTaskCard = ({
 
                 {/* Custom Checkbox */}
                 {(!isEditing || loading) && (
-                    <>
+                    <div className='h-6 w-6'>
                         {loading ? (
                             <Loader2 className="w-4 h-4 text-white animate-spin" />
                         ) : (
@@ -127,7 +127,7 @@ const SubTaskCard = ({
                                 )}
                             </div>
                         )}
-                    </>
+                    </div>
                 )}
             </button>
 

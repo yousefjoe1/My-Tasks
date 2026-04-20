@@ -141,7 +141,7 @@ const DashBoard = () => {
                                 <div className="flex items-center gap-4 mb-8">
                                     <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent to-brand/20"></div>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-sm font-black text-brand uppercase tracking-[0.2em]">Weekly Snapshot</span>
+                                        <span className="text-sm font-black text-brand uppercase tracking-[0.2em]">إنجازات هذا الاسبوع</span>
                                         <h3 className="text-xl md:text-2xl font-black text-primary flex items-center gap-2">
                                             {format(snapWeekStart, 'MMMM dd')}
                                             <span className="text-brand">—</span>
@@ -154,9 +154,9 @@ const DashBoard = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                     <div className="glass-card p-4 flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-bold text-muted uppercase tracking-wider">Overall Progress</p>
+                                            <p className="text-sm font-bold text-muted uppercase tracking-wider">الانجاز العام</p>
                                             <h4 className="text-2xl font-black text-brand">{totalProgressPercent}%</h4>
-                                            <p className="text-xs text-secondary italic">Total efficiency this week</p>
+                                            {/* <p className="text-xs text-secondary italic">Total efficiency this week</p> */}
                                         </div>
                                         <div className="w-14 h-14 rounded-full border-4 border-brand/20 border-t-brand flex items-center justify-center font-bold text-xs">
                                             {totalCompletedDays}/{totalPossiblePoints}
@@ -165,9 +165,9 @@ const DashBoard = () => {
 
                                     <div className="glass-card p-4 flex items-center justify-between">
                                         <div>
-                                            <p className="text-md font-bold text-muted uppercase tracking-wider">Active Tasks</p>
+                                            <p className="text-md font-bold text-muted uppercase tracking-wider">عدد المهمات</p>
                                             <h4 className="text-2xl font-black text-primary">{totalTasks}</h4>
-                                            <p className="text-xs text-secondary italic">Habits tracked</p>
+                                            {/* <p className="text-xs text-secondary italic">Habits tracked</p> */}
                                         </div>
                                         <div className="text-3xl"><Target /></div>
                                     </div>
@@ -196,7 +196,6 @@ const DashBoard = () => {
 
                                 <div className="mt-4 overflow-hidden rounded-xl border border-secondary bg-secondary shadow-sm">
                                     <div className="px-4 py-3 border-b border-primary bg-tertiary/50 flex flex-wrap items-center justify-between gap-2">
-                                        <span className="text-md font-bold text-muted">DETAILED LOG</span>
                                         <div className="px-3 py-1 rounded-full bg-brand/10 text-brand text-lg font-bold">
                                             {format(snapWeekStart, 'MMM dd')} - {snap.week_end ? format(new Date(snap.week_end), 'MMM dd') : ''}
                                         </div>
