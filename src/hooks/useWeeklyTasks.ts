@@ -86,62 +86,144 @@ export function useWeeklyTasks({
     dispatch(setSyncLoading(false))
   }
 
+  // const checkWeeklyResetWithCache = async (userId: string | undefined) => {
+  //   if (!userId) return;
+
+  //   const now = new Date();
+  //   const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
+
+  //   // Fast local cache check (first line of defense)
+  //   const localLastReset = localStorage.getItem(`last_reset_${userId}`);
+  //   if (localLastReset === currentWeekStart) {
+  //     return;
+  //   }
+
+  //   try {
+  //     // === ATOMIC WEEKLY RESET CHECK + CLAIM ===
+  //     // Only ONE device will successfully update the last_snapshot_week
+  //     const { data, error: updateError } = await supabase
+  //       .from('profiles')
+  //       .update({ last_snapshot_week: currentWeekStart })
+  //       .eq('id', userId)
+  //       .not('last_snapshot_week', 'eq', currentWeekStart)   // ← This prevents duplicate resets
+  //       .select('id')
+  //       .maybeSingle();
+
+  //     if (updateError) {
+  //       console.error("Error claiming weekly reset:", updateError);
+  //       // Still update local cache to avoid retrying too aggressively
+  //       localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+  //       return;
+  //     }
+
+  //     // If no row was updated → another device already performed the reset
+  //     if (!data) {
+  //       console.log("Another device already handled the weekly reset");
+  //       localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+  //       return;
+  //     }
+
+  //     // === THIS DEVICE WON THE RACE → Perform the actual reset ===
+  //     console.log("اكتشاف أسبوع جديد.. جاري تصفير المهام (هذا الجهاز فاز)...");
+
+  //     const result = await handleWeeklyReset(userId);
+
+  //     if (result?.success) {
+  //       localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+  //       console.log("Weekly reset completed successfully");
+  //     } else {
+  //       console.error("Weekly reset failed after claiming it");
+  //       // Optional: You can revert the profile update here if you want (rare case)
+  //     }
+
+  //   } catch (err) {
+  //     console.error("خطأ في المزامنة الأسبوعية:", err);
+  //     // Fallback: update localStorage anyway so we don't spam the DB
+  //     localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+  //   }
+  // };
   const checkWeeklyResetWithCache = async (userId: string | undefined) => {
     if (!userId) return;
 
     const now = new Date();
     const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
 
-    // Fast local cache check (first line of defense)
+    // Fast local cache check
     const localLastReset = localStorage.getItem(`last_reset_${userId}`);
     if (localLastReset === currentWeekStart) {
+      console.log("✅ Weekly reset already done this week (cache)");
       return;
     }
 
     try {
-      // === ATOMIC WEEKLY RESET CHECK + CLAIM ===
-      // Only ONE device will successfully update the last_snapshot_week
-      const { data, error: updateError } = await supabase
+      // FIXED: Fetch current user's last_snapshot_week to compare
+      const { data: profile, error: fetchError } = await supabase
         .from('profiles')
-        .update({ last_snapshot_week: currentWeekStart })
+        .select('last_snapshot_week')
         .eq('id', userId)
-        .not('last_snapshot_week', 'eq', currentWeekStart)   // ← This prevents duplicate resets
+        .single();
+
+      if (fetchError) {
+        console.error("❌ Error fetching profile:", fetchError);
+        return;
+      }
+
+      const lastResetWeek = profile?.last_snapshot_week;
+
+      // If already reset this week, skip
+      if (lastResetWeek === currentWeekStart) {
+        console.log("✅ Weekly reset already done this week (DB)");
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        return;
+      }
+
+      console.log(`📅 Reset needed. Last reset: ${lastResetWeek}, Current week: ${currentWeekStart}`);
+
+      // === ATOMIC UPDATE: This device claims the reset ===
+      const { data: updated, error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          last_snapshot_week: currentWeekStart
+        })
+        .eq('id', userId)
         .select('id')
         .maybeSingle();
 
       if (updateError) {
-        console.error("Error claiming weekly reset:", updateError);
-        // Still update local cache to avoid retrying too aggressively
+        console.error("❌ Error claiming reset:", updateError);
         localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
         return;
       }
 
-      // If no row was updated → another device already performed the reset
-      if (!data) {
-        console.log("Another device already handled the weekly reset");
+      if (!updated) {
+        console.log("⚠️ Update failed");
         localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
         return;
       }
 
-      // === THIS DEVICE WON THE RACE → Perform the actual reset ===
-      console.log("اكتشاف أسبوع جديد.. جاري تصفير المهام (هذا الجهاز فاز)...");
+      console.log("✅ This device claimed the reset!");
 
+      // === THIS DEVICE WON → Perform the actual reset ===
+      console.log("🔄 Starting weekly reset...");
       const result = await handleWeeklyReset(userId);
 
       if (result?.success) {
         localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
-        console.log("Weekly reset completed successfully");
+        console.log("✅ Weekly reset completed successfully");
       } else {
-        console.error("Weekly reset failed after claiming it");
-        // Optional: You can revert the profile update here if you want (rare case)
+        console.error("❌ Weekly reset failed after claiming it");
+        // IMPORTANT: Consider reverting the profile update if reset failed
+        // await supabase.from('profiles').update({ last_snapshot_week: lastResetWeek }).eq('id', userId);
       }
 
     } catch (err) {
-      console.error("خطأ في المزامنة الأسبوعية:", err);
-      // Fallback: update localStorage anyway so we don't spam the DB
-      localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+      console.error("❌ Critical error in weekly check:", err);
+      localStorage.setItem(`last_reset_${userId}`, new Date().toISOString());
     }
   };
+
+
+
 
   useEffect(() => {
     Sync()
