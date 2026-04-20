@@ -27,6 +27,7 @@ import PushNotificationManager from "@/common/Notifications";
 import InstallPWA from "@/common/DownloadButtonPwa";
 import Footer from "@/common/Footer";
 import OnboardingWrapper from "@/common/OnboardingWrapper";
+import WelcomeNotifications from "@/features/Notifications/WelcomeNotifications";
 
 export const metadata: Metadata = {
   title: {
@@ -78,7 +79,7 @@ export default function RootLayout({
               <Navbar />
               <PushNotificationManager />
               <InstallPWA />
-
+              <WelcomeNotifications />
               {children}
             </AuthProvider >
           </ThemeProvider >
