@@ -69,7 +69,6 @@ export class WeeklyTasksService {
                 .insert({
                     ...insertData,
                     userId,
-                    is_essential: is_essential
                 })
                 .select()
                 .single();
