@@ -43,12 +43,6 @@ export default function Home() {
       <div className="max-w-[95%] mx-auto">
         <div className="rounded-2xl shadow-sm">
           <div className="mb-8 flex justify-between items-center">
-
-            <div>
-              <h1 className="lg:text-3xl text-xl font-bold text-primary mb-2">
-                Weekly Tasks
-              </h1>
-            </div>
             <OnboardingWrapper />
           </div>
 
@@ -86,8 +80,8 @@ export default function Home() {
 
           <div className="space-y-4 relative bg-primary rounded-2xl p-3">
             {
-              syncLoading &&
-              <div className="flex justify-center items-center">
+              syncLoading || loading &&
+              <div className="flex justify-center items-center fixed w-full h-full top-0 left-0 z-999">
                 <div className="loader-v3" />
               </div>
             }
