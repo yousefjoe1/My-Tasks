@@ -161,7 +161,7 @@ export default function Navbar() {
       </nav>
 
       {/* html dialog */}
-      <dialog ref={dialogRef} className="fixed w-[95%] bg-transparent lg:w-max top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 outline-none backdrop:bg-black/40 backdrop:backdrop-blur-sm">
+      <dialog ref={dialogRef} className="fixed w-[95%] bg-transparent transform  z-50 outline-none backdrop:bg-black/40 backdrop:backdrop-blur-sm">
         <div className="flex flex-col gap-3">
           <LoginModal closeModal={() => dialogRef?.current?.close()} />
           <button
