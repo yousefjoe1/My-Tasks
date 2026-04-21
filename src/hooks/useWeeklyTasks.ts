@@ -29,7 +29,9 @@ export function useWeeklyTasks({
   const seedEssentialTasks = async () => {
     const defaults = [
       {
-        content: "📖 الورد القرآني", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [
+        content: "📖 الورد القرآني", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false },
+        is_essential: true,
+        sub_tasks: [
           {
             content: "صفحه من البقره",
             days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
@@ -37,7 +39,10 @@ export function useWeeklyTasks({
         ]
       },
       {
-        content: "اذكار الصباح", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [
+        content: "اذكار الصباح", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false },
+        is_essential: true,
+
+        sub_tasks: [
           {
             content: "بسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم  3 مرات",
             days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
@@ -49,7 +54,9 @@ export function useWeeklyTasks({
         ]
       },
       {
-        content: "اذكار المساء", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [
+        content: "اذكار المساء", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false },
+        is_essential: true,
+        sub_tasks: [
           {
             content: "بسم الله الذي لا يضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم  3 مرات",
             days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
@@ -61,7 +68,10 @@ export function useWeeklyTasks({
         ]
       },
       {
-        content: "شويه رياضه", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false }, sub_tasks: [
+        content: "شويه رياضه", description: "", days: { Sat: false, Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false },
+        is_essential: true,
+
+        sub_tasks: [
           {
             content: "شويه إطاله",
             days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
@@ -197,7 +207,7 @@ export function useWeeklyTasks({
         .from('profiles')
         .select('last_snapshot_week')
         .eq('id', userId)
-        .single();
+        .maybeSingle()
 
       if (fetchError) {
         console.error("❌ Error fetching profile:", fetchError);

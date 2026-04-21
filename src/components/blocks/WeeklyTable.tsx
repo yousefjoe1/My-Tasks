@@ -32,9 +32,52 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
   const dispatch = useDispatch();
 
-  const handleSubTaskToggle = async (subTask: SubTask, newState: boolean) => {
+
+  // const handleSubTaskToggle = async (subTask: SubTask, newState: boolean, day: string) => {
+  //   setUpdateSubTaskLoading(true);
+  //   const todayKey = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+
+  //   const updatedDays = {
+  //     ...(subTask.days_completed || {}),
+  //     [todayKey]: newState
+  //   };
+
+  //   try {
+  //     await WeeklyTasksService.updateSubTask(subTask.id!, { days_completed: updatedDays });
+
+  //     dispatch(updateSubTaskAction({
+  //       taskId: task.id,
+  //       subTaskId: subTask.id!,
+  //       updates: { days_completed: updatedDays }
+  //     }));
+
+  //     // check if all sub tasks today done , then update the main task
+  //     const allSubTasksDone = task.sub_tasks?.every((st) => st.days_completed?.[todayKey]);
+  //     console.log("🚀 ~ handleSubTaskToggle ~ allSubTasksDone:", allSubTasksDone)
+  //     if (allSubTasksDone) {
+  //       toggleDay(day)
+  //     }
+
+  //   } catch (err) {
+  //     console.error("Failed to update subtask:", err);
+  //   }
+  //   setUpdateSubTaskLoading(false);
+  // };
+
+  const handleSubTaskToggle = async (subTask: SubTask, newState: boolean, day: string) => {
     setUpdateSubTaskLoading(true);
     const todayKey = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+
+    // --- الحل هنا ---
+    // بدلاً من الاعتماد على الـ Props، احسب النتيجة بناءً على الـ newState اللي المستخدم لسه ضاغط عليها
+    const allSubTasksDone = task.sub_tasks?.every((st) => {
+      // لو دي المهمة اللي المستخدم لسه ضاغط عليها، استخدم الـ newState الجديدة
+      if (st.id === subTask.id) return newState;
+      // غير كده، استخدم الحالة الحالية الموجودة في الـ Props
+      return st.days_completed?.[todayKey];
+    });
+
+    console.log("Will all subtasks be done?", allSubTasksDone);
 
     const updatedDays = {
       ...(subTask.days_completed || {}),
@@ -50,13 +93,16 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
         updates: { days_completed: updatedDays }
       }));
 
+      // دلوقتي هيشتغل من أول مرة لأن allSubTasksDone محسوبة بناءً على الـ Input الجديد
+      if (allSubTasksDone) {
+        toggleDay(day);
+      }
+
     } catch (err) {
       console.error("Failed to update subtask:", err);
     }
     setUpdateSubTaskLoading(false);
   };
-
-
   const toggleDay = (day: string) => {
     const currentDays = task.days || {};
     onUpdate(task.id, {
@@ -70,6 +116,8 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
   const today = new Date();
   const todayDayName = today.toLocaleDateString('en-US', { weekday: 'short' }); // "Wed" not "Wednesday"
+
+
 
   const isToday = (day: string) => {
     return day === todayDayName;
@@ -108,7 +156,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
               key={st.id}
               subTask={st}
               dayKey={todayDayName} // اليوم الحالي اللي انت عرفته فوق بـ "Wed" مثلاً
-              onToggle={(id, state) => handleSubTaskToggle(st, state)}
+              onToggle={(id, state) => handleSubTaskToggle(st, state, todayDayName)}
               loading={updateSubTaskLoading}
             />
           ))
