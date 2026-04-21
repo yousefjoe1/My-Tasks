@@ -21,18 +21,15 @@ const geistMono = Geist_Mono({
 
 
 import type { Metadata } from "next";
-import { Mail, Phone } from "lucide-react";
-// import PushNotificationManager from "@/common/PushNotifications";
 import PushNotificationManager from "@/common/Notifications";
 import InstallPWA from "@/common/DownloadButtonPwa";
 import Footer from "@/common/Footer";
-import OnboardingWrapper from "@/common/OnboardingWrapper";
 import WelcomeNotifications from "@/features/Notifications/WelcomeNotifications";
 
 export const metadata: Metadata = {
   title: {
-    default: "Weekly Tasks | Manage Your Weekly Tasks",
-    template: "%s | Weekly Tasks",
+    default: "Just Today | Manage Your Weekly Tasks",
+    template: "%s | Just Today",
   },
   description: "أفضل تطبيق لتنظيم مهامك الأسبوعية، تتبع إنجازاتك، وتحسين إنتاجيتك بكل سهولة.",
   keywords: ["تاسكات", "تنظيم وقت", "مهام أسبوعية", "Task manager", "Weekly planner", "Productivity app"],
@@ -40,10 +37,10 @@ export const metadata: Metadata = {
 
   // إعدادات الـ Open Graph (تظهر عند مشاركة اللينك على فيسبوك/واتساب)
   openGraph: {
-    title: "Weekly Tasks - نظم حياتك بذكاء",
+    title: "Just Today -  نظم حياتك بذكاء وسهولة",
     description: "تطبيق ذكي لإدارة المهام وتتبع الأهداف الأسبوعية مع ميزة الأرشفة التلقائية.",
     url: "https://my-tasks-inky.vercel.app",
-    siteName: "Weekly Tasks",
+    siteName: "Just Today",
     locale: "ar_EG",
     type: "website",
   },
@@ -51,7 +48,7 @@ export const metadata: Metadata = {
   // إعدادات تويتر
   twitter: {
     card: "summary_large_image",
-    title: "Weekly Tasks",
+    title: "Just Today",
     description: "نظم مهامك الأسبوعية ولا تفوت أي هدف.",
   },
 };
