@@ -16,22 +16,71 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
     const [message, setMessage] = useState<Message | null>(null);
     const { error: toastError, success: toastSuccess } = useToast();
 
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+    //     setMessage(null); // مسح أي رسالة قديمة
+
+    //     try {
+    //         if (isSignUp) {
+    //             const { error } = await supabase.auth.signUp({
+    //                 email,
+    //                 password,
+    //                 options: { data: { full_name: fullName } } // إرسال الاسم
+    //             });
+    //             if (error) throw error;
+    //             setMessage({ type: 'success', text: 'تم التسجيل بنجاح!.' });
+    //             toastSuccess('تم التسجيل بنجاح!');
+    //         } else {
+    //             const { error } = await supabase.auth.signInWithPassword({ email, password });
+    //             if (error) throw error;
+    //             setMessage({ type: 'success', text: 'أهلاً بك مجدداً!' });
+    //             toastSuccess('أهلاً بك مجدداً!');
+    //             closeModal();
+    //         }
+    //     } catch (error: unknown) {
+    //         const err = error as Error;
+    //         toastError(err.message || 'حدث خطأ ما');
+    //         setMessage({ type: 'error', text: err.message });
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setMessage(null); // مسح أي رسالة قديمة
+        setMessage(null);
 
         try {
             if (isSignUp) {
-                const { error } = await supabase.auth.signUp({
+                // 1. استرجاع الـ ID من التخزين (إذا وجد)
+                const referredBy = localStorage.getItem('referred_by');
+
+                // 2. إعداد بيانات التسجيل
+                const signUpData = {
                     email,
                     password,
-                    options: { data: { full_name: fullName } } // إرسال الاسم
-                });
+                    options: {
+                        data: {
+                            full_name: fullName,
+                            // إضافة الـ referred_by إذا كان موجوداً
+                            ...(referredBy && { referred_by: referredBy })
+                        }
+                    }
+                };
+
+                const { error } = await supabase.auth.signUp(signUpData);
+
                 if (error) throw error;
+
+                // 3. مسح الـ ID بعد نجاح التسجيل (لحماية الخصوصية)
+                localStorage.removeItem('referred_by');
+
                 setMessage({ type: 'success', text: 'تم التسجيل بنجاح!.' });
                 toastSuccess('تم التسجيل بنجاح!');
             } else {
+                // منطق تسجيل الدخول العادي
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 setMessage({ type: 'success', text: 'أهلاً بك مجدداً!' });

@@ -94,6 +94,21 @@ export function useWeeklyTasks({
     dispatch(setSyncLoading(false))
   }, [user, dispatch])
 
+  const handleZikr = async (userId: string) => {
+    try {
+      // استدعاء الـ RPC بدلاً من fetch و update
+      const { error } = await supabase.rpc('increment_zikr', {
+        target_user_id: userId
+      });
+
+      if (error) throw error;
+
+      console.log("تم تحديث العداد بنجاح!");
+    } catch (err) {
+      console.error("حدث خطأ:", err);
+    }
+  };
+
 
   const updateBlock = async (taskId: string, updates: Partial<WeeklyTask>) => {
     // Clear any previous error for this specific task before starting
@@ -110,6 +125,7 @@ export function useWeeklyTasks({
       const message = err instanceof Error ? err.message : 'Update failed';
       dispatch(setError({ id: taskId, message }));
     }
+    handleZikr(user?.id as string);
   };
 
   const deleteBlock = async (taskId: string) => {
