@@ -25,6 +25,8 @@ import PushNotificationManager from "@/common/Notifications";
 import InstallPWA from "@/common/DownloadButtonPwa";
 import Footer from "@/common/Footer";
 import WelcomeNotifications from "@/features/Notifications/WelcomeNotifications";
+import { Suspense } from "react";
+import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: {
@@ -76,7 +78,9 @@ export default function RootLayout({
               <Navbar />
               <PushNotificationManager />
               <InstallPWA />
-              <WelcomeNotifications />
+              <Suspense fallback={<Loader2 className="animate-spin h-8 w-8" />}>
+                <WelcomeNotifications />
+              </Suspense>
               {children}
             </AuthProvider >
           </ThemeProvider >
