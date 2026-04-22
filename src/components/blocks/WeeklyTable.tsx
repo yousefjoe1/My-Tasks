@@ -125,7 +125,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
   return (
     <>
-      <div className="group relative bg-primary rounded-xl shadow-sm border border-primary hover:shadow-md transition-all duration-200">
+      <div className="group relative bg-primary rounded-xl shadow-sm border border-brand pb-1 overflow-hidden  hover:shadow-md transition-all duration-200">
         {/* Header Section */}
         {error[task.id] && (
           <p className="text-red-500 text-sm mt-1">{error[task.id]}</p>
@@ -249,7 +249,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
         </div>
 
         {/* Status Bar */}
-        <div className="px-4 py-2 bg-secondary border-t border-secondary rounded-b-xl">
+        {/* <div className="px-4 py-2 bg-secondary border-t border-secondary rounded-b-xl">
           <div className="flex justify-between items-center text-xs text-muted">
             <span>
               Completed {Object.values(task.days || {}).filter(Boolean).length}{" "}
@@ -257,7 +257,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
             </span>
             <span className="text-muted">Click days to mark as complete</span>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <dialog ref={deleteDialogRef}

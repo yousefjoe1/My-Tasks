@@ -80,7 +80,13 @@ export default function Home() {
 
           <div className="space-y-4 relative bg-primary rounded-2xl p-3">
             {
-              syncLoading || loading &&
+              syncLoading &&
+              <div className="flex justify-center items-center fixed w-full h-full top-0 left-0 z-999">
+                <div className="loader-v3" />
+              </div>
+            }
+            {
+              loading &&
               <div className="flex justify-center items-center fixed w-full h-full top-0 left-0 z-999">
                 <div className="loader-v3" />
               </div>

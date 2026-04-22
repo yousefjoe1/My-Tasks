@@ -69,7 +69,7 @@ export async function GET() {
             title: "مراجعة منتصف اليوم 🕒",
             body: "ها يا بطل، طمني عملت إيه في مهام النهاردة؟ لسه فيه وقت تخلص الباقي."
         };
-        url = '/general-tasks'
+        url = '/'
     } else if (cairoHour === 19) { // 7 مساءً
         notificationContent = {
             title: "وقت الرياضة 🏃‍♂️",
@@ -81,7 +81,7 @@ export async function GET() {
             title: cairoHour === 5 ? "أذكار الصباح ☀️" : "أذكار المساء ✨",
             body: azkarDayAndNight[Math.floor(Math.random() * azkarDayAndNight.length)],
         };
-        url = '/general-tasks'
+        url = '/'
     } else if (cairoHour === 10) { // 10 صباحاً
         notificationContent = {
             title: "بداية اليوم 🚀",
