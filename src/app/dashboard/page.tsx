@@ -6,6 +6,7 @@ import { WeeklyTasksSync } from '@/services/weeklyTasksSyncService';
 import { getWeekDays } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CheckCircle2, Target, Trophy } from 'lucide-react';
+import MyImpact from '@/features/dashboard/MyImpact';
 
 const DashBoard = () => {
     const { user, loading: authLoading } = useAuth(); // تأكد إن useAuth بترجع حالة تحميل الـ Auth
@@ -60,6 +61,7 @@ const DashBoard = () => {
 
     return (
         <div className='flex flex-col gap-4 py-20 lg:px-7 px-1 min-h-screen'>
+            <MyImpact currentUserId={user.id} />
             {/* باقي الـ JSX بتاعك زي ما هو */}
             {snapData && snapData.length === 0 && (
                 <div className="text-center py-10">
