@@ -14,6 +14,7 @@ import { useToast } from '@/components/Toasts/useToast';
 import OnboardingWrapper from '@/common/OnboardingWrapper';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import ShareApp from '@/common/ShareApp';
 
 export default function Home() {
   const { error, success, toast, toasts, removeToast } = useToast()
@@ -42,8 +43,9 @@ export default function Home() {
 
       <div className="max-w-[95%] mx-auto">
         <div className="rounded-2xl shadow-sm">
-          <div className="mb-8 flex justify-between items-center">
+          <div className="mb-8 flex justify-between items-center flex-wrap gap-2">
             <OnboardingWrapper />
+            <ShareApp userId={user?.id} />
           </div>
 
 

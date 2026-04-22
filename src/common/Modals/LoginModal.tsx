@@ -29,7 +29,7 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
                     options: { data: { full_name: fullName } } // إرسال الاسم
                 });
                 if (error) throw error;
-                setMessage({ type: 'success', text: 'تم التسجيل بنجاح! تحقق من بريدك الإلكتروني.' });
+                setMessage({ type: 'success', text: 'تم التسجيل بنجاح!.' });
                 toastSuccess('تم التسجيل بنجاح!');
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
