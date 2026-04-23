@@ -1,5 +1,6 @@
 'use client'
 
+import { useToast } from '@/components/Toasts/useToast';
 import { Copy, Check } from 'lucide-react';
 import React, { useState } from 'react'
 
@@ -8,6 +9,7 @@ interface ShareAppProps {
 }
 
 const ShareApp = ({ userId }: ShareAppProps) => {
+    const { error: toastError, success: toastSuccess } = useToast();
     const [isCopied, setIsCopied] = useState(false);
 
     const shareUrl = userId
@@ -18,7 +20,7 @@ const ShareApp = ({ userId }: ShareAppProps) => {
         try {
             await navigator.clipboard.writeText(shareUrl);
             setIsCopied(true);
-
+            toastSuccess("لازم تسجل الاول عشان تتابع مين سجل تبعك");
             // إرجاع الزر لحالته الأصلية بعد ثانيتين
             setTimeout(() => {
                 setIsCopied(false);
