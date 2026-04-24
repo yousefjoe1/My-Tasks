@@ -217,11 +217,11 @@ const DashBoard = () => {
 
                                                     <div className=''>
                                                         <h4 className="text-lg font-semibold text-secondary min-w-[120px]">{task.content}</h4>
-                                                        <h3 className="text-sm font-bold text-secondary">
-                                                            انجازت اضافية للانجاز الرئيسي
-                                                        </h3>
                                                         {task.sub_tasks && task.sub_tasks.length > 0 && (
                                                             <div className="pl-4 mt-2 space-y-1">
+                                                                <h3 className="text-sm font-bold text-secondary">
+                                                                    انجازت اضافية للانجاز الرئيسي
+                                                                </h3>
                                                                 {task.sub_tasks.map((st: SubTask) => (
                                                                     <div key={st.id} className="flex justify-between items-center text-sm border border-brand rounded-2xl p-1 gap-2">
                                                                         <span className="text-muted">{st.content}</span>

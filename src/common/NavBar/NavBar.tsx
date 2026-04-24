@@ -8,11 +8,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import { useToast } from "@/components/Toasts/useToast";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
-  { name: "General Tasks", href: "/general-tasks" },
-  { name: "My Progress", href: "/dashboard" },
-  { name: "Powerful Day ⚡", href: "/" },
+  { name: "مهمات بسيطه", href: "/general-tasks" },
+  { name: "انجازاتي", href: "/dashboard" },
+  { name: "النهارده أقوي ⚡", href: "/" },
 ];
 
 export default function Navbar() {
@@ -23,6 +24,8 @@ export default function Navbar() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const confirmRef = useRef<HTMLDivElement>(null); // للتعامل مع الإغلاق عند الضغط بره
   const [loading, setLoading] = useState(false);
+
+  const path = usePathname();
 
   // إغلاق قائمة التأكيد لو ضغطت في أي مكان بره
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function Navbar() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="shrink-0">
-              <Link href="/" className="text-2xl font-bold text-brand hover:opacity-80 transition-opacity">
+              <Link href="/" className={`text-2xl font-bold text-brand hover:opacity-80 transition-opacity`}>
                 Just Today
               </Link>
             </div>
@@ -72,7 +75,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-primary hover:text-brand font-medium transition-colors duration-200 relative group"
+                  className={`text-primary hover:text-brand font-medium transition-colors duration-200 relative group ${path === link.href ? "text-brand border-b-2 border rounded-2xl px-2" : ""}`}
                 >
                   {link.name}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
@@ -150,7 +153,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="block px-4 py-3 text-primary hover:bg-secondary hover:text-brand rounded-lg font-medium transition-colors"
+                  className={`block px-4 py-3 text-primary hover:bg-secondary hover:text-brand rounded-lg font-medium transition-colors ${path === link.href ? "text-brand border-2 border-primary rounded-2xl px-2" : ""}`}
                 >
                   {link.name}
                 </Link>

@@ -1,5 +1,5 @@
 'use client';
-import { Mail, Phone, Linkedin, Globe, Heart } from "lucide-react";
+import { Mail, Phone, Linkedin, Globe, Heart, Link } from "lucide-react";
 
 export default function Footer() {
     return (
@@ -27,8 +27,9 @@ export default function Footer() {
                                 <a href="https://www.linkedin.com/in/youssefmahmoud1/" target="_blank" className="p-2 bg-tertiary rounded-full text-secondary hover:text-brand hover:scale-110 transition-all">
                                     <Linkedin size={20} />
                                 </a>
-                                <a href="https://portfolio-nextjs-iota-eight.vercel.app/" target="_blank" className="p-2 bg-tertiary rounded-full text-secondary hover:text-brand hover:scale-110 transition-all">
+                                <a href="https://portfolio-nextjs-iota-eight.vercel.app/" target="_blank" className="p-2 flex justify-center items-center bg-tertiary rounded-full text-secondary hover:text-brand hover:scale-110 transition-all">
                                     <Globe size={20} />
+                                    <span> اعمالي الاخري</span>
                                 </a>
                                 <a href="mailto:yousefmahmoud150@gmail.com" className="p-2 bg-tertiary rounded-full text-secondary hover:text-brand hover:scale-110 transition-all">
                                     <Mail size={20} />

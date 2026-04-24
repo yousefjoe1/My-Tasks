@@ -179,11 +179,17 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                 {weekDays.map((day, index) => (
                   <th
                     key={day}
-                    className="p-2 border-r border-secondary last:border-r-0 text-center"
+                    className="p-2 border border-secondary text-center"
                   >
 
                     <div className="flex flex-col">
-                      <span className="font-semibold text-primary">{day}</span>
+
+
+                      <div className="flex justify-center gap-1 items-center mb-3">
+                        <span className="font-semibold text-xs text-primary">{day}</span>
+                        {day === todayDayName && <TodayBadge />}
+
+                      </div>
                       <span className="text-xs text-muted mt-1 normal-case">
                         {format(weekDates[index], "MMM dd")}
                       </span>
@@ -200,18 +206,13 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                   <td
                     key={day}
                     className={[
-                      "p-2 border-r relative border-secondary last:border-r-0 align-middle transition-colors",
+                      "p-2 border border-secondary align-middle transition-colors",
                       task.days?.[day]
                         ? "bg-success/10 dark:bg-success/20"
                         : "bg-primary",
                     ].join(" ")}
                   >
 
-
-                    <div className="flex justify-center mb-3">
-                      {day === todayDayName && <TodayBadge />}
-
-                    </div>
                     <div className="flex justify-center items-center">
 
                       <button
