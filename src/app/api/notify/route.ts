@@ -124,14 +124,44 @@ export async function GET() {
         }
     }
 
-    const { data: subs } = await supabase.from('push_subscriptions').select('*');
+    const { data: subs } = await supabase.from('push_subscriptions').select('*, users(full_name)'); // جلب بيانات المستخدم المرتبط بالاشتراك
+
+    // if (subs && subs.length > 0) {
+
+    //     const pushPromises = subs.map(sub =>
+    //         webpush.sendNotification(
+    //             { endpoint: sub.endpoint, keys: { auth: sub.auth, p256dh: sub.p256dh } },
+    //             JSON.stringify({
+    //                 ...notificationContent,
+    //                 icon: '/icon.png',
+    //                 badge: '/badge.png',
+    //                 tag: 'task-reminder',
+    //                 renotify: true,
+    //                 data: { url: url }
+    //             })
+    //         ).catch(async (err) => {
+    //             // تنظيف الاشتراكات المنتهية 410
+    //             if (err.statusCode === 410 || err.statusCode === 404) {
+    //                 await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
+    //             }
+    //         })
+    //     );
+    //     await Promise.all(pushPromises);
+    // }
 
     if (subs && subs.length > 0) {
-        const pushPromises = subs.map(sub =>
-            webpush.sendNotification(
+        const pushPromises = subs.map(sub => {
+            // استخراج الاسم، لو مش موجود (أو لسه ما اتحدثش) هنستخدم "يا بطل" كقيمة افتراضية
+            const userName = sub.users?.full_name || "بطل";
+
+            // تجهيز النص المخصص
+            const personalizedBody = `${userName}، ${notificationContent.body}`;
+
+            return webpush.sendNotification(
                 { endpoint: sub.endpoint, keys: { auth: sub.auth, p256dh: sub.p256dh } },
                 JSON.stringify({
                     ...notificationContent,
+                    body: personalizedBody, // استخدمنا هنا النص المخصص بالاسم
                     icon: '/icon.png',
                     badge: '/badge.png',
                     tag: 'task-reminder',
@@ -143,8 +173,9 @@ export async function GET() {
                 if (err.statusCode === 410 || err.statusCode === 404) {
                     await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
                 }
-            })
-        );
+            });
+        });
+
         await Promise.all(pushPromises);
     }
 
