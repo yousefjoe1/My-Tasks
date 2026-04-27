@@ -1,38 +1,38 @@
-// 'use server'
+'use server'
 
-// import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
 
-// const supabase = createClient(
-//     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//     process.env.SUPABASE_SERVICE_ROLE_KEY!
-// );
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 // // جلب المستخدمين مع مهامهم (Left Join)
-// export async function getUsersWithProgress() {
-//     const { data, error } = await supabase
-//         .from('users')
-//         .select(`
-//             id,
-//             full_name,
-//             user_tasks (
-//                 id,
-//                 count,
-//                 is_completed,
-//                 task_id,
-//                 tasks (
-//                     id,
-//                     name,
-//                     has_count
-//                 )
-//             )
-//         `);
+export async function getUsersWithProgress() {
+    const { data, error } = await supabase
+        .from('users')
+        .select(`
+            id,
+            full_name,
+            user_tasks (
+                id,
+                count,
+                is_completed,
+                task_id,
+                tasks (
+                    id,
+                    name,
+                    has_count
+                )
+            )
+        `);
 
-//     if (error) {
-//         console.error('Supabase Error:', error);
-//         throw error;
-//     }
-//     return data;
-// }
+    if (error) {
+        console.error('Supabase Error:', error);
+        throw error;
+    }
+    return data;
+}
 
 // // حفظ التحديثات (Bulk Upsert)
 // export async function saveUserProgress(tasksToSave: any[]) {

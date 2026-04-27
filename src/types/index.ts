@@ -31,10 +31,21 @@ export interface WeeklySnapshot {
   week_data: WeeklyTask[];
 }
 
+// 3.1 تعريف إنجاز المستخدم
+export interface UserTask {
+  id?: string;
+  user_id?: string;
+  task_id: string;
+  day?: string;
+  count?: number | undefined;
+}
+
 // 4. تعريفات أخرى
 export interface User {
   id: string;
   email?: string;
+  full_name?: string;
+  user_tasks?: UserTask[];
 }
 
 export interface SupabaseTaskUpdate {

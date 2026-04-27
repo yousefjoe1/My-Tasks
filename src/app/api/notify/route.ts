@@ -151,17 +151,11 @@ export async function GET() {
 
     if (subs && subs.length > 0) {
         const pushPromises = subs.map(sub => {
-            // استخراج الاسم، لو مش موجود (أو لسه ما اتحدثش) هنستخدم "يا بطل" كقيمة افتراضية
-            const userName = sub.users?.full_name || "بطل";
-
-            // تجهيز النص المخصص
-            const personalizedBody = `${userName}، ${notificationContent.body}`;
 
             return webpush.sendNotification(
                 { endpoint: sub.endpoint, keys: { auth: sub.auth, p256dh: sub.p256dh } },
                 JSON.stringify({
                     ...notificationContent,
-                    body: personalizedBody, // استخدمنا هنا النص المخصص بالاسم
                     icon: '/icon.png',
                     badge: '/badge.png',
                     tag: 'task-reminder',
