@@ -32,39 +32,64 @@ export default function PushNotificationManager() {
     }, [])
 
     async function registerServiceWorker() {
-        const registration = await navigator.serviceWorker.register('/sw.js', {
-            scope: '/',
-            updateViaCache: 'none',
-        })
-        const sub = await registration.pushManager.getSubscription()
-        setSubscription(sub)
+        try {
+
+            const registration = await navigator.serviceWorker.register('/sw.js', {
+                scope: '/',
+                updateViaCache: 'none',
+            })
+            const sub = await registration.pushManager.getSubscription()
+            setSubscription(sub)
+
+        } catch (error) {
+            console.log("🚀 ~ registerServiceWorker ~ error:", error)
+
+        }
     }
 
     async function subscribeToPush() {
-        setLoading(true)
-        if (Notification.permission === 'denied') {
-            alert('Notifications are blocked. Please click the lock icon in the address bar to allow them!');
+        console.log('VAPID key:', process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
+        const permission = await Notification.requestPermission();
+
+        if (permission !== 'granted') {
+            alert('لازم توافق على الإشعارات الأول');
             return;
         }
-        const registration = await navigator.serviceWorker.ready
-        const sub = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(
-                process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-            ),
-        })
-        setSubscription(sub)
-        const serializedSub = JSON.parse(JSON.stringify(sub))
-        await subscribeUser(serializedSub)
-        setLoading(false)
+        try {
+            setLoading(true)
+            if (Notification.permission === 'denied') {
+                alert('Notifications are blocked. Please click the lock icon in the address bar to allow them!');
+                return;
+            }
+            const registration = await navigator.serviceWorker.ready
+            const sub = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(
+                    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+                ),
+            })
+            setSubscription(sub)
+            const serializedSub = JSON.parse(JSON.stringify(sub))
+            await subscribeUser(serializedSub)
+            setLoading(false)
+
+        } catch (error) {
+            setLoading(false)
+            console.log("🚀 ~ subscribeToPush ~ error:", error)
+        }
     }
 
     async function unsubscribeFromPush() {
-        setLoading(true)
-        await subscription?.unsubscribe()
-        setSubscription(null)
-        await unsubscribeUser()
-        setLoading(false)
+        try {
+            setLoading(true)
+            await subscription?.unsubscribe()
+            setSubscription(null)
+            await unsubscribeUser()
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+            console.log("🚀 ~ unsubscribeFromPush ~ error:", error)
+        }
     }
 
     if (!isSupported) {

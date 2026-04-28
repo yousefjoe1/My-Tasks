@@ -19,38 +19,33 @@ interface PushSubscription {
     };
 }
 
-// app/actions.ts
-
 export async function subscribeUser(sub: PushSubscription) {
-    const supabase = await createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    try {
+        const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
-    // 1. جلب بيانات المستخدم الحالي
-    const { data: { user } } = await supabase.auth.getUser();
+        // We use .upsert() so if the user subscribes twice, 
+        // it just updates the existing record instead of creating a duplicate.
+        const { error } = await supabase
+            .from('push_subscriptions')
+            .upsert({
+                endpoint: sub.endpoint,
+                p256dh: sub.keys.p256dh,
+                auth: sub.keys.auth,
+                user_id: `39505af4-4286-423b-8f4a-953a493b62c8`
+            }, { onConflict: 'endpoint' });
 
-    if (!user) {
-        return { success: false, error: "يجب تسجيل الدخول أولاً" };
-    }
+        if (error) {
+            console.error('Supabase Error:', error);
+            return { success: false };
+        }
 
-    // 2. تخزين الاشتراك مع الـ user_id
-    const { error } = await supabase
-        .from('push_subscriptions')
-        .upsert({
-            endpoint: sub.endpoint,
-            p256dh: sub.keys.p256dh,
-            auth: sub.keys.auth,
-            user_id: user.id, // ربط الاشتراك بالمستخدم
-        }, { onConflict: 'endpoint' });
-
-    if (error) {
-        console.error('Supabase Error:', error);
+        return { success: true };
+    } catch (error) {
+        console.error('Error:', error);
         return { success: false };
     }
-
-    return { success: true };
 }
+
 
 export async function unsubscribeUser() {
     subscription = null
