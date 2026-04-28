@@ -48,13 +48,14 @@ export default function PushNotificationManager() {
     }
 
     async function subscribeToPush() {
-        console.log('VAPID key:', process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
         const permission = await Notification.requestPermission();
 
         if (permission !== 'granted') {
             alert('لازم توافق على الإشعارات الأول');
             return;
         }
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (!registration) throw new Error("SW not ready");
         try {
             setLoading(true)
             if (Notification.permission === 'denied') {
