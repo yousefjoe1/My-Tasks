@@ -1,6 +1,5 @@
 import { useToast } from '@/components/Toasts/useToast';
 import { supabase } from '@/lib/supabase/client';
-import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 
 // تعريف أنواع الأخطاء والرسائل
@@ -8,7 +7,7 @@ interface Error { message: string; }
 type MessageType = 'success' | 'error'
 interface Message { type: MessageType; text: string; }
 
-export default function LoginModal({ closeModal }: { closeModal: () => void }) {
+export default function LoginModal({ closeModal, referredByQuery }: { closeModal: () => void, referredByQuery?: string | null }) {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,39 +16,6 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
     const [message, setMessage] = useState<Message | null>(null);
     const { error: toastError, success: toastSuccess } = useToast();
 
-    const searchParams = useSearchParams();
-    const referredByQuery = searchParams.get('ref');
-
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-    //     setMessage(null); // مسح أي رسالة قديمة
-
-    //     try {
-    //         if (isSignUp) {
-    //             const { error } = await supabase.auth.signUp({
-    //                 email,
-    //                 password,
-    //                 options: { data: { full_name: fullName } } // إرسال الاسم
-    //             });
-    //             if (error) throw error;
-    //             setMessage({ type: 'success', text: 'تم التسجيل بنجاح!.' });
-    //             toastSuccess('تم التسجيل بنجاح!');
-    //         } else {
-    //             const { error } = await supabase.auth.signInWithPassword({ email, password });
-    //             if (error) throw error;
-    //             setMessage({ type: 'success', text: 'أهلاً بك مجدداً!' });
-    //             toastSuccess('أهلاً بك مجدداً!');
-    //             closeModal();
-    //         }
-    //     } catch (error: unknown) {
-    //         const err = error as Error;
-    //         toastError(err.message || 'حدث خطأ ما');
-    //         setMessage({ type: 'error', text: err.message });
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

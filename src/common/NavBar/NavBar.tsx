@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import { useToast } from "@/components/Toasts/useToast";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const navLinks = [
   { name: "مهمات بسيطه", href: "/general-tasks" },
@@ -26,6 +26,9 @@ export default function Navbar() {
   const [loading, setLoading] = useState(false);
 
   const path = usePathname();
+
+  const searchParams = useSearchParams();
+  const referredByQuery = searchParams.get('ref');
 
   // إغلاق قائمة التأكيد لو ضغطت في أي مكان بره
   useEffect(() => {
@@ -166,7 +169,7 @@ export default function Navbar() {
       {/* html dialog */}
       <dialog ref={dialogRef} className="fixed w-[95%] bg-transparent transform  z-50 outline-none backdrop:bg-black/40 backdrop:backdrop-blur-sm">
         <div className="flex flex-col gap-3">
-          <LoginModal closeModal={() => dialogRef?.current?.close()} />
+          <LoginModal referredByQuery={referredByQuery} closeModal={() => dialogRef?.current?.close()} />
           <button
             className="p-3 rounded-2xl w-full text-brand-error bg-secondary hover:bg-brand-error/10 transition-colors shadow-lg border border-primary font-bold"
             onClick={() => dialogRef?.current?.close()}
