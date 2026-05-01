@@ -27,8 +27,6 @@ export default function Navbar() {
 
   const path = usePathname();
 
-  const searchParams = useSearchParams();
-  const referredByQuery = searchParams.get('ref');
 
   // إغلاق قائمة التأكيد لو ضغطت في أي مكان بره
   useEffect(() => {
