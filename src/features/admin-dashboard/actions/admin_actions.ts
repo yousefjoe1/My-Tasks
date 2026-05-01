@@ -1,12 +1,12 @@
 'use server'
 import { createClient } from '@supabase/supabase-js'
 
+const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 export async function promoteUserToAdmin(userId: string) {
     // هنا نستخدم الـ Service Role Key
-    const supabaseAdmin = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
 
     const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
         userId,
@@ -16,10 +16,28 @@ export async function promoteUserToAdmin(userId: string) {
     return { data, error }
 }
 
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// const supabaseAdmin = createClient(
+//     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+//     process.env.SUPABASE_SERVICE_ROLE_KEY!
+// );
+
+/**
+ * جلب رتبة المستخدم من الـ Auth Metadata مباشرة
+ * مفيد للتحقق من الصلاحيات في السيرفر (Server-side protection)
+ */
+export async function getUserRoleById(userId: string) {
+    try {
+        const { data, error } = await supabaseAdmin.auth.admin.getUserById(userId);
+
+        if (error) throw error;
+
+        // إرجاع الـ role من app_metadata أو 'user' كقيمة افتراضية
+        return data.user?.app_metadata?.role || 'user';
+    } catch (error) {
+        console.error("Error fetching user role:", error);
+        return 'user'; // في حالة الخطأ بنعتبره يوزر عادي زيادة في الأمان
+    }
+}
 
 export async function getUsers() {
     const { data: users, error } = await supabaseAdmin

@@ -32,7 +32,7 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
                         data: {
                             full_name: fullName,
                             // إضافة الـ referred_by إذا كان موجوداً
-                            ...(referredByQuery && { referred_by: referredByQuery })
+                            referred_by: referredByQuery || null
                         }
                     }
                 };

@@ -16,7 +16,7 @@ const SeviceWorker = () => {
 
 
     return (
-        <div>serviceWorker</div>
+        <></>
     )
 }
 

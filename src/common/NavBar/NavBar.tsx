@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import { useToast } from "@/components/Toasts/useToast";
 import { usePathname, useSearchParams } from "next/navigation";
+import { getUserRoleById } from "@/features/admin-dashboard/actions/admin_actions";
 
 const navLinks = [
   { name: "مهمات بسيطه", href: "/general-tasks" },
@@ -26,6 +27,25 @@ export default function Navbar() {
   const [loading, setLoading] = useState(false);
 
   const path = usePathname();
+
+  const [userInfo, setUserInfo] = useState(null);
+  console.log("🚀 ~ Navbar ~ userInfo:", userInfo)
+
+  const getUser = async () => {
+    if (user) {
+      try {
+        const res = await getUserRoleById(user.id);
+        setUserInfo(res);
+        console.log("🚀 ~ Navbar ~ res:", res)
+      } catch (error) {
+
+      }
+    }
+  }
+
+  useEffect(() => {
+    getUser();
+  }, [user]);
 
 
   // إغلاق قائمة التأكيد لو ضغطت في أي مكان بره
@@ -82,6 +102,17 @@ export default function Navbar() {
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
                 </Link>
               ))}
+              {
+                userInfo == 'admin' && (
+                  <Link
+                    href="/admin"
+                    className={`text-primary hover:text-brand font-medium transition-colors duration-200 relative group ${path === "/admin" ? "text-brand border-b-2 border rounded-2xl px-2" : ""}`}
+                  >
+                    لوحة التحكم
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
+                  </Link>
+                )
+              }
             </div>
 
             <button
@@ -159,6 +190,17 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
+              {
+                userInfo == 'admin' && (
+                  <Link
+                    href="/admin"
+                    className={`text-primary px-4 py-3 hover:text-brand font-medium transition-colors duration-200 relative group ${path === "/admin" ? "text-brand border-b-2 border rounded-2xl px-2" : ""}`}
+                  >
+                    لوحة التحكم
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
+                  </Link>
+                )
+              }
             </div>
           )}
         </div>
