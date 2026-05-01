@@ -1,5 +1,5 @@
 'use client'
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import { LoaderIcon, LogIn, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import ToggleMode from "./ToggleMode";
@@ -169,7 +169,9 @@ export default function Navbar() {
       {/* html dialog */}
       <dialog ref={dialogRef} className="fixed w-[95%] bg-transparent transform  z-50 outline-none backdrop:bg-black/40 backdrop:backdrop-blur-sm">
         <div className="flex flex-col gap-3">
-          <LoginModal referredByQuery={referredByQuery} closeModal={() => dialogRef?.current?.close()} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <LoginModal referredByQuery={referredByQuery} closeModal={() => dialogRef?.current?.close()} />
+          </Suspense>
           <button
             className="p-3 rounded-2xl w-full text-brand-error bg-secondary hover:bg-brand-error/10 transition-colors shadow-lg border border-primary font-bold"
             onClick={() => dialogRef?.current?.close()}
