@@ -1,5 +1,6 @@
 import { useToast } from '@/components/Toasts/useToast';
 import { supabase } from '@/lib/supabase/client';
+import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 
 // تعريف أنواع الأخطاء والرسائل
@@ -15,6 +16,9 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
     const [isSignUp, setIsSignUp] = useState(false);
     const [message, setMessage] = useState<Message | null>(null);
     const { error: toastError, success: toastSuccess } = useToast();
+
+    const searchParams = useSearchParams();
+    const referredByQuery = searchParams.get('ref');
 
     // const handleSubmit = async (e: React.FormEvent) => {
     //     e.preventDefault();
@@ -57,6 +61,8 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
                 // 1. استرجاع الـ ID من التخزين (إذا وجد)
                 const referredBy = localStorage.getItem('referred_by');
 
+                const isLocalORquery = referredBy || referredByQuery;
+
                 // 2. إعداد بيانات التسجيل
                 const signUpData = {
                     email,
@@ -65,7 +71,7 @@ export default function LoginModal({ closeModal }: { closeModal: () => void }) {
                         data: {
                             full_name: fullName,
                             // إضافة الـ referred_by إذا كان موجوداً
-                            ...(referredBy && { referred_by: referredBy })
+                            ...(isLocalORquery && { referred_by: isLocalORquery })
                         }
                     }
                 };
