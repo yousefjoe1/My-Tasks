@@ -63,6 +63,24 @@ export async function sendNotification(message: string, sub: webpush.PushSubscri
                 icon: '/icon.png',
             })
         )
+        // delete from supabase
+        const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+        try {
+
+            const { error } = await supabase
+                .from('push_subscriptions')
+                .delete()
+                .eq('endpoint', sub.endpoint);
+
+            if (error) {
+                console.error('Error deleting subscription:', error);
+            }
+        }
+        catch (e) {
+            console.error('Error:', e);
+        }
+
+
         return { success: true }
     } catch (error) {
         console.error('Error:', error)
