@@ -19,7 +19,7 @@ interface PushSubscription {
     };
 }
 
-export async function subscribeUser(sub: PushSubscription) {
+export async function subscribeUser(sub: PushSubscription, userId?: string) {
     try {
         const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
@@ -31,7 +31,7 @@ export async function subscribeUser(sub: PushSubscription) {
                 endpoint: sub.endpoint,
                 p256dh: sub.keys.p256dh,
                 auth: sub.keys.auth,
-                user_id: `39505af4-4286-423b-8f4a-953a493b62c8`
+                user_id: userId || `39505af4-4286-423b-8f4a-953a493b62c8`
             }, { onConflict: 'endpoint' });
 
         if (error) {

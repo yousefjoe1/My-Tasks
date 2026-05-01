@@ -1,6 +1,7 @@
 'use client'
 
 import { subscribeUser, unsubscribeUser } from '@/app/actions'
+import { useAuth } from '@/contexts/AuthContext'
 import { useState, useEffect } from 'react'
 
 function urlBase64ToUint8Array(base64String: string) {
@@ -22,6 +23,8 @@ export default function PushNotificationManager() {
     const [subscription, setSubscription] = useState<PushSubscription | null>(
         null
     )
+
+    const { user } = useAuth()
 
     useEffect(() => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -71,7 +74,7 @@ export default function PushNotificationManager() {
             })
             setSubscription(sub)
             const serializedSub = JSON.parse(JSON.stringify(sub))
-            await subscribeUser(serializedSub)
+            await subscribeUser(serializedSub, user?.id)
             setLoading(false)
 
         } catch (error) {
