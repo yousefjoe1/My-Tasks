@@ -170,7 +170,7 @@ export default function Navbar() {
       <dialog ref={dialogRef} className="fixed w-[95%] bg-transparent transform  z-50 outline-none backdrop:bg-black/40 backdrop:backdrop-blur-sm">
         <div className="flex flex-col gap-3">
           <Suspense fallback={<div>Loading...</div>}>
-            <LoginModal referredByQuery={referredByQuery} closeModal={() => dialogRef?.current?.close()} />
+            <LoginModalWrapper closeModal={() => dialogRef?.current?.close()} />
           </Suspense>
           <button
             className="p-3 rounded-2xl w-full text-brand-error bg-secondary hover:bg-brand-error/10 transition-colors shadow-lg border border-primary font-bold"
@@ -182,4 +182,11 @@ export default function Navbar() {
       </dialog>
     </>
   );
+}
+
+function LoginModalWrapper({ closeModal }: { closeModal: () => void }) {
+  const searchParams = useSearchParams();
+  const referredByQuery = searchParams.get('ref');
+
+  return <LoginModal referredByQuery={referredByQuery} closeModal={closeModal} />;
 }
