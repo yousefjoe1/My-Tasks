@@ -24,12 +24,7 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
 
         try {
             if (isSignUp) {
-                // 1. استرجاع الـ ID من التخزين (إذا وجد)
-                const referredBy = localStorage.getItem('referred_by');
-
-                const isLocalORquery = referredBy || referredByQuery;
-
-                // 2. إعداد بيانات التسجيل
+                // 1. إعداد بيانات التسجيل
                 const signUpData = {
                     email,
                     password,
@@ -37,7 +32,7 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
                         data: {
                             full_name: fullName,
                             // إضافة الـ referred_by إذا كان موجوداً
-                            ...(isLocalORquery && { referred_by: isLocalORquery })
+                            ...(referredByQuery && { referred_by: referredByQuery })
                         }
                     }
                 };
@@ -47,7 +42,6 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
                 if (error) throw error;
 
                 // 3. مسح الـ ID بعد نجاح التسجيل (لحماية الخصوصية)
-                localStorage.removeItem('referred_by');
 
                 setMessage({ type: 'success', text: 'تم التسجيل بنجاح!.' });
                 toastSuccess('تم التسجيل بنجاح!');
