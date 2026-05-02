@@ -4,11 +4,25 @@ import { useEffect } from 'react';
 import { useToast } from '@/components/Toasts/useToast';
 import ToastContainer from '@/components/Toasts/ToastContainer';
 import { useSearchParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { userOpenedApp } from '@/actions/general.actions';
 
 const WelcomeNotifications = () => {
     const { toast, toasts, removeToast } = useToast()
 
     const searchParams = useSearchParams();
+
+    const { user } = useAuth();
+
+
+    const userEnteredTheApp = async () => {
+        if (user) {
+            const res = await userOpenedApp(user.id);
+            if (res === 'admin') {
+
+            }
+        }
+    }
 
     useEffect(() => {
         const refId = searchParams.get('ref');
@@ -19,6 +33,7 @@ const WelcomeNotifications = () => {
     }, [searchParams]);
 
     useEffect(() => {
+
         // تأخير بسيط عشان التوست ما يظهرش فوق الـ Loader أو محتوى الـ Layout
         const timer = setTimeout(() => {
             toast("بسم الله ",

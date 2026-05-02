@@ -17,6 +17,7 @@ export interface WeeklyTask {
   is_essential?: boolean;
   description?: string;
   sub_tasks?: SubTask[]; // تأكد أن هذا موجود هنا
+  name?: string;
 }
 
 // 3. تعريف الـ Snapshot (التعديل المهم هنا)
@@ -38,6 +39,9 @@ export interface UserTask {
   task_id: string;
   day?: string;
   count?: number | undefined;
+  is_completed?: boolean;
+  tasks?: WeeklyTask;
+  sub_task_id?: string;
 }
 
 // 4. تعريفات أخرى

@@ -85,8 +85,8 @@ export async function getUsersWithProgress() {
 // }
 
 
-
-// export async function updateTaskCount(userId: string, taskId: string, count: number, date: string) {
+// old update
+// export async function updateTaskCount(userId: string, taskId: string, count: number) {
 
 //     // بنستخدم upsert عشان لو السجل موجود يحدثه، ولو مش موجود ينشئه
 //     const { error } = await supabase
@@ -96,8 +96,6 @@ export async function getUsersWithProgress() {
 //                 user_id: userId,
 //                 task_id: taskId,
 //                 count: count,
-//                 is_completed: count > 0, // بنعتبر المهمة مكتملة لو العداد أكبر من 0
-//                 // created_at: date // لو العمود ده موجود عندك في الجدول ضيفه، لو مش موجود احذفه
 //             },
 //             {
 //                 // لازم تتأكد إن الـ Constraint ده موجود في الداتابيز (user_id, task_id)
@@ -112,3 +110,27 @@ export async function getUsersWithProgress() {
 
 //     return { success: true };
 // }
+
+export async function updateTaskCount(userId: string, taskId: string, count: number) {
+    const { error } = await supabase
+        .from('user_tasks')
+        .upsert(
+            {
+                user_id: userId,
+                task_id: taskId,
+                count: count,
+                is_completed: count >= 10, // مثال: لو العداد وصل 10 تبقى اكتملت
+                created_at: new Date().toISOString().split('T')[0] // عشان يحافظ على تاريخ اليوم
+            },
+            {
+                onConflict: 'user_id, task_id'
+            }
+        );
+
+    if (error) {
+        console.error("Error updating task count:", error);
+        throw error;
+    }
+
+    return { success: true };
+}
