@@ -15,6 +15,8 @@ const navLinks = [
   { name: "مهمات بسيطه", href: "/general-tasks" },
   { name: "انجازاتي", href: "/dashboard" },
   { name: "النهارده أقوي ⚡", href: "/" },
+  { name: "التقدم البسيط", href: "/group-tasks" },
+
 ];
 
 export default function Navbar() {
