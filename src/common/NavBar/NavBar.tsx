@@ -31,7 +31,6 @@ export default function Navbar() {
   const path = usePathname();
 
   const [userInfo, setUserInfo] = useState(null);
-  console.log("🚀 ~ Navbar ~ userInfo:", userInfo)
 
   const getUser = async () => {
     if (user) {

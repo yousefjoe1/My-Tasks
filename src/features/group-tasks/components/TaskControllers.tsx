@@ -61,13 +61,13 @@ const TaskControllers = ({ userTask }: { userTask: UserTask }) => {
             </div>
             {/* أزرار التحكم */}
             <div className="flex gap-3 mt-6 z-10">
-                <button
+                {/* <button
                     onClick={() => handleIncrement(userTask.task_id)}
                     className="flex-1 flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-primary/20"
                 >
                     <Plus size={20} />
                     <span>زيادة</span>
-                </button>
+                </button> */}
 
                 <button
                     onClick={() => handleSave(userTask)}
@@ -75,7 +75,7 @@ const TaskControllers = ({ userTask }: { userTask: UserTask }) => {
                     title="حفظ التقدم"
                     disabled={loading}
                 >
-                    {loading ? <Loader size={20} className="animate-spin" /> : <Save size={20} />}
+                    {loading ? <Loader size={20} className="animate-spin" /> : 'حفظ'}
                 </button>
             </div>
 

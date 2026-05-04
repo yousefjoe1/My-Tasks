@@ -4,6 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { User, UserTask } from '@/types';
 import { Plus, Check, Save, User as UserIcon, Award, Loader } from 'lucide-react';
 import { updateTaskCount } from '../actions/group-tasks.actions';
+import { useToast } from '@/components/Toasts/useToast';
+import ToastContainer from '@/components/Toasts/ToastContainer';
+
+// toast , sooner
 
 interface MyTasksControlsProps {
     users: User[];
@@ -12,9 +16,9 @@ interface MyTasksControlsProps {
 export default function MyTasksControls({ users }: MyTasksControlsProps) {
     const { user: currentUser } = useAuth();
     const [localUserTasks, setLocalUserTasks] = useState<UserTask[]>([]);
-
     // loading state
     const [loading, setLoading] = useState(false);
+    const { error, success, toast, toasts, removeToast } = useToast()
 
     // تحديث الحالة المحلية عند تحميل المستخدم أو الـ users
     useEffect(() => {
@@ -44,14 +48,8 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
         }
 
         try {
-            // نمرر id المستخدم الحالي مع id المهمة والعدد الجديد
             await updateTaskCount(currentUser.id, userTask.task_id, userTask.count || 0);
-
-            console.log("Task updated successfully:", userTask);
-            alert(`تم حفظ تقدمك في: ${userTask.tasks?.name}`);
-
-            // اختيار اختياري: لو عايز الصفحة تتحدث وتجيب البيانات الجديدة من السيرفر
-            // router.refresh(); 
+            toast(`تم حفظ تقدمك في: ${userTask.tasks?.name}`)
         } catch (error) {
             alert("حدث خطأ أثناء الحفظ، حاول مرة أخرى");
         } finally {
@@ -62,7 +60,9 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
     if (!currentUser) return null;
 
     return (
-        <div className="space-y-6 p-1 md:p-6 bg-brand-bg text-brand-text transition-colors duration-300">
+        <div className="space-y-6 p-1 bg-brand-bg text-brand-text transition-colors duration-300">
+            <ToastContainer toasts={toasts} removeToast={removeToast} />
+
             {/* Header: ترحيب بالمستخدم */}
             <header className="flex flex-col gap-2 border-b border-brand-border pb-1">
                 <div className="flex items-center gap-3">
@@ -85,7 +85,7 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
                 {localUserTasks.map((userTask) => (
                     <div
                         key={userTask.id}
-                        className="group flex flex-col p-6 bg-brand-secondary border border-brand-border rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border-b-4 border-b-brand-primary overflow-hidden relative"
+                        className="group flex flex-col pb-1 pt-2 px-3 bg-brand-secondary border border-brand-border rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border-b-4 border-b-brand-primary overflow-hidden relative"
                     >
                         {/* زخرفة خلفية بسيطة */}
                         <div className="absolute -top-4 -left-4 w-16 h-16 bg-brand-primary/5 rounded-full blur-2xl group-hover:bg-brand-primary/10 transition-colors"></div>
@@ -103,46 +103,27 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
                         </div>
 
                         {/* العداد المركزي */}
-                        <div className="flex flex-col items-center justify-center relative">
-                            <div className="w-24 h-24 rounded-full border-4 border-brand-tertiary flex flex-col items-center justify-center bg-brand-bg shadow-inner">
+                        <button onClick={() => handleIncrement(userTask.task_id)} className="flex flex-col items-center justify-center relative transition-all active:scale-95 ">
+                            <div className="w-36 h-36 rounded-full border-4 border-brand-tertiary flex flex-col items-center justify-center bg-brand-bg shadow-inner">
                                 <span className="text-3xl font-black text-brand-primary font-mono">
                                     {userTask.count || 0}
                                 </span>
                                 <span className="text-[10px] text-brand-text-muted font-bold">تكرار</span>
+                                <span>+</span>
                             </div>
-                        </div>
+                        </button>
 
                         {/* أزرار التحكم */}
-                        <div className="flex gap-3 mt-2 z-10">
-                            <button
-                                onClick={() => handleIncrement(userTask.task_id)}
-                                className="flex-1 flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold py-3 rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-primary/20"
-                            >
-                                <Plus size={20} />
-                                <span>زيادة</span>
-                            </button>
+                        <div className="flex gap-3 justify-center mt-2 z-10">
 
                             <button
                                 onClick={() => handleSave(userTask)}
-                                className="w-14 flex items-center justify-center bg-brand-tertiary hover:bg-brand-border text-brand-text-secondary rounded-2xl transition-all active:scale-95 border border-brand-border"
+                                className="w-24 p-2 flex items-center justify-center bg-brand-tertiary hover:bg-brand-border text-brand-text-secondary rounded-2xl transition-all active:scale-95 border border-brand-border"
                                 title="حفظ التقدم"
                                 disabled={loading}
                             >
-                                {loading ? <Loader size={20} className="animate-spin" /> : <Save size={20} />}
+                                {loading ? <Loader size={20} className="animate-spin" /> : <> <Save size={20} className='ml-2' /> حفظ</>}
                             </button>
-                        </div>
-
-                        {/* مؤشر الحالة */}
-                        <div className="mt-4 flex items-center gap-2">
-                            {/* <div className={`h-1.5 flex-1 rounded-full bg-brand-tertiary overflow-hidden`}>
-                                <div
-                                    className="h-full bg-brand-success transition-all duration-500"
-                                    style={{ width: (userTask.count || 0) >= 10 ? '100%' : `${(userTask.count || 0) * 10}%` }}
-                                ></div>
-                            </div> */}
-                            {/* <span className="text-[10px] font-bold text-brand-text-muted">
-                                {userTask.count > 0 ? 'قيد التنفيذ' : 'لم تبدأ بعد'}
-                            </span> */}
                         </div>
                     </div>
                 ))}
