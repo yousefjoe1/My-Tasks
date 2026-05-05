@@ -2,6 +2,7 @@
 
 'use client'
 
+import { useAuth } from "@/contexts/AuthContext";
 import { getUsersWithProgress } from "@/features/group-tasks/actions/group-tasks.actions";
 import MyTasksControls from "@/features/group-tasks/components/MyTasksControls";
 // import MyTasksControls from "@/features/group-tasks/components/MyTasksControls";
@@ -14,6 +15,8 @@ export default function GroupTasksPage() {
     // const { users, allTasks, userProgress } = await getDashboardData();
     const [users, setUsers] = useState<User[]>([])
 
+    const { user } = useAuth()
+
     // useeffect to fetch all tasks
     useEffect(() => {
         const fetchTasks = async () => {
@@ -22,7 +25,7 @@ export default function GroupTasksPage() {
             setUsers(data as unknown as User[])
         }
         fetchTasks()
-    }, [])
+    }, [user?.id])
 
     return (
         <div className="p-6">
