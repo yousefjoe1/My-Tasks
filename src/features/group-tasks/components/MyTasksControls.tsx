@@ -83,37 +83,40 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
             {/* Grid لمهام المستخدم فقط */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {localUserTasks.map((userTask) => (
-                    <div
-                        key={userTask.id}
-                        className="group flex flex-col pb-1 pt-2 px-3 bg-brand-secondary border border-brand-border rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border-b-4 border-b-brand-primary overflow-hidden relative"
-                    >
-                        {/* زخرفة خلفية بسيطة */}
-                        <div className="absolute -top-4 -left-4 w-16 h-16 bg-brand-primary/5 rounded-full blur-2xl group-hover:bg-brand-primary/10 transition-colors"></div>
+                    <div key={userTask.id} className=' bg-brand-secondary border border-brand-border rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border-b-4 border-b-brand-primary'>
 
-                        {/* اسم المهمة */}
-                        <div className="flex justify-between items-start mb-2 z-10">
-                            <h3 className="font-bold text-lg text-brand-text leading-tight max-w-[70%]">
-                                {userTask.tasks?.name}
-                            </h3>
-                            {userTask.is_completed && (
-                                <span className="bg-brand-success/10 text-brand-success p-1 rounded-full">
-                                    <Check size={16} strokeWidth={3} />
-                                </span>
-                            )}
-                        </div>
+                        <button onClick={() => handleIncrement(userTask.task_id)}
+                            key={userTask.id}
+                            className="group w-full flex flex-col pb-1 pt-2 px-3 overflow-hidden relative"
+                        >
+                            {/* زخرفة خلفية بسيطة */}
+                            <div className="absolute -top-4 -left-4 w-16 h-16 bg-brand-primary/5 rounded-full blur-2xl group-hover:bg-brand-primary/10 transition-colors"></div>
 
-                        {/* العداد المركزي */}
-                        <button onClick={() => handleIncrement(userTask.task_id)} className="flex flex-col items-center justify-center relative transition-all active:scale-95 ">
-                            <div className="w-36 h-36 rounded-full border-4 border-brand-tertiary flex flex-col items-center justify-center bg-brand-bg shadow-inner">
-                                <span className="text-3xl font-black text-brand-primary font-mono">
-                                    {userTask.count || 0}
-                                </span>
-                                <span className="text-[10px] text-brand-text-muted font-bold">تكرار</span>
-                                <span>+</span>
+                            {/* اسم المهمة */}
+                            <div className="flex justify-between items-start mb-2 z-10">
+                                <h3 className="font-bold text-lg text-brand-text leading-tight max-w-[70%]">
+                                    {userTask.tasks?.name}
+                                </h3>
+                                {userTask.is_completed && (
+                                    <span className="bg-brand-success/10 text-brand-success p-1 rounded-full">
+                                        <Check size={16} strokeWidth={3} />
+                                    </span>
+                                )}
                             </div>
-                        </button>
 
-                        {/* أزرار التحكم */}
+                            {/* العداد المركزي */}
+                            <div className="flex flex-col items-center justify-center relative transition-all active:scale-95 ">
+                                <div className="w-36 h-36 rounded-full border-4 border-brand-tertiary flex flex-col items-center justify-center bg-brand-bg shadow-inner">
+                                    <span className="text-3xl font-black text-brand-primary font-mono">
+                                        {userTask.count || 0}
+                                    </span>
+                                    <span className="text-[10px] text-brand-text-muted font-bold">تكرار</span>
+                                    <span>+</span>
+                                </div>
+                            </div>
+
+                            {/* أزرار التحكم */}
+                        </button>
                         <div className="flex gap-3 justify-center mt-2 z-10">
 
                             <button
