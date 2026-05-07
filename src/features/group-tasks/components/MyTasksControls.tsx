@@ -24,9 +24,14 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
     useEffect(() => {
         if (currentUser) {
             const myData = users.find(u => u.id === currentUser.id);
-            if (myData?.user_tasks) {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setLocalUserTasks(myData.user_tasks);
+
+            if (myData?.user_tasks && myData.user_tasks.length > 0) {
+                // اختيار ذكر واحد عشوائي من المصفوفة
+                const randomIndex = Math.floor(Math.random() * myData.user_tasks.length);
+                const randomTask = myData.user_tasks[randomIndex];
+
+                // تعيين الذكر العشوائي في الـ State كـ Array يحتوي على عنصر واحد
+                setLocalUserTasks([randomTask]);
             }
         }
     }, [currentUser, users]);
@@ -81,28 +86,30 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
             </header>
 
             {/* Grid لمهام المستخدم فقط */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="">
                 {localUserTasks.map((userTask) => (
-                    <div key={userTask.id} className=' bg-brand-secondary border border-brand-border rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border-b-4 border-b-brand-primary'>
+                    <div key={userTask.id} className='h-[75vh] mt-3 flex flex-col overflow-hidden justify-between bg-brand-secondary border border-brand-border rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 b'>
 
                         <button onClick={() => handleIncrement(userTask.task_id)}
                             key={userTask.id}
-                            className="group w-full flex flex-col pb-1 pt-2 px-3 overflow-hidden relative"
+                            className="group w-full h-full border-b-2 border-brand-primary flex flex-col pb-1 pt-2 px-3 overflow-hidden relative"
                         >
                             {/* زخرفة خلفية بسيطة */}
                             <div className="absolute -top-4 -left-4 w-16 h-16 bg-brand-primary/5 rounded-full blur-2xl group-hover:bg-brand-primary/10 transition-colors"></div>
 
                             {/* اسم المهمة */}
                             <div className="flex justify-between items-start mb-2 z-10">
-                                <h3 className="font-bold text-lg text-brand-text leading-tight max-w-[70%]">
-                                    {userTask.tasks?.name}
-                                </h3>
+
                                 {userTask.is_completed && (
                                     <span className="bg-brand-success/10 text-brand-success p-1 rounded-full">
                                         <Check size={16} strokeWidth={3} />
                                     </span>
                                 )}
                             </div>
+                            <h3 className="font-bold text-lg mb-3 text-brand-text leading-tight">
+                                {userTask.tasks?.name}
+                            </h3>
+
 
                             {/* العداد المركزي */}
                             <div className="flex flex-col items-center justify-center relative transition-all active:scale-95 ">
@@ -121,7 +128,7 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
 
                             <button
                                 onClick={() => handleSave(userTask)}
-                                className="w-24 p-2 flex items-center justify-center bg-brand-tertiary hover:bg-brand-border text-brand-text-secondary rounded-2xl transition-all active:scale-95 border border-brand-border"
+                                className="p-2 flex items-center w-full justify-center bg-brand-tertiary hover:bg-brand-border text-brand-text-secondary transition-all active:scale-95 border border-brand-border"
                                 title="حفظ التقدم"
                                 disabled={loading}
                             >
