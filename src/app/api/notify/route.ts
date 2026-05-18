@@ -84,9 +84,10 @@ export async function GET() {
         url = '/'
     } else if (cairoHour === 10) { // 10 صباحاً
         notificationContent = {
-            title: "بداية اليوم 🚀",
-            body: `الحمد لله، إن شاء الله خير. ${zikr[Math.floor(Math.random() * zikr.length)]}`,
+            title: "إضغط واستغفر 10 مرات او كما تحب",
+            body: `اللهم اغفرلي`,
         };
+        url = '/group-tasks'
     } else if (cairoHour === 13) { // الساعة 1 ظهراً
         try {
             const response = await fetch('https://api.alquran.cloud/v1/ayah/random');

@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { setTasks, setLoading, updateTask, setError, removeTask, setSyncLoading } from "@/store/weeklyTasksSlice";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import AsmahAllah from "@/features/Allah-names/services/allah-names";
-import { startOfWeek } from "date-fns";
+import { getDay, startOfWeek } from "date-fns";
 import { handleWeeklyReset } from "@/services/snapShotService";
 import { supabase } from "@/lib/supabase/client";
 
@@ -139,6 +139,84 @@ export function useWeeklyTasks({
     }
   }
 
+  const checkWeeklyResetWithCache = async (userId: string | undefined) => {
+    if (!userId) return;
+
+    const now = new Date();
+
+    // 1. التأكد أولاً إن النهاردة الأحد (يوم الأحد في date-fns قيمته 0)
+    if (getDay(now) !== 0) {
+      console.log("⏳ Today is not Sunday. Skipping weekly reset check.");
+      return;
+    }
+
+    // حساب بداية الأسبوع الحالي (بداية يوم الأحد الحالي) لتكون هي الـ Identifier بتاعنا
+    const currentWeekStart = startOfWeek(now, { weekStartsOn: 0 }).toISOString(); // weekStartsOn: 0 يخلي الأسبوع يبدأ من الأحد
+
+    // 2. فحص الـ LocalStorage أولاً (لمنع الـ Request تماماً لو الجهاز ده عمل الـ Reset أو عرف إنه اتعمل)
+    const localLastReset = localStorage.getItem(`last_reset_${userId}`);
+    if (localLastReset === currentWeekStart) {
+      console.log("✅ Weekly reset already verified for this Sunday (Cache hit)");
+      return;
+    }
+
+    try {
+      // 3. طالما مش في الكاش، نروح نتأكد من الـ DB عشان لو معمول من جهاز تاني لنفس الحساب
+      const { data: profile, error: fetchError } = await supabase
+        .from('profiles')
+        .select('last_snapshot_week')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error("❌ Error fetching profile:", fetchError);
+        return;
+      }
+
+      const lastResetWeek = profile?.last_snapshot_week;
+
+      // لو الـ DB متحدثة بالتاريخ بتاع الأحد ده، يبقى الـ snapshot اتعملت خلاص من جهاز تاني
+      if (lastResetWeek === currentWeekStart) {
+        console.log("✅ Weekly reset already done this week (DB verified)");
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart); // احفظها في الكاش عشان ميعملش ريكويست تاني
+        return;
+      }
+
+      console.log(`📅 Snapshot needed. Last snapshot week: ${lastResetWeek}, Target Sunday: ${currentWeekStart}`);
+
+      // 4. حجز عملية الـ Reset بشكل Atomic (لحماية التزامن)
+      const { data: updated, error: updateError } = await supabase
+        .from('profiles')
+        .update({ last_snapshot_week: currentWeekStart })
+        .eq('id', userId)
+        .select('id')
+        .maybeSingle();
+
+      if (updateError || !updated) {
+        console.log("⚠️ Another device claimed or update failed");
+        // لو فشل التحديث غالباً جهاز تاني لقطها في نفس الفيمتو ثانية، هنحدث الكاش للأمان
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        return;
+      }
+
+      // 5. تنفيذ الـ Snapshot الفعلي لأن الجهاز ده هو اللي كسب الـ السباق
+      console.log("🔄 Running weekly snapshot...");
+      const result = await handleWeeklyReset(userId);
+
+      if (result?.success) {
+        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+        console.log("✅ Weekly snapshot completed and cached successfully");
+      } else {
+        console.error("❌ Weekly snapshot failed after claiming it");
+        // اختياري: لو عايز ترجع الـ DB لقيمتها القديمة لو الفانكشن فشلت تماماً
+        // await supabase.from('profiles').update({ last_snapshot_week: lastResetWeek }).eq('id', userId);
+      }
+
+    } catch (err) {
+      console.error("❌ Critical error in weekly check:", err);
+    }
+  };
+
   const Sync = async () => {
     dispatch(setSyncLoading(true))
     await checkWeeklyResetWithCache(user?.id)
@@ -203,85 +281,87 @@ export function useWeeklyTasks({
   //     localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
   //   }
   // };
-  const checkWeeklyResetWithCache = async (userId: string | undefined) => {
-    if (!userId) return;
+  // const checkWeeklyResetWithCache = async (userId: string | undefined) => {
+  //   if (!userId) return;
 
-    const now = new Date();
-    const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
+  //   const now = new Date();
+  //   const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
 
-    // Fast local cache check
-    const localLastReset = localStorage.getItem(`last_reset_${userId}`);
-    if (localLastReset === currentWeekStart) {
-      console.log("✅ Weekly reset already done this week (cache)");
-      return;
-    }
+  //   // Fast local cache check
+  //   const localLastReset = localStorage.getItem(`last_reset_${userId}`);
+  //   if (localLastReset === currentWeekStart) {
+  //     console.log("✅ Weekly reset already done this week (cache)");
+  //     return;
+  //   }
 
-    try {
-      // FIXED: Fetch current user's last_snapshot_week to compare
-      const { data: profile, error: fetchError } = await supabase
-        .from('profiles')
-        .select('last_snapshot_week')
-        .eq('id', userId)
-        .maybeSingle()
+  //   try {
+  //     // FIXED: Fetch current user's last_snapshot_week to compare
+  //     const { data: profile, error: fetchError } = await supabase
+  //       .from('profiles')
+  //       .select('last_snapshot_week')
+  //       .eq('id', userId)
+  //       .maybeSingle()
 
-      if (fetchError) {
-        console.error("❌ Error fetching profile:", fetchError);
-        return;
-      }
+  //     if (fetchError) {
+  //       console.error("❌ Error fetching profile:", fetchError);
+  //       return;
+  //     }
 
-      const lastResetWeek = profile?.last_snapshot_week;
+  //     const lastResetWeek = profile?.last_snapshot_week;
 
-      // If already reset this week, skip
-      if (lastResetWeek === currentWeekStart) {
-        console.log("✅ Weekly reset already done this week (DB)");
-        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
-        return;
-      }
+  //     // If already reset this week, skip
+  //     if (lastResetWeek === currentWeekStart) {
+  //       console.log("✅ Weekly reset already done this week (DB)");
+  //       localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+  //       return;
+  //     }
 
-      console.log(`📅 Reset needed. Last reset: ${lastResetWeek}, Current week: ${currentWeekStart}`);
+  //     console.log(`📅 Reset needed. Last reset: ${lastResetWeek}, Current week: ${currentWeekStart}`);
 
-      // === ATOMIC UPDATE: This device claims the reset ===
-      const { data: updated, error: updateError } = await supabase
-        .from('profiles')
-        .update({
-          last_snapshot_week: currentWeekStart
-        })
-        .eq('id', userId)
-        .select('id')
-        .maybeSingle();
+  //     // === ATOMIC UPDATE: This device claims the reset ===
+  //     const { data: updated, error: updateError } = await supabase
+  //       .from('profiles')
+  //       .update({
+  //         last_snapshot_week: currentWeekStart
+  //       })
+  //       .eq('id', userId)
+  //       .select('id')
+  //       .maybeSingle();
 
-      if (updateError) {
-        console.error("❌ Error claiming reset:", updateError);
-        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
-        return;
-      }
+  //     if (updateError) {
+  //       console.error("❌ Error claiming reset:", updateError);
+  //       localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+  //       return;
+  //     }
 
-      if (!updated) {
-        console.log("⚠️ Update failed");
-        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
-        return;
-      }
+  //     if (!updated) {
+  //       console.log("⚠️ Update failed");
+  //       localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+  //       return;
+  //     }
 
-      console.log("✅ This device claimed the reset!");
+  //     console.log("✅ This device claimed the reset!");
 
-      // === THIS DEVICE WON → Perform the actual reset ===
-      console.log("🔄 Starting weekly reset...");
-      const result = await handleWeeklyReset(userId);
+  //     // === THIS DEVICE WON → Perform the actual reset ===
+  //     console.log("🔄 Starting weekly reset...");
+  //     const result = await handleWeeklyReset(userId);
 
-      if (result?.success) {
-        localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
-        console.log("✅ Weekly reset completed successfully");
-      } else {
-        console.error("❌ Weekly reset failed after claiming it");
-        // IMPORTANT: Consider reverting the profile update if reset failed
-        // await supabase.from('profiles').update({ last_snapshot_week: lastResetWeek }).eq('id', userId);
-      }
+  //     if (result?.success) {
+  //       localStorage.setItem(`last_reset_${userId}`, currentWeekStart);
+  //       console.log("✅ Weekly reset completed successfully");
+  //     } else {
+  //       console.error("❌ Weekly reset failed after claiming it");
+  //       // IMPORTANT: Consider reverting the profile update if reset failed
+  //       // await supabase.from('profiles').update({ last_snapshot_week: lastResetWeek }).eq('id', userId);
+  //     }
 
-    } catch (err) {
-      console.error("❌ Critical error in weekly check:", err);
-      localStorage.setItem(`last_reset_${userId}`, new Date().toISOString());
-    }
-  };
+  //   } catch (err) {
+  //     console.error("❌ Critical error in weekly check:", err);
+  //     localStorage.setItem(`last_reset_${userId}`, new Date().toISOString());
+  //   }
+  // };
+
+
 
 
 
