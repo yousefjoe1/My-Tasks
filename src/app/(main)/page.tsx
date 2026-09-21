@@ -52,10 +52,11 @@ export default function Home() {
           <div className="mb-5 bg-primary rounded-2xl p-1 flex flex-col justify-between items-center gap-4 border-b border-secondary">
             <div className="text-center md:text-left">
               <h1 className="lg:text-4xl text-2xl font-black text-primary tracking-tight mb-2">
-                ⚡ Powerful Day
+                {/* Powerful Day */}
+                ⚡ 
+                المهام الاساسية لبناء نسختك الأفضل
               </h1>
               <p className="text-secondary font-medium">
-                المهام الاساسية لبناء نسختك الأفضل
               </p>
             </div>
 
@@ -80,7 +81,7 @@ export default function Home() {
 
 
 
-          <div className="space-y-4 relative bg-primary rounded-2xl p-3">
+          <div className="space-y-4 relative rounded-2xl p-3">
             {
               syncLoading &&
               <div className="flex justify-center items-center fixed w-full h-full top-0 left-0 z-999">

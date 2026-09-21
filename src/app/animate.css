@@ -134,8 +134,29 @@
     transform: translateY(-1px);
 }
 
+.day-btn-3d-sm {
+    width: 22px;
+    height: 22px;
+    margin: 0;
+}
 
+.day-btn-3d-sm .day-btn-3d-shadow,
+.day-btn-3d-sm .day-btn-3d-edge,
+.day-btn-3d-sm .day-btn-3d-front {
+    border-radius: 8px;
+}
 
+.day-btn-3d-sm .day-btn-3d-front {
+    transform: translateY(-3px);
+}
+
+.day-btn-3d-sm:hover .day-btn-3d-front {
+    transform: translateY(-4px);
+}
+
+.day-btn-3d-sm:active .day-btn-3d-front {
+    transform: translateY(-1px);
+}
 
 .loader-v3 {
     width: 96px;

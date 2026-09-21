@@ -1,4 +1,4 @@
-import { Edit, X } from 'lucide-react'
+import { Pen, X } from 'lucide-react'
 import React, { useRef, useState } from 'react'
 import { SubTask, WeeklyTask } from '@/types'
 import SubTaskCard from './SubTask';
@@ -96,10 +96,12 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
     return (
         <div>
             <button
+                type="button"
                 onClick={() => detailsModalRef.current?.showModal()}
-                className="text-lg font-semibold text-primary hover:text-brand cursor-pointer transition-colors duration-200 py-1 rounded-lg hover:bg-brand/10"
+                aria-label="Edit task"
+                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-2/25 text-primary-2-dark transition-all duration-200 hover:bg-primary-2/40 active:scale-95 shadow-sm"
             >
-                <Edit />
+                <Pen size={16} strokeWidth={2.25} />
             </button>
 
             {/* dialog */}

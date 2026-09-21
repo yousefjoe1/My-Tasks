@@ -1,0 +1,42 @@
+---
+description: Next.js App Router and React component patterns
+globs: "**/*.{tsx,ts}"
+alwaysApply: false
+---
+
+# Next.js & React
+
+## Client vs server
+
+- Add `'use client'` only when using hooks, browser APIs, Redux, or event handlers in that file
+- Server actions: `'use server'` at top of action files (e.g. `src/features/**/actions/*.ts`, `src/app/actions.ts`)
+- Keep data fetching in services, hooks, or server actions—not duplicated in presentational components
+
+## Components
+
+- Functional components; default export for pages and main component files
+- Colocate feature UI under `src/features/<feature>/components/`
+- Wrap fragile UI with existing `ErrorBoundary` from `@/common/ErrorBoundry` where the app already does
+- Toasts: use `useToast` + `ToastContainer` pattern from `@/components/Toasts/`
+
+## Styling
+
+- Tailwind utility classes; follow existing spacing and dark/light patterns from `ThemeContext`
+- Arabic copy and RTL-friendly layouts appear in product UI—preserve direction and wording unless asked to change
+
+## Example
+
+```tsx
+'use client';
+
+import { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
+
+export default function Example() {
+  const items = useSelector((s: RootState) => s.weeklyTasks.tasks);
+  const visible = useMemo(() => items?.filter(Boolean) ?? [], [items]);
+  const onAction = useCallback(() => { /* ... */ }, []);
+  return <div className="p-4">{/* ... */}</div>;
+}
+```

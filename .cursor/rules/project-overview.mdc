@@ -1,0 +1,40 @@
+---
+description: Stack, layout, and conventions for my-notion-app
+alwaysApply: true
+---
+
+# my-notion-app
+
+Personal Notion-style PWA: weekly tasks, group tasks, dashboard, admin, notifications.
+
+## Stack
+
+- Next.js 16 App Router, React 19, TypeScript (strict)
+- Tailwind CSS v4, Lucide icons
+- Redux Toolkit (`src/store/`), React Context (auth, theme)
+- Supabase (client + server actions), Firebase, local storage strategies for weekly tasks
+- React Compiler enabled via `babel-plugin-react-compiler`
+
+## Paths
+
+- Import from `@/` → `src/` (see `tsconfig.json` paths)
+- Do not introduce new path aliases without updating `tsconfig.json`
+
+## Folder layout
+
+| Area | Location |
+|------|----------|
+| Routes & layouts | `src/app/` — route groups `(main)`, `(admin)` |
+| Shared UI | `src/common/`, `src/components/` |
+| Feature modules | `src/features/<name>/` (components, actions, services) |
+| Global types | `src/types/` |
+| Hooks | `src/hooks/` |
+| App services | `src/services/` |
+| Storage strategies | `src/lib/storage/` |
+| Supabase client | `src/lib/supabase/client.ts` |
+
+## Agent behavior
+
+- Prefer minimal diffs; match existing naming and file placement
+- Only commit or push when the user explicitly asks
+<!-- - Run `pnpm lint` after substantive TS/React changes when validating work -->

@@ -102,7 +102,7 @@ const SubTaskCard = ({
                     />
                 ) : (
                     <li className={`
-                        text-sm mx-2 font-medium transition-all duration-300 
+                        text-xs mx-2 font-medium transition-all duration-300 
                         ${isCompleted ? 'text-primary line-through opacity-70' : 'text-primary'}
                     `}>
                         {subTask.content}

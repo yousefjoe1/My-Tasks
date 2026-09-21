@@ -1,0 +1,33 @@
+---
+description: Redux, services, Supabase, and weekly task storage
+globs: "{src/store/**,src/services/**,src/hooks/**,src/lib/**,src/features/**/actions/**,src/app/api/**}"
+alwaysApply: false
+---
+
+# Data & state
+
+## Redux
+
+- Slice definitions live in `src/store/`; register reducers in `src/store/store.ts`
+- Dispatch typed actions from hooks (e.g. `useWeeklyTasks`) rather than scattering fetch logic in components
+- Select state with `RootState` from `@/store/store`
+
+## Weekly tasks
+
+- Business logic: `WeeklyTasksService`, sync via `weeklyTasksSyncService`, reset/snapshot via `snapShotService`
+- Persistence: strategy pattern under `src/lib/storage/weeklyTasks/` (local vs Supabase)—extend strategies instead of bypassing them
+
+## Supabase & secrets
+
+- Browser: `@/lib/supabase/client.ts`
+- Server-only privileged access: server actions with env vars (`SUPABASE_SERVICE_ROLE_KEY` never in client components)
+- Do not commit `.env` or hardcode keys
+
+## Types
+
+- Shared domain types in `src/types/`; feature-specific types under `src/features/<name>/types/`
+- Reuse `WeeklyTask` and related shapes from `@/types` instead of duplicating interfaces
+
+## API routes
+
+- Route handlers under `src/app/api/` — keep handlers thin; delegate to services
