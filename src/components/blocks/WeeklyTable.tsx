@@ -1,6 +1,7 @@
 import { SubTask, WeeklyTask } from "@/types";
 import React, { useRef, useState } from "react";
-import { Loader, Trash } from "lucide-react";
+import { CalendarDays, Check, ChevronDown, Loader, Trash, X } from "lucide-react";
+import { getWeekDays } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { WeeklyTasksService } from "@/services/weeklyTasksService";
@@ -21,6 +22,8 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
   const { error } = useSelector((state: RootState) => state.weeklyTasks)
 
   const [updateSubTaskLoading, setUpdateSubTaskLoading] = useState(false);
+  const [weekDaysOpen, setWeekDaysOpen] = useState(false);
+  const weekDays = getWeekDays();
 
   const deleteDialogRef = useRef<HTMLDialogElement | null>(null)
 
@@ -193,6 +196,61 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
         ) : (
           <p className="text-xs text-muted italic p-1">لا توجد مهام فرعية.</p>
         )}
+
+        <div className="mt-1 border-t border-secondary/60 pt-2">
+          <button
+            type="button"
+            onClick={() => setWeekDaysOpen((open) => !open)}
+            aria-expanded={weekDaysOpen}
+            aria-label={weekDaysOpen ? "إخفاء أيام الأسبوع" : "عرض أيام الأسبوع"}
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-muted transition-colors hover:bg-tertiary/60 hover:text-primary"
+          >
+            <CalendarDays size={16} strokeWidth={2} />
+            <span className="text-xs font-medium">أيام الأسبوع</span>
+            <ChevronDown
+              size={16}
+              strokeWidth={2.25}
+              className={`shrink-0 transition-transform duration-200 ${weekDaysOpen ? "rotate-180" : ""}`}
+              aria-hidden
+            />
+          </button>
+
+          {weekDaysOpen && (
+            <div className="mt-2 flex flex-wrap items-end justify-center gap-1.5 px-1 pb-2">
+              {weekDays.map((day) => {
+                const done = Boolean(task.days?.[day]);
+                const isToday = day === todayDayName;
+
+                return (
+                  <div key={day} className="flex flex-col items-center gap-0.5">
+                    <button
+                      type="button"
+                      onClick={() => toggleDay(day)}
+                      disabled={loading}
+                      aria-label={`${day}: ${done ? "مكتمل" : "غير مكتمل"}`}
+                      className={`flex size-6 shrink-0 items-center justify-center rounded-full border transition-all active:scale-95 disabled:opacity-50 ${
+                        done
+                          ? "border-success bg-success text-white shadow-sm shadow-success/30"
+                          : "border-secondary bg-tertiary/50 text-muted"
+                      } ${isToday ? "ring-1 ring-brand" : ""}`}
+                    >
+                      {done ? (
+                        <Check size={11} strokeWidth={3} aria-hidden />
+                      ) : (
+                        <X size={10} strokeWidth={2.5} aria-hidden />
+                      )}
+                    </button>
+                    <span
+                      className={`text-[8px] font-bold uppercase ${isToday ? "text-brand" : "text-muted"}`}
+                    >
+                      {day}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {loading && (
           <div className="absolute z-10 rounded-2xl flex justify-center items-center inset-0 w-full h-full bg-brand-text-muted/50">
