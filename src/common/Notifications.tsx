@@ -2,6 +2,7 @@
 
 import { subscribeUser, unsubscribeUser } from '@/app/actions'
 import { useAuth } from '@/contexts/AuthContext'
+import { registerAppServiceWorker } from '@/lib/serviceWorker/registerAppServiceWorker'
 import { useState, useEffect } from 'react'
 
 function urlBase64ToUint8Array(base64String: string) {
@@ -36,17 +37,11 @@ export default function PushNotificationManager() {
 
     async function registerServiceWorker() {
         try {
-
-            const registration = await navigator.serviceWorker.register('/sw.js', {
-                scope: '/',
-                updateViaCache: 'none',
-            })
+            const registration = await registerAppServiceWorker()
             const sub = await registration.pushManager.getSubscription()
             setSubscription(sub)
-
         } catch (error) {
-            console.log("🚀 ~ registerServiceWorker ~ error:", error)
-
+            console.warn("Push SW setup failed:", error)
         }
     }
 

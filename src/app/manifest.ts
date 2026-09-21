@@ -2,21 +2,23 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
+        id: '/',
         name: 'My Weekly Tasks',
         short_name: 'My Weekly Tasks',
         description: 'My Weekly Tasks',
         start_url: '/',
+        scope: '/',
         display: 'standalone',
         background_color: '#ffffff',
         theme_color: '#000000',
         icons: [
             {
-                src: 'icons/192x192.png?v=2',
+                src: '/icons/192x192.png?v=2',
                 sizes: '192x192',
                 type: 'image/png',
             },
             {
-                src: 'icons/512x512.png?v=2',
+                src: '/icons/512x512.png?v=2',
                 sizes: '512x512',
                 type: 'image/png',
             },

@@ -12,11 +12,10 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { getUserRoleById } from "@/features/admin-dashboard/actions/admin_actions";
 
 const navLinks = [
-  { name: "مهمات بسيطه", href: "/general-tasks" },
-  { name: "انجازاتي", href: "/dashboard" },
-  { name: "النهارده أقوي ⚡", href: "/" },
-  { name: "التقدم البسيط", href: "/group-tasks" },
-
+  { name: "انجازاتي اليومية", href: "/" },
+  // { name: "مهمات بسيطه", href: "/general-tasks" },
+  { name: "معلومات التقدم", href: "/dashboard" },
+  { name: "ذكر بسيط", href: "/group-tasks" },
 ];
 
 export default function Navbar() {
@@ -97,7 +96,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-primary hover:text-brand font-medium transition-colors duration-200 relative group ${path === link.href ? "text-brand border-b-2 border rounded-2xl px-2" : ""}`}
+                  className={`text-primary hover:text-brand font-medium transition-colors duration-200 relative group ${path === link.href ? "text-brand" : ""}`}
                 >
                   {link.name}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
@@ -107,7 +106,7 @@ export default function Navbar() {
                 userInfo == 'admin' && (
                   <Link
                     href="/admin"
-                    className={`text-primary hover:text-brand font-medium transition-colors duration-200 relative group ${path === "/admin" ? "text-brand border-b-2 border rounded-2xl px-2" : ""}`}
+                    className={`text-primary hover:text-brand font-medium transition-colors duration-200 relative group ${path === "/admin" ? "text-brand" : ""}`}
                   >
                     لوحة التحكم
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
@@ -186,7 +185,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block px-4 py-3 text-primary hover:bg-secondary hover:text-brand rounded-lg font-medium transition-colors ${path === link.href ? "text-brand border-2 border-primary rounded-2xl px-2" : ""}`}
+                  className={`block px-4 py-3 text-primary hover:bg-secondary hover:text-brand rounded-lg font-medium transition-colors ${path === link.href ? "text-brand bg-secondary/60" : ""}`}
                 >
                   {link.name}
                 </Link>
@@ -195,7 +194,7 @@ export default function Navbar() {
                 userInfo == 'admin' && (
                   <Link
                     href="/admin"
-                    className={`text-primary px-4 py-3 hover:text-brand font-medium transition-colors duration-200 relative group ${path === "/admin" ? "text-brand border-b-2 border rounded-2xl px-2" : ""}`}
+                    className={`text-primary px-4 py-3 hover:text-brand font-medium transition-colors duration-200 relative group ${path === "/admin" ? "text-brand" : ""}`}
                   >
                     لوحة التحكم
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>

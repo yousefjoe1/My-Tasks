@@ -47,8 +47,10 @@ export default function InstallPWA() {
         }
     };
 
-    // لو التطبيق مثبت بالفعل، لا تعرض أي شيء (Return null)
     if (isInstalled) return null;
+
+    // Show when install is possible (native prompt or iOS instructions)
+    if (!isIOS && !deferredPrompt) return null;
 
     return (
         <div className="p-2 bg-tertiary border border-secondary shadow-sm transition-colors duration-300">
