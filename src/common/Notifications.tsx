@@ -148,7 +148,7 @@ export default function PushNotificationManager() {
                     <button
                         disabled={loading || !user}
                         onClick={subscribeToPush}
-                        className="whitespace-nowrap px-6 py-2 hover:opacity-90 text-primary font-semibold rounded-xl transition-all active:scale-[0.98] bg-primary border border-primary disabled:opacity-50"
+                        className="whitespace-nowrap text-xs px-6 py-2 hover:opacity-90 text-primary font-semibold rounded-xl transition-all active:scale-[0.98] bg-primary border border-primary disabled:opacity-50"
                     >
                         {loading ? 'جاري التفعيل...' : 'تحب افكرك ؟'}
                     </button>

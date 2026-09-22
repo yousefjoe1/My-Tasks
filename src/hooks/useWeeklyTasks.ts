@@ -32,7 +32,7 @@ export function useWeeklyTasks({
         is_essential: true,
         sub_tasks: [
           {
-            content: "صفحه من البقره",
+            content: "صفحه من القران الكريم",
             days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
           }
         ]
@@ -72,7 +72,7 @@ export function useWeeklyTasks({
 
         sub_tasks: [
           {
-            content: "شويه إطاله",
+            content: "شويه إطاله - ستريتشات",
             days_completed: { "Mon": false, "Tue": false, "Wed": false, "Thu": false, "Fri": false, "Sat": false, "Sun": false }
           },
         ]

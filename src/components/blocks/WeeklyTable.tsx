@@ -1,6 +1,6 @@
 import { SubTask, WeeklyTask } from "@/types";
 import React, { useRef, useState } from "react";
-import { CalendarDays, Check, ChevronDown, Loader, Trash, X } from "lucide-react";
+import { CalendarDays, Check, ChevronDown, Loader, Loader2, Trash, X } from "lucide-react";
 import { getWeekDays } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
@@ -114,6 +114,8 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
   const today = new Date();
   const todayDayName = today.toLocaleDateString('en-US', { weekday: 'short' }); // "Wed" not "Wednesday"
   const isTodayDone = Boolean(task.days?.[todayDayName]);
+  const subTasksLoading = loading || task.sub_tasks === undefined;
+  const subTasks = task.sub_tasks ?? [];
 
   return (
     <>
@@ -183,12 +185,17 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
           </p>
         )}
 
-        {task.sub_tasks && task.sub_tasks.length > 0 ? (
-          task.sub_tasks.map((st) => (
+        {subTasksLoading ? (
+          <div className="flex items-center gap-2 p-2 text-muted">
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+            <span className="text-xs">جاري تحميل المهام الفرعية...</span>
+          </div>
+        ) : subTasks.length > 0 ? (
+          subTasks.map((st) => (
             <SubTaskCard
               key={st.id}
               subTask={st}
-              dayKey={todayDayName} // اليوم الحالي اللي انت عرفته فوق بـ "Wed" مثلاً
+              dayKey={todayDayName}
               onToggle={(id, state) => handleSubTaskToggle(st, state, todayDayName)}
               loading={updateSubTaskLoading}
             />
@@ -206,7 +213,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
             className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-muted transition-colors hover:bg-tertiary/60 hover:text-primary"
           >
             <CalendarDays size={16} strokeWidth={2} />
-            <span className="text-xs font-medium">أيام الأسبوع</span>
+            <span className="text-xs font-medium">عملت اي ؟</span>
             <ChevronDown
               size={16}
               strokeWidth={2.25}

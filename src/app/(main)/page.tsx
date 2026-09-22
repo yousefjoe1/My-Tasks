@@ -37,6 +37,8 @@ export default function Home() {
     tasks?.filter((t: WeeklyTask) => t.is_essential == true) || [],
     [tasks]);
 
+  const isTasksLoading = loading || syncLoading;
+
   return (
     <section className="min-h-screen bg-secondary py-8 pt-5">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
@@ -60,7 +62,7 @@ export default function Home() {
               </p>
             </div>
 
-            {normalTasks.length === 0 && !loading && (
+            {normalTasks.length === 0 && !isTasksLoading && (
               <button
                 disabled={loading}
                 onClick={() => {
@@ -106,19 +108,25 @@ export default function Home() {
                     key={block.id}
                     task={block}
                     onUpdate={(taskid: string, updates: Partial<WeeklyTask>) => updateBlock(taskid, updates)}
-                    onDelete={handleDelete} loading={loading}
+                    onDelete={handleDelete} loading={isTasksLoading}
                   />
                 </ErrorBoundary>
               ))
             }
-            {normalTasks.length === 0 && (
+            {isTasksLoading && normalTasks.length === 0 && (
+              <div className="flex flex-col items-center justify-center gap-3 py-24 text-muted">
+                <Loader2 className="size-8 animate-spin" aria-hidden />
+                <p className="text-sm font-medium">جاري تحميل المهام...</p>
+              </div>
+            )}
+            {/* {!isTasksLoading && normalTasks.length === 0 && (
               <div className="text-center py-24 border-2 border-dashed rounded-3xl border-secondary">
                 <div className="text-6xl mb-4">🎯</div>
                 <p className="text-muted text-lg font-medium">
                   لم تضف أي مهام أساسية بعد. <br />
                 </p>
               </div>
-            )}
+            )} */}
 
           </div>
         </div>

@@ -56,7 +56,7 @@ export default function OnboardingWrapper() {
                 className="flex  items-center gap-2 px-5 py-2.5 glass-card text-secondary hover:text-brand transition-all text-sm font-bold group"
             >
                 <HelpCircle size={18} className="group-hover:rotate-12 transition-transform" />
-                <span className='text-lg'>فهمّني أكتر</span>
+                <span className='text-xs'>فهمّني أكتر</span>
             </button>
 
             {/* الـ Modal نفسه */}
