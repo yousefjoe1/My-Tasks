@@ -37,4 +37,5 @@ Personal Notion-style PWA: weekly tasks, group tasks, dashboard, admin, notifica
 
 - Prefer minimal diffs; match existing naming and file placement
 - Only commit or push when the user explicitly asks
+- do not open the browser here
 <!-- - Run `pnpm lint` after substantive TS/React changes when validating work -->

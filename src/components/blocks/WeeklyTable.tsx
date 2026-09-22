@@ -197,7 +197,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
           <p className="text-xs text-muted italic p-1">لا توجد مهام فرعية.</p>
         )}
 
-        <div className="mt-1 border-t border-secondary/60 pt-2">
+        <div className="mt-1 pt-2">
           <button
             type="button"
             onClick={() => setWeekDaysOpen((open) => !open)}

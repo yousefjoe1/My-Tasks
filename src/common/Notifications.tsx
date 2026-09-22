@@ -30,7 +30,6 @@ export default function PushNotificationManager() {
     useEffect(() => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
             setIsSupported(true)
-            // eslint-disable-next-line react-hooks/immutability
             registerServiceWorker()
         }
     }, [])
@@ -46,48 +45,62 @@ export default function PushNotificationManager() {
     }
 
     async function subscribeToPush() {
+        if (!user?.id) {
+            alert('سجّل الدخول أولاً لتفعيل التذكيرات');
+            return;
+        }
+
+        const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+        if (!vapidPublicKey) {
+            alert('مفاتيح الإشعارات غير متوفرة حالياً');
+            return;
+        }
+
         const permission = await Notification.requestPermission();
 
         if (permission !== 'granted') {
             alert('لازم توافق على الإشعارات الأول');
             return;
         }
-        const registration = await navigator.serviceWorker.getRegistration();
-        if (!registration) throw new Error("SW not ready");
+
         try {
             setLoading(true)
-            if (Notification.permission === 'denied') {
-                alert('Notifications are blocked. Please click the lock icon in the address bar to allow them!');
-                return;
-            }
             const registration = await navigator.serviceWorker.ready
             const sub = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(
-                    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-                ),
+                applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
             })
-            setSubscription(sub)
             const serializedSub = JSON.parse(JSON.stringify(sub))
-            await subscribeUser(serializedSub, user?.id)
-            setLoading(false)
+            const result = await subscribeUser(serializedSub, user.id)
 
+            if (!result.success) {
+                await sub.unsubscribe()
+                setSubscription(null)
+                alert(result.error || 'تعذر تفعيل التذكيرات')
+                return
+            }
+
+            setSubscription(sub)
         } catch (error) {
+            console.warn("subscribeToPush failed:", error)
+            alert('تعذر تفعيل التذكيرات')
+        } finally {
             setLoading(false)
-            console.log("🚀 ~ subscribeToPush ~ error:", error)
         }
     }
 
     async function unsubscribeFromPush() {
         try {
             setLoading(true)
+            const endpoint = subscription?.endpoint
             await subscription?.unsubscribe()
             setSubscription(null)
-            await unsubscribeUser()
-            setLoading(false)
+            await unsubscribeUser(endpoint, user?.id)
         } catch (error) {
+            console.warn("unsubscribeFromPush failed:", error)
+            alert('تعذر تعطيل التذكيرات')
+        } finally {
             setLoading(false)
-            console.log("🚀 ~ unsubscribeFromPush ~ error:", error)
         }
     }
 
@@ -128,12 +141,14 @@ export default function PushNotificationManager() {
             ) : (
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl">
                     <p className="text-sm text-muted leading-relaxed text-center sm:text-left flex-1">
-                        ابق على اطلاع دائم بمهامك. احصل على تذكيرات لمهامك والأذكار طوال اليوم.
+                        {user
+                            ? 'ابق على اطلاع دائم بمهامك. احصل على تذكيرات لمهامك والأذكار طوال اليوم.'
+                            : 'سجّل الدخول أولاً لتفعيل تذكيرات المهام والأذكار.'}
                     </p>
                     <button
-                        disabled={loading}
+                        disabled={loading || !user}
                         onClick={subscribeToPush}
-                        className="whitespace-nowrap px-6 py-2 hover:opacity-90 text-primary font-semibold rounded-xl transition-all active:scale-[0.98]bg-primary border border-primary"
+                        className="whitespace-nowrap px-6 py-2 hover:opacity-90 text-primary font-semibold rounded-xl transition-all active:scale-[0.98] bg-primary border border-primary disabled:opacity-50"
                     >
                         {loading ? 'جاري التفعيل...' : 'تحب افكرك ؟'}
                     </button>

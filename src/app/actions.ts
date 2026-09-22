@@ -1,17 +1,10 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { configureWebPush } from '@/lib/push/vapid'
 import webpush from 'web-push'
 
-webpush.setVapidDetails(
-    'mailto:yousefmahmoud150@gmail.com',  // ← remove the <> brackets
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.NEXT_PUBLIC_VAPID_PRIVATE_KEY!
-)
-
-let subscription: webpush.PushSubscription | null = null  // ← use webpush type
-
-interface PushSubscription {
+interface PushSubscriptionPayload {
     endpoint: string;
     keys: {
         p256dh: string;
@@ -19,67 +12,77 @@ interface PushSubscription {
     };
 }
 
-export async function subscribeUser(sub: PushSubscription, userId?: string) {
-    try {
-        const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+export async function subscribeUser(sub: PushSubscriptionPayload, userId?: string) {
+    if (!userId) {
+        return { success: false, error: 'Must be signed in to enable reminders' }
+    }
 
-        // We use .upsert() so if the user subscribes twice, 
-        // it just updates the existing record instead of creating a duplicate.
+    if (!sub?.endpoint || !sub.keys?.p256dh || !sub.keys?.auth) {
+        return { success: false, error: 'Invalid push subscription' }
+    }
+
+    try {
+        const supabase = createAdminClient()
+
         const { error } = await supabase
             .from('push_subscriptions')
             .upsert({
                 endpoint: sub.endpoint,
                 p256dh: sub.keys.p256dh,
                 auth: sub.keys.auth,
-                user_id: userId || `39505af4-4286-423b-8f4a-953a493b62c8`
-            }, { onConflict: 'endpoint' });
+                user_id: userId,
+            }, { onConflict: 'endpoint' })
 
         if (error) {
-            console.error('Supabase Error:', error);
-            return { success: false };
+            console.error('Supabase Error:', error)
+            return { success: false, error: 'Failed to save subscription' }
         }
 
-        return { success: true };
+        return { success: true }
     } catch (error) {
-        console.error('Error:', error);
-        return { success: false };
+        console.error('Error:', error)
+        return { success: false, error: 'Failed to save subscription' }
     }
 }
 
+export async function unsubscribeUser(endpoint?: string, userId?: string) {
+    if (!endpoint) {
+        return { success: false, error: 'Missing subscription endpoint' }
+    }
 
-export async function unsubscribeUser() {
-    subscription = null
-    return { success: true }
-}
-// app/actions.ts
-export async function sendNotification(message: string, sub: webpush.PushSubscription) {
-    // Instead of relying on the 'let subscription' variable, use the one passed in
     try {
-        await webpush.sendNotification(
-            sub, // Use the passed-in sub
+        const supabase = createAdminClient()
+        let query = supabase.from('push_subscriptions').delete().eq('endpoint', endpoint)
+
+        if (userId) {
+            query = query.eq('user_id', userId)
+        }
+
+        const { error } = await query
+
+        if (error) {
+            console.error('Error deleting subscription:', error)
+            return { success: false, error: 'Failed to remove subscription' }
+        }
+
+        return { success: true }
+    } catch (error) {
+        console.error('Error:', error)
+        return { success: false, error: 'Failed to remove subscription' }
+    }
+}
+
+export async function sendNotification(message: string, sub: webpush.PushSubscription) {
+    try {
+        const push = configureWebPush()
+        await push.sendNotification(
+            sub,
             JSON.stringify({
                 title: 'Test Notification',
                 body: message,
-                icon: '/icon.png',
+                data: { url: '/' },
             })
         )
-        // delete from supabase
-        const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-        try {
-
-            const { error } = await supabase
-                .from('push_subscriptions')
-                .delete()
-                .eq('endpoint', sub.endpoint);
-
-            if (error) {
-                console.error('Error deleting subscription:', error);
-            }
-        }
-        catch (e) {
-            console.error('Error:', e);
-        }
-
 
         return { success: true }
     } catch (error) {
@@ -87,5 +90,3 @@ export async function sendNotification(message: string, sub: webpush.PushSubscri
         return { success: false }
     }
 }
-
-
