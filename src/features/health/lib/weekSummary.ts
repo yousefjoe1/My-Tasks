@@ -49,7 +49,8 @@ export function buildHealthWeekSummary(
   reference = new Date()
 ): HealthWeekSummary {
   const weekColumns = getCurrentWeekDateKeys(reference);
-  const todayKey = getCairoDateKey(reference);
+  /** Always real "today" in Cairo — not `reference` (often Monday when loading by weekStartKey). */
+  const todayKey = getCairoDateKey(new Date());
   const dateKeyToDay = Object.fromEntries(weekColumns.map((c) => [c.dateKey, c.dayKey]));
 
   const exerciseStats: ExerciseWeekStats[] = exercises.map((ex) => {
@@ -93,10 +94,9 @@ export function buildHealthWeekSummary(
 
 export function getTodayTotalForExercise(
   exerciseId: string,
-  completions: CompletionRow[],
-  reference = new Date()
+  completions: CompletionRow[]
 ): number {
-  const todayKey = getCairoDateKey(reference);
+  const todayKey = getCairoDateKey(new Date());
   return completions
     .filter((c) => c.exercise_id === exerciseId && getCairoDateKeyFromIso(c.completed_at) === todayKey)
     .reduce((sum, c) => sum + c.reps, 0);

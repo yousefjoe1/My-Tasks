@@ -217,6 +217,18 @@ export default function HealthPageClient() {
         </div>
       ) : (
         <>
+          <ul className="space-y-3">
+            {exercises.map((exercise) => (
+              <li key={exercise.id}>
+                <ExerciseCard
+                  exercise={exercise}
+                  userId={user.id}
+                  todayTotal={getTodayTotal(exercise.id)}
+                  onCompleted={handleCompleted}
+                />
+              </li>
+            ))}
+          </ul>
           {weekSummary && (
             <HealthWeekOverview
               summary={weekSummary}
@@ -232,18 +244,6 @@ export default function HealthPageClient() {
               canGoNext={canGoNext}
             />
           )}
-          <ul className="space-y-3">
-            {exercises.map((exercise) => (
-              <li key={exercise.id}>
-                <ExerciseCard
-                  exercise={exercise}
-                  userId={user.id}
-                  todayTotal={getTodayTotal(exercise.id)}
-                  onCompleted={handleCompleted}
-                />
-              </li>
-            ))}
-          </ul>
         </>
       )}
     </div>

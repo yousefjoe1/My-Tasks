@@ -23,6 +23,7 @@ export default function ExerciseCard({
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReps(exercise.default_reps);
   }, [exercise.default_reps, exercise.id]);
 
