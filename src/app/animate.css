@@ -158,6 +158,30 @@
     transform: translateY(-1px);
 }
 
+.day-btn-3d-md {
+    width: 28px;
+    height: 28px;
+    margin: 0;
+}
+
+.day-btn-3d-md .day-btn-3d-shadow,
+.day-btn-3d-md .day-btn-3d-edge,
+.day-btn-3d-md .day-btn-3d-front {
+    border-radius: 10px;
+}
+
+.day-btn-3d-md .day-btn-3d-front {
+    transform: translateY(-4px);
+}
+
+.day-btn-3d-md:hover .day-btn-3d-front {
+    transform: translateY(-5px);
+}
+
+.day-btn-3d-md:active .day-btn-3d-front {
+    transform: translateY(-1px);
+}
+
 .loader-v3 {
     width: 96px;
     box-sizing: content-box;

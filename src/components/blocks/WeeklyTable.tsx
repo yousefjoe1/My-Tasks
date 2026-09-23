@@ -139,7 +139,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
             <button
               type="button"
               onClick={handleMainDayClick}
-              className={`relative day-btn-3d day-btn-3d-sm shrink-0 ${
+              className={`relative day-btn-3d day-btn-3d-md shrink-0 ${
                 isTodayDone ? "day-btn-3d-on" : "day-btn-3d-off"
               }`}
               aria-label={isTodayDone ? "Mark today incomplete" : "Mark today complete"}
@@ -160,9 +160,9 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
               <span className="day-btn-3d-edge" />
               <span className="day-btn-3d-front">
                 {isTodayDone ? (
-                  <span className="text-[10px] font-bold leading-none">✓</span>
+                  <span className="text-xs font-bold leading-none">✓</span>
                 ) : (
-                  <span className="text-sm leading-none">🎯</span>
+                  <span className="text-base leading-none">🎯</span>
                 )}
               </span>
             </button>
