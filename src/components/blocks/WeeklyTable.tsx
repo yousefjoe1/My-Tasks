@@ -30,51 +30,14 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
   const dispatch = useDispatch();
 
 
-  // const handleSubTaskToggle = async (subTask: SubTask, newState: boolean, day: string) => {
-  //   setUpdateSubTaskLoading(true);
-  //   const todayKey = new Date().toLocaleDateString('en-US', { weekday: 'short' });
-
-  //   const updatedDays = {
-  //     ...(subTask.days_completed || {}),
-  //     [todayKey]: newState
-  //   };
-
-  //   try {
-  //     await WeeklyTasksService.updateSubTask(subTask.id!, { days_completed: updatedDays });
-
-  //     dispatch(updateSubTaskAction({
-  //       taskId: task.id,
-  //       subTaskId: subTask.id!,
-  //       updates: { days_completed: updatedDays }
-  //     }));
-
-  //     // check if all sub tasks today done , then update the main task
-  //     const allSubTasksDone = task.sub_tasks?.every((st) => st.days_completed?.[todayKey]);
-  //     console.log("🚀 ~ handleSubTaskToggle ~ allSubTasksDone:", allSubTasksDone)
-  //     if (allSubTasksDone) {
-  //       toggleDay(day)
-  //     }
-
-  //   } catch (err) {
-  //     console.error("Failed to update subtask:", err);
-  //   }
-  //   setUpdateSubTaskLoading(false);
-  // };
-
   const handleSubTaskToggle = async (subTask: SubTask, newState: boolean, day: string) => {
     setUpdateSubTaskLoading(true);
     const todayKey = new Date().toLocaleDateString('en-US', { weekday: 'short' });
 
-    // --- الحل هنا ---
-    // بدلاً من الاعتماد على الـ Props، احسب النتيجة بناءً على الـ newState اللي المستخدم لسه ضاغط عليها
     const allSubTasksDone = task.sub_tasks?.every((st) => {
-      // لو دي المهمة اللي المستخدم لسه ضاغط عليها، استخدم الـ newState الجديدة
       if (st.id === subTask.id) return newState;
-      // غير كده، استخدم الحالة الحالية الموجودة في الـ Props
       return st.days_completed?.[todayKey];
     });
-
-    console.log("Will all subtasks be done?", allSubTasksDone);
 
     const updatedDays = {
       ...(subTask.days_completed || {}),
@@ -90,9 +53,9 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
         updates: { days_completed: updatedDays }
       }));
 
-      // دلوقتي هيشتغل من أول مرة لأن allSubTasksDone محسوبة بناءً على الـ Input الجديد
-      if (allSubTasksDone) {
-        toggleDay(day);
+      // Only mark the main day done. Never flip it off if it is already complete.
+      if (allSubTasksDone && newState && !task.days?.[day]) {
+        markDayDone(day);
       }
 
     } catch (err) {
@@ -100,6 +63,17 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
     }
     setUpdateSubTaskLoading(false);
   };
+
+  const markDayDone = (day: string) => {
+    if (task.days?.[day]) return;
+    onUpdate(task.id, {
+      days: {
+        ...(task.days || {}),
+        [day]: true,
+      },
+    });
+  };
+
   const toggleDay = (day: string) => {
     const currentDays = task.days || {};
     onUpdate(task.id, {
@@ -110,10 +84,44 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
     });
   };
 
+  const markAllSubTasksDone = async (day: string) => {
+    const pending = (task.sub_tasks ?? []).filter((st) => st.id && !st.days_completed?.[day]);
+    if (pending.length === 0) return;
+
+    setUpdateSubTaskLoading(true);
+    try {
+      await Promise.all(
+        pending.map(async (st) => {
+          const updatedDays = {
+            ...(st.days_completed || {}),
+            [day]: true,
+          };
+          await WeeklyTasksService.updateSubTask(st.id!, { days_completed: updatedDays });
+          dispatch(updateSubTaskAction({
+            taskId: task.id,
+            subTaskId: st.id!,
+            updates: { days_completed: updatedDays },
+          }));
+        })
+      );
+    } catch (err) {
+      console.error("Failed to update subtask:", err);
+    }
+    setUpdateSubTaskLoading(false);
+  };
 
   const today = new Date();
   const todayDayName = today.toLocaleDateString('en-US', { weekday: 'short' }); // "Wed" not "Wednesday"
   const isTodayDone = Boolean(task.days?.[todayDayName]);
+
+  const handleMainDayClick = () => {
+    const turningOn = !isTodayDone;
+    toggleDay(todayDayName);
+    if (turningOn) {
+      void markAllSubTasksDone(todayDayName);
+    }
+  };
+
   const subTasksLoading = loading || task.sub_tasks === undefined;
   const subTasks = task.sub_tasks ?? [];
 
@@ -130,7 +138,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
             <h3 className="lg:text-xl">- {task.content || "Untitled Task"}</h3>
             <button
               type="button"
-              onClick={() => toggleDay(todayDayName)}
+              onClick={handleMainDayClick}
               className={`relative day-btn-3d day-btn-3d-sm shrink-0 ${
                 isTodayDone ? "day-btn-3d-on" : "day-btn-3d-off"
               }`}
