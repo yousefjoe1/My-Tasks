@@ -119,14 +119,6 @@ export default function Home() {
                 <p className="text-sm font-medium">جاري تحميل المهام...</p>
               </div>
             )}
-            {/* {!isTasksLoading && normalTasks.length === 0 && (
-              <div className="text-center py-24 border-2 border-dashed rounded-3xl border-secondary">
-                <div className="text-6xl mb-4">🎯</div>
-                <p className="text-muted text-lg font-medium">
-                  لم تضف أي مهام أساسية بعد. <br />
-                </p>
-              </div>
-            )} */}
 
           </div>
         </div>

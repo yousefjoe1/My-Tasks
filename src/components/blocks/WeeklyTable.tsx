@@ -8,6 +8,7 @@ import { WeeklyTasksService } from "@/services/weeklyTasksService";
 import { updateSubTaskAction } from "@/store/weeklyTasksSlice";
 import SubTaskCard from "@/common/Tasks/SubTask";
 import UpdateMainTaskModal from "@/common/Tasks/UpdateMainTaskModal";
+import { fireCompletionCelebration } from "@/features/health/components/fireCompletionCelebration";
 
 
 interface WeeklyTableProps {
@@ -119,6 +120,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
     toggleDay(todayDayName);
     if (turningOn) {
       void markAllSubTasksDone(todayDayName);
+      void fireCompletionCelebration();
     }
   };
 
