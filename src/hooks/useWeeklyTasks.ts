@@ -13,7 +13,7 @@ import { supabase } from "@/lib/supabase/client";
 
 
 export function useWeeklyTasks({
-  success,
+  success: _success,
   toast,
 }: {
   error: (m: string) => void;
@@ -114,7 +114,7 @@ export function useWeeklyTasks({
     // Clear any previous error for this specific task before starting
     dispatch(setError({ id: taskId, message: null }));
     dispatch(setLoading(true))
-    success('Task updated successfully')
+    // success('Task updated successfully') // disabled: fireworks on main-day complete; zikr toast remains
     try {
       await WeeklyTasksService.updateTask(taskId, updates, user?.id);
       dispatch(updateTask({ id: taskId, updates }))
