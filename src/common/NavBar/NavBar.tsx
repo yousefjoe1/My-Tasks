@@ -17,6 +17,7 @@ const navLinks = [
   { name: "معلومات التقدم", href: "/dashboard" },
   { name: "ذكر بسيط", href: "/group-tasks" },
   { name: "صحتك", href: "/health" },
+  { name: "نومك", href: "/sleep" },
 ];
 
 export default function Navbar() {

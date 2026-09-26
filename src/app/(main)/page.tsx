@@ -12,9 +12,17 @@ import ErrorBoundary from '@/common/ErrorBoundry';
 import ToastContainer from '@/components/Toasts/ToastContainer';
 import { useToast } from '@/components/Toasts/useToast';
 import OnboardingWrapper from '@/common/OnboardingWrapper';
-import { Loader2 } from 'lucide-react';
+import { BarChart3, BookOpen, Dumbbell, Loader2, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ShareApp from '@/common/ShareApp';
+import Link from 'next/link';
+
+const quickLinks = [
+  { name: "معلومات التقدم", href: "/dashboard", icon: BarChart3 },
+  { name: "ذكر بسيط", href: "/group-tasks", icon: BookOpen },
+  { name: "صحتك", href: "/health", icon: Dumbbell },
+  { name: "نومك", href: "/sleep", icon: Moon },
+];
 
 export default function Home() {
   const { error, success, toast, toasts, removeToast } = useToast()
@@ -45,6 +53,19 @@ export default function Home() {
 
       <div className="max-w-[95%] mx-auto">
         <div className="rounded-2xl shadow-sm">
+          {/* quick navigation */}
+          <nav aria-label="تنقل سريع" className="mb-4 grid grid-cols-4 gap-2">
+            {quickLinks.map(({ name, href, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-secondary bg-primary px-2 py-3 text-primary transition-colors hover:border-brand hover:text-brand"
+              >
+                <Icon className="size-6" aria-hidden />
+                {/* <span className="text-center text-[11px] font-bold leading-tight sm:text-xs">{name}</span> */}
+              </Link>
+            ))}
+          </nav>
           <div className="mb-8 flex justify-between items-center flex-wrap gap-2">
             <OnboardingWrapper />
             <ShareApp userId={user?.id} />
