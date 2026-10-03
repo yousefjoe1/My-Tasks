@@ -25,6 +25,7 @@ interface User {
     email: string;
     role: string;
     created_at: string;
+    notificationsEnabled: boolean;
 }
 
 const DAY_MAP: Record<string, string> = {
@@ -236,7 +237,21 @@ function UserCard({
                     </div>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "10px", flexWrap: "wrap" }}>
+                    <span
+                        style={{
+                            fontSize: "11px",
+                            fontFamily: "monospace",
+                            padding: "3px 10px",
+                            borderRadius: "20px",
+                            fontWeight: 600,
+                            background: user.notificationsEnabled ? "rgba(52,211,153,0.12)" : "rgba(156,163,175,0.1)",
+                            color: user.notificationsEnabled ? "var(--color-brand-success)" : "var(--color-brand-text-muted)",
+                            border: `1px solid ${user.notificationsEnabled ? "rgba(52,211,153,0.35)" : "var(--color-brand-border)"}`,
+                        }}
+                    >
+                        {user.notificationsEnabled ? "تذكير مفعّل" : "تذكير غير مفعّل"}
+                    </span>
                     {/* Role badge */}
                     <span
                         style={{
@@ -364,6 +379,7 @@ export default function AdminPage() {
                 <div style={{ display: "flex", gap: "24px" }}>
                     {[
                         { value: users.length, label: "مستخدم" },
+                        { value: users.filter((user) => user.notificationsEnabled).length, label: "تذكير" },
                         { value: tasks.length, label: "مهمة" },
                         { value: subtasks.length, label: "مهمة فرعية" },
                     ].map((s) => (

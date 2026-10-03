@@ -1,6 +1,16 @@
 import { useToast } from '@/components/Toasts/useToast';
+import { attachSignupReferral } from '@/features/auth/actions/referral.actions';
 import { supabase } from '@/lib/supabase/client';
 import React, { useState } from 'react';
+
+const UUID_RE =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function readReferral(fromQuery?: string | null): string | null {
+    const fromStorage = typeof window !== 'undefined' ? localStorage.getItem('referred_by') : null;
+    const value = (fromQuery || fromStorage || '').trim();
+    return UUID_RE.test(value) ? value : null;
+}
 
 // تعريف أنواع الأخطاء والرسائل
 interface Error { message: string; }
@@ -24,24 +34,26 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
 
         try {
             if (isSignUp) {
-                // 1. إعداد بيانات التسجيل
+                const referredBy = readReferral(referredByQuery);
                 const signUpData = {
                     email,
                     password,
                     options: {
                         data: {
                             full_name: fullName,
-                            // إضافة الـ referred_by إذا كان موجوداً
-                            referred_by: referredByQuery || null
+                            ...(referredBy ? { referred_by: referredBy } : {}),
                         }
                     }
                 };
 
-                const { error } = await supabase.auth.signUp(signUpData);
+                const { data, error } = await supabase.auth.signUp(signUpData);
 
                 if (error) throw error;
 
-                // 3. مسح الـ ID بعد نجاح التسجيل (لحماية الخصوصية)
+                if (data.user?.id && referredBy) {
+                    await attachSignupReferral(data.user.id, referredBy, fullName);
+                    localStorage.removeItem('referred_by');
+                }
 
                 setMessage({ type: 'success', text: 'تم التسجيل بنجاح!.' });
                 toastSuccess('تم التسجيل بنجاح!');

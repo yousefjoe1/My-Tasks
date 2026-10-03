@@ -50,14 +50,22 @@ export async function getUsers() {
 }
 
 export async function getUsersWithTasks() {
-    const [{ data: users }, { data: tasks }, { data: subtasks }] = await Promise.all([
+    const [{ data: users }, { data: tasks }, { data: subtasks }, { data: subs }] = await Promise.all([
         supabaseAdmin.from("users").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("weekly_tasks").select("*"),
         supabaseAdmin.from("sub_tasks").select("*"),
+        supabaseAdmin.from("push_subscriptions").select("user_id"),
     ]);
 
+    const enabledIds = new Set(
+        (subs ?? []).map((row) => row.user_id).filter((id): id is string => Boolean(id))
+    );
+
     return {
-        users: users ?? [],
+        users: (users ?? []).map((user) => ({
+            ...user,
+            notificationsEnabled: enabledIds.has(user.id),
+        })),
         tasks: tasks ?? [],
         subtasks: subtasks ?? [],
     };
