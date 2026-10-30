@@ -1,3 +1,4 @@
+import { pickGermanSpeakText } from '@/lib/germanLessonText';
 import { createClient } from '@supabase/supabase-js';
 import webpush from 'web-push';
 
@@ -15,7 +16,7 @@ const azkarDayAndNight = [
     "يا حي يا قيوم برحمتك أستغيث أصلح لي شأني كله ولا تكلني إلى نفسي طرفة عين.",
     "رضيت بالله رباً، وبالإسلام ديناً، وبمحمد صلى الله عليه وسلم نبياً.",
     "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم. (7 مرات)",
-    "انا عارف ان الالتزام صعب , بس النتيجه مبهره وجميله"
+    // "انا عارف ان الالتزام صعب , بس النتيجه مبهره وجميله"
 ];
 
 
@@ -31,7 +32,7 @@ const zikr = [
     "اللهم اني اعوذ بك من الجبن , واعوذ بك من البخل , واعوذ بك من الهرم , واعوذ بك من فتنة الدنيا وعذاب القبر",
     "اللهم إني اسألك الهدي و التقي و العفاف و الغني",
     "اللهم صل وسلم وبارك على سيدنا محمد",
-    "انا عارف ان الالتزام صعب , بس النتيجه مبهره وجميله"
+    // "انا عارف ان الالتزام صعب , بس النتيجه مبهره وجميله"
 
 ];
 
@@ -176,7 +177,10 @@ export async function GET() {
             title: lesson.title,
             body: lesson.description,
         };
-        url = '/group-tasks'
+        const germanSpeak = pickGermanSpeakText(lesson);
+        url = germanSpeak
+            ? `/group-tasks?speak=${encodeURIComponent(germanSpeak)}`
+            : '/group-tasks';
     } else if (cairoHour === 13) { // الساعة 1 ظهراً
         try {
             const response = await fetch('https://api.alquran.cloud/v1/ayah/random');

@@ -110,23 +110,26 @@ self.addEventListener('push', function (event) {
 
 // التعامل مع الضغط على الإشعار (Click Event)
 self.addEventListener('notificationclick', function(event) {
-    event.notification.close(); // إغلاق الإشعار فوراً
+    event.notification.close();
 
-    // جلب الرابط من الداتا اللي بعتناها في الـ Push
     const urlToOpen = event.notification.data?.url || '/';
 
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
-            // التحقق إذا كان الرابط المطلوب مفتوح في أي Tab
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async function(clientList) {
             for (let i = 0; i < clientList.length; i++) {
-                let client = clientList[i];
-                // بنستخدم includes عشان لو فيه parameters في الـ URL
-                if (client.url.includes(urlToOpen) && 'focus' in client) {
+                const client = clientList[i];
+                if (!('focus' in client)) continue;
+
+                try {
+                    if ('navigate' in client) {
+                        await client.navigate(urlToOpen);
+                    }
                     return client.focus();
+                } catch (err) {
+                    console.warn('notificationclick navigate failed:', err);
                 }
             }
-            
-            // لو مش مفتوح، افتح اللينك المبعوث من السيرفر
+
             if (clients.openWindow) {
                 return clients.openWindow(urlToOpen);
             }
