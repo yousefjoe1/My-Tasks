@@ -95,7 +95,7 @@ const DashBoard = () => {
                             </div>
 
                             <div className="flex gap-4 w-full md:w-auto">
-                                <div className="flex-1 md:flex-none bg-primary/20 border-2 border-primary backdrop-blur-md rounded-2xl p-4 min-w-[140px]">
+                                <div className="flex-1 flex items-center justify-between bg-primary/20 border-2 border-primary backdrop-blur-md rounded-2xl p-4 min-w-[140px]">
                                     <p className="text-sm font-bold text-primary/70 mb-1">إجمالي أيام الإنجاز</p>
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-3xl font-black">{totalLifetimeCompleted}</span>
