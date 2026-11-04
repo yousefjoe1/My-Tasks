@@ -129,7 +129,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
   return (
     <>
-      <div className="group relative bg-primary rounded-xl shadow-sm px-2 pb-1 overflow-visible hover:shadow-md transition-all duration-200">
+      <div className="group relative bg-primary rounded-3xl shadow-sm px-2 pb-1 overflow-visible hover:shadow-md transition-all duration-200">
         {/* Header Section */}
         {error[task.id] && (
           <p className="text-red-500 text-sm mt-1">{error[task.id]}</p>
@@ -137,7 +137,6 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
 
         <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 p-2 mb-2 flex-wrap">
-            <h3 className="lg:text-xl">- {task.content || "Untitled Task"}</h3>
             <button
               type="button"
               onClick={handleMainDayClick}
@@ -168,6 +167,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                 )}
               </span>
             </button>
+            <h3 className="lg:text-xl">- {task.content || "Untitled Task"}</h3>
           </div>
 
 
