@@ -1,60 +1,47 @@
 'use client'
 import { useRef, useState, useEffect, Suspense } from "react";
-import { LoaderIcon, LogIn, LogOut, Menu, X } from "lucide-react";
+import { LoaderIcon, LogIn, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
-import ToggleMode from "./ToggleMode";
+import Image from "next/image";
 import LoginModal from "../Modals/LoginModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import { useToast } from "@/components/Toasts/useToast";
-import { usePathname, useSearchParams } from "next/navigation";
-import { getUserRoleById } from "@/features/admin-dashboard/actions/admin_actions";
-
-const navLinks = [
-  { name: "انجازاتي اليومية", href: "/" },
-  // { name: "مهمات بسيطه", href: "/general-tasks" },
-  { name: "معلومات التقدم", href: "/dashboard" },
-  { name: "ذكر بسيط", href: "/group-tasks" },
-  { name: "صحتك", href: "/health" },
-  { name: "نومك", href: "/sleep" },
-];
+import { useSearchParams } from "next/navigation";
+import { resolveSignedInDisplayName } from "@/features/group-tasks/services/azkarData";
 
 export default function Navbar() {
   const { user, loading: authLoading } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false); // حالة إظهار التأكيد
+  const [displayName, setDisplayName] = useState("");
+  const { theme, toggleTheme } = useTheme();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { error } = useToast();
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const confirmRef = useRef<HTMLDivElement>(null); // للتعامل مع الإغلاق عند الضغط بره
+  const settingsRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
 
-  const path = usePathname();
-
-  const [userInfo, setUserInfo] = useState(null);
-
-  const getUser = async () => {
-    if (user) {
-      try {
-        const res = await getUserRoleById(user.id);
-        setUserInfo(res);
-        console.log("🚀 ~ Navbar ~ res:", res)
-      } catch (error) {
-
-      }
-    }
-  }
-
   useEffect(() => {
-    getUser();
-  }, [user]);
+    if (!user?.id) {
+      setDisplayName("");
+      return;
+    }
+    let cancelled = false;
+    void resolveSignedInDisplayName(user.id).then((name) => {
+      if (!cancelled) setDisplayName(name);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
 
-
-  // إغلاق قائمة التأكيد لو ضغطت في أي مكان بره
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (confirmRef.current && !confirmRef.current.contains(event.target as Node)) {
-        setShowConfirm(false);
+      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+        setSettingsOpen(false);
+        setShowLogoutConfirm(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -78,99 +65,140 @@ export default function Navbar() {
       LocalStorageStrategy.resetSync();
       localStorage.removeItem('supabase.auth.token');
       setLoading(false);
-      setShowConfirm(false);
+      setShowLogoutConfirm(false);
+      setSettingsOpen(false);
     }
+  };
+
+  const closeSettings = () => {
+    setSettingsOpen(false);
+    setShowLogoutConfirm(false);
   };
 
   return (
     <>
       <nav className="fixed w-full top-0 z-50 bg-primary border-b border-primary shadow-sm">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="shrink-0">
-              <Link href="/" className={`text-2xl font-bold text-brand hover:opacity-80 transition-opacity`}>
-                Just Today
+          <div className="relative flex h-16 items-center justify-between">
+            <div className="relative z-10 shrink-0">
+              <Link href="/" className="text-2xl font-bold text-brand hover:opacity-80 transition-opacity">
+                كل يوم
               </Link>
             </div>
 
-            <div className="hidden md:flex items-center space-x-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`text-primary hover:text-brand font-medium transition-colors duration-200 relative group ${path === link.href ? "text-brand" : ""}`}
-                >
-                  {link.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
-                </Link>
-              ))}
-              {
-                userInfo == 'admin' && (
-                  <Link
-                    href="/admin"
-                    className={`text-primary hover:text-brand font-medium transition-colors duration-200 relative group ${path === "/admin" ? "text-brand" : ""}`}
-                  >
-                    لوحة التحكم
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
-                  </Link>
-                )
-              }
+            <div
+              className="pointer-events-none absolute inset-0 flex items-center justify-center px-24"
+              aria-hidden={!user}
+            >
+              {user && !authLoading && (
+                <span className="max-w-[min(100%,14rem)] truncate text-center text-base font-bold text-primary">
+                  {displayName.trim() || "مستخدم"}
+                </span>
+              )}
             </div>
 
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-primary hover:bg-secondary transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-
-            <div className="space-x-4 flex items-center relative">
-              <ToggleMode />
-
+            <div className="relative z-10" ref={settingsRef}>
               {authLoading ? (
-                <LoaderIcon className="animate-spin" />
+                <LoaderIcon className="animate-spin h-6 w-6 text-primary" />
               ) : (
                 <>
-                  {user == null ? (
-                    <button
-                      title="Log in"
-                      className="p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border border-primary"
-                      onClick={() => dialogRef?.current?.showModal()}
-                    >
-                      <LogIn />
-                    </button>
-                  ) : (
-                    <div className="relative" ref={confirmRef}>
-                      <button
-                        title="Logout"
-                        className={`p-3 rounded-full transition-colors shadow-lg border border-primary ${showConfirm ? 'bg-tertiary border-brand' : 'bg-secondary hover:bg-tertiary'
-                          }`}
-                        onClick={() => setShowConfirm(!showConfirm)}
-                      >
-                        <LogOut />
-                      </button>
+                  <button
+                    type="button"
+                    title="الإعدادات"
+                    aria-expanded={settingsOpen}
+                    aria-haspopup="menu"
+                    className={`p-3 rounded-full transition-colors shadow-lg border border-primary ${settingsOpen ? 'bg-tertiary border-brand' : 'bg-secondary hover:bg-tertiary'
+                      }`}
+                    onClick={() => {
+                      setSettingsOpen((open) => !open);
+                      setShowLogoutConfirm(false);
+                    }}
+                  >
+                    <Settings className="h-5 w-5 text-primary" />
+                  </button>
 
-                      {/* ديف التأكيد الصغير */}
-                      {showConfirm && (
-                        <div className="absolute left-0 mt-3 w-48 glass-card border-brand-primary p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200 z-50">
-                          <p className="text-xs text-primary font-bold mb-3 text-center italic">هل تريد تسجيل الخروج؟</p>
-                          <div className="flex flex-col gap-2">
-                            <button
-                              disabled={loading}
-                              onClick={handleLogout}
-                              className="w-full py-2 bg-brand-error/10 text-brand-error hover:bg-brand-error hover:text-white rounded-lg text-xs font-black transition-all flex justify-center items-center gap-2"
-                            >
-                              {loading ? <LoaderIcon className="animate-spin h-3 w-3" /> : "نعم، خروج"}
-                            </button>
-                            <button
-                              onClick={() => setShowConfirm(false)}
-                              className="w-full py-2 bg-tertiary text-primary hover:bg-secondary rounded-lg text-xs font-medium transition-all"
-                            >
-                              إلغاء
-                            </button>
-                          </div>
+                  {settingsOpen && (
+                    <div
+                      role="menu"
+                      className="absolute left-0 mt-3 w-56 glass-card border-brand-primary p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200 z-50"
+                    >
+                      <p className="text-xs text-primary font-bold mb-3 text-center">المظهر</p>
+                      <div className="flex justify-center gap-2 mb-4">
+                        <button
+                          type="button"
+                          title="وردي"
+                          onClick={() => toggleTheme('pink')}
+                          className={`w-11 h-11 rounded-full bg-secondary hover:bg-tertiary transition-all shadow-lg border overflow-hidden flex items-center justify-center p-0 ${theme === 'pink' ? 'border-brand ring-2 ring-brand/40' : 'border-primary'
+                            }`}
+                        >
+                          <Image height={44} width={44} alt="وردي" src="/icons/pink-img.png" className="w-full h-full object-cover" />
+                        </button>
+                        <button
+                          type="button"
+                          title="فاتح"
+                          onClick={() => toggleTheme('light')}
+                          className={`p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border ${theme === 'light' ? 'border-brand ring-2 ring-brand/40' : 'border-primary'
+                            }`}
+                        >
+                          <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          title="داكن"
+                          onClick={() => toggleTheme('dark')}
+                          className={`p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border ${theme === 'dark' ? 'border-brand ring-2 ring-brand/40' : 'border-primary'
+                            }`}
+                        >
+                          <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      {user == null ? (
+                        <button
+                          type="button"
+                          title="Log in"
+                          className="w-full py-2.5 rounded-lg bg-secondary hover:bg-tertiary border border-primary text-primary font-medium transition-all flex justify-center items-center gap-2"
+                          onClick={() => {
+                            closeSettings();
+                            dialogRef.current?.showModal();
+                          }}
+                        >
+                          <LogIn className="h-4 w-4" />
+                          تسجيل الدخول
+                        </button>
+                      ) : showLogoutConfirm ? (
+                        <div className="space-y-2">
+                          <p className="text-xs text-primary font-bold text-center italic">هل تريد تسجيل الخروج؟</p>
+                          <button
+                            type="button"
+                            disabled={loading}
+                            onClick={handleLogout}
+                            className="w-full py-2 bg-brand-error/10 text-brand-error hover:bg-brand-error hover:text-white rounded-lg text-xs font-black transition-all flex justify-center items-center gap-2"
+                          >
+                            {loading ? <LoaderIcon className="animate-spin h-3 w-3" /> : "نعم، خروج"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowLogoutConfirm(false)}
+                            className="w-full py-2 bg-tertiary text-primary hover:bg-secondary rounded-lg text-xs font-medium transition-all"
+                          >
+                            إلغاء
+                          </button>
                         </div>
+                      ) : (
+                        <button
+                          type="button"
+                          title="Logout"
+                          className="w-full py-2.5 rounded-lg bg-secondary hover:bg-brand-error/10 hover:text-brand-error border border-primary text-primary font-medium transition-all flex justify-center items-center gap-2"
+                          onClick={() => setShowLogoutConfirm(true)}
+                        >
+                          <LogOut className="h-4 w-4" />
+                          تسجيل الخروج
+                        </button>
                       )}
                     </div>
                   )}
@@ -178,37 +206,9 @@ export default function Navbar() {
               )}
             </div>
           </div>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="md:hidden pb-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block px-4 py-3 text-primary hover:bg-secondary hover:text-brand rounded-lg font-medium transition-colors ${path === link.href ? "text-brand bg-secondary/60" : ""}`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              {
-                userInfo == 'admin' && (
-                  <Link
-                    href="/admin"
-                    className={`text-primary px-4 py-3 hover:text-brand font-medium transition-colors duration-200 relative group ${path === "/admin" ? "text-brand" : ""}`}
-                  >
-                    لوحة التحكم
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand transition-all duration-200 group-hover:w-full"></span>
-                  </Link>
-                )
-              }
-            </div>
-          )}
         </div>
       </nav>
 
-      {/* html dialog */}
       <dialog ref={dialogRef} className="fixed w-[95%] bg-transparent transform  z-50 outline-none backdrop:bg-black/40 backdrop:backdrop-blur-sm">
         <div className="flex flex-col gap-3">
           <Suspense fallback={<div>Loading...</div>}>

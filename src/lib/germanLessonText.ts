@@ -5,6 +5,13 @@ export function germanTextBeforePipe(text: string): string {
   return segment.trim();
 }
 
+/** Arabic portion after the bilingual `|` separator. */
+export function arabicTextAfterPipe(text: string): string {
+  const pipeIndex = text.indexOf("|");
+  if (pipeIndex === -1) return "";
+  return text.slice(pipeIndex + 1).trim();
+}
+
 export function pickGermanSpeakText(lesson: {
   title: string;
   description: string;

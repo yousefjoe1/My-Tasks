@@ -52,20 +52,20 @@ export default function Home() {
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
       <div className="max-w-[95%] mx-auto">
-        <div className="rounded-2xl shadow-sm">
-          {/* quick navigation */}
-          <nav aria-label="تنقل سريع" className="mb-4 grid grid-cols-4 gap-2">
+          <nav aria-label="تنقل سريع" className="mb-4 flex justify-between gap-2">
             {quickLinks.map(({ name, href, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
-                className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-secondary bg-primary px-2 py-3 text-primary transition-colors hover:border-brand hover:text-brand"
+                className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-secondary bg-primary px-2 py-2 text-primary transition-colors hover:border-brand hover:text-brand"
               >
                 <Icon className="size-6" aria-hidden />
                 {/* <span className="text-center text-[11px] font-bold leading-tight sm:text-xs">{name}</span> */}
               </Link>
             ))}
           </nav>
+        <div className="rounded-2xl shadow-sm">
+          {/* quick navigation */}
           <div className="mb-8 flex justify-between items-center flex-wrap gap-2">
             <OnboardingWrapper />
             <ShareApp userId={user?.id} />
@@ -73,15 +73,15 @@ export default function Home() {
 
 
           <div className="mb-5 bg-primary rounded-2xl p-1 flex flex-col justify-between items-center gap-4 border-b border-secondary">
-            <div className="text-center md:text-left">
+            {/* <div className="text-center md:text-left">
               <h1 className="lg:text-4xl text-2xl font-black text-primary tracking-tight mb-2">
-                {/* Powerful Day */}
+
                 ⚡ 
                 المهام الاساسية لبناء نسختك الأفضل
               </h1>
               <p className="text-secondary font-medium">
               </p>
-            </div>
+            </div> */}
 
             {normalTasks.length === 0 && !isTasksLoading && (
               <button
