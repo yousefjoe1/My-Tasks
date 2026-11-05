@@ -1,39 +1,64 @@
+
+/** Speak German text via the Web Speech API (cancels any ongoing speech first). */
+
 function pickGermanVoice(): SpeechSynthesisVoice | undefined {
   const voices = window.speechSynthesis.getVoices();
+  // console.log("🚀 ~ pickGermanVoice ~ voices:", voices)
+
+  // Prefer German voices, prioritizing exact German locale
   return (
-    voices.find((v) => v.lang === "de-DE") ??
-    voices.find((v) => v.lang.startsWith("de"))
+    voices.find(
+      (v) => v.lang.toLowerCase() === "de-de" && !v.localService === false
+    ) ??
+    voices.find((v) => v.lang.toLowerCase() === "de-de") ??
+    voices.find((v) => v.lang.toLowerCase().startsWith("de-")) ??
+    voices.find((v) => v.lang.toLowerCase() === "de")
   );
 }
 
-/** Speak German text via the Web Speech API (cancels any ongoing speech first). */
+/**
+ * Speak German text using the Web Speech API.
+ */
 export function speakText(text: string, rate = 0.85): void {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    return;
+  }
 
   const trimmed = text.trim();
   if (!trimmed) return;
 
-  window.speechSynthesis.cancel();
+  const synth = window.speechSynthesis;
 
-  const utterance = new SpeechSynthesisUtterance(trimmed);
-  utterance.lang = "de-DE";
-  utterance.rate = rate;
+  synth.cancel();
 
-  const applyVoice = () => {
-    const voice = pickGermanVoice();
-    if (voice) utterance.voice = voice;
+  const speak = () => {
+    const utterance = new SpeechSynthesisUtterance(trimmed);
+
+    utterance.lang = "de-DE";
+    utterance.rate = rate;
+    utterance.pitch = 1;
+
+    const germanVoice = pickGermanVoice();
+
+    if (germanVoice) {
+      utterance.voice = germanVoice;
+      utterance.lang = germanVoice.lang;
+    }
+
+    synth.speak(utterance);
   };
 
-  applyVoice();
-  if (window.speechSynthesis.getVoices().length === 0) {
-    const onVoices = () => {
-      applyVoice();
-      window.speechSynthesis.removeEventListener("voiceschanged", onVoices);
-      window.speechSynthesis.speak(utterance);
-    };
-    window.speechSynthesis.addEventListener("voiceschanged", onVoices);
+  const voices = synth.getVoices();
+
+  if (voices.length > 0) {
+    speak();
     return;
   }
 
-  window.speechSynthesis.speak(utterance);
+  const handleVoicesChanged = () => {
+    synth.removeEventListener("voiceschanged", handleVoicesChanged);
+    speak();
+  };
+
+  synth.addEventListener("voiceschanged", handleVoicesChanged);
 }

@@ -21,6 +21,7 @@ export default function GermanLessonClient() {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLesson(resolveInitialLesson(speakParam));
     setSpeechSupported(
       typeof window !== "undefined" && "speechSynthesis" in window

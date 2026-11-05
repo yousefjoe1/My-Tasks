@@ -12,7 +12,7 @@ import ErrorBoundary from '@/common/ErrorBoundry';
 import ToastContainer from '@/components/Toasts/ToastContainer';
 import { useToast } from '@/components/Toasts/useToast';
 import OnboardingWrapper from '@/common/OnboardingWrapper';
-import { BarChart3, BookOpen, Dumbbell, Loader2, Moon } from 'lucide-react';
+import { BarChart3, BookOpen, Dumbbell, Languages, Loader2, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ShareApp from '@/common/ShareApp';
 import Link from 'next/link';
@@ -22,6 +22,7 @@ const quickLinks = [
   { name: "ذكر بسيط", href: "/group-tasks", icon: BookOpen },
   { name: "صحتك", href: "/health", icon: Dumbbell },
   { name: "نومك", href: "/sleep", icon: Moon },
+  { name: "درس ألماني", href: "/german-lesson", icon: Languages },
 ];
 
 export default function Home() {
