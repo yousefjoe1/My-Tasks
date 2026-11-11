@@ -53,19 +53,13 @@ export default function InstallPWA() {
     if (!isIOS && !deferredPrompt) return null;
 
     return (
-        <div className="p-2 bg-tertiary border border-secondary shadow-sm transition-colors duration-300">
-            <div className="flex flex-col items-center gap-3 text-center">
-                <p className="text-sm text-muted font-medium">
-                    يمكنك تنزيل التطبيق بكل سهولة للوصول السريع لمهامك
-                </p>
-                <button
-                    onClick={handleInstallClick}
-                    className="btn btn-primary text-xs"
-                >
-                    <span>تنزيل التطبيق الآن</span>
-                    <span className="text-lg">📲</span>
-                </button>
-            </div>
-        </div>
+        <button
+            onClick={handleInstallClick}
+            title="يمكنك تنزيل التطبيق بكل سهولة للوصول السريع لمهامك"
+            className="btn btn-primary text-xs"
+        >
+            <span>تنزيل التطبيق</span>
+            <span className="text-lg" aria-hidden>📲</span>
+        </button>
     );
 }

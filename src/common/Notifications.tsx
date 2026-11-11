@@ -105,54 +105,47 @@ export default function PushNotificationManager() {
     }
 
     if (!isSupported) {
-        return <div className='mt-10'>
-            <p>Push notifications are not supported in this browser.</p>
-            <p>قم بتفعيل الاشعارات لتصلك تذكيرات مفيده جدا في حياتك اليوميه</p>
-        </div>
+        return (
+            <p className="text-center text-xs text-muted">
+                الإشعارات غير مدعومة في هذا المتصفح
+            </p>
+        )
     }
 
+    const reminderHint = user
+        ? 'ابق على اطلاع دائم بمهامك. احصل على تذكيرات لمهامك والأذكار طوال اليوم.'
+        : 'سجّل الدخول أولاً لتفعيل تذكيرات المهام والأذكار.'
+
     return (
-        <div className="mt-10 flex flex-wrap items-center gap-4 justify-center p-4 bg-secondary border-b border-primary shadow-sm transition-colors duration-300">
-            <div className="flex items-center gap-3">
-                <div className="lg:p-2 p-1 bg-tertiary rounded-lg">
-                    <span className="lg:text-xl text-sm">🔔</span>
-                </div>
-                <h3 className="lg:text-lg text-sm font-semibold text-primary">التذكير</h3>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+            <div className="flex items-center gap-2">
+                <span className="text-base" aria-hidden>🔔</span>
+                <h3 className="text-sm font-semibold text-primary">التذكير</h3>
             </div>
 
             {subscription ? (
-                <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex items-center gap-2 px-3 py-2 bg-tertiary text-secondary rounded-lg text-sm border border-secondary">
-                        <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                        <span className="text-secondary font-medium">هفكرك إن شاء الله</span>
-                    </div>
-
-                    <div className="flex gap-3">
-                        <button
-                            disabled={loading}
-                            onClick={unsubscribeFromPush}
-                            className="btn btn-danger"
-                        >
-                            {loading ? 'جاري التعطيل...' : 'تعطيل التذكيرات'}
-
-                        </button>
-                    </div>
-                </div>
-            ) : (
-                <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl">
-                    <p className="text-sm text-muted leading-relaxed text-center sm:text-left flex-1">
-                        {user
-                            ? 'ابق على اطلاع دائم بمهامك. احصل على تذكيرات لمهامك والأذكار طوال اليوم.'
-                            : 'سجّل الدخول أولاً لتفعيل تذكيرات المهام والأذكار.'}
-                    </p>
+                <>
+                    <span className="inline-flex items-center gap-2 rounded-lg border border-secondary bg-tertiary px-2.5 py-1 text-xs font-medium text-secondary">
+                        <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+                        هفكرك إن شاء الله
+                    </span>
                     <button
-                        disabled={loading || !user}
-                        onClick={subscribeToPush}
-                        className="btn btn-primary whitespace-nowrap text-xs"
+                        disabled={loading}
+                        onClick={unsubscribeFromPush}
+                        className="btn btn-danger text-xs"
                     >
-                        {loading ? 'جاري التفعيل...' : 'تحب افكرك ؟'}
+                        {loading ? 'جاري التعطيل...' : 'تعطيل'}
                     </button>
-                </div>
+                </>
+            ) : (
+                <button
+                    disabled={loading || !user}
+                    onClick={subscribeToPush}
+                    title={reminderHint}
+                    className="btn btn-primary whitespace-nowrap text-xs"
+                >
+                    {loading ? 'جاري التفعيل...' : 'تحب افكرك ؟'}
+                </button>
             )}
         </div>
     )

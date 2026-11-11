@@ -10,8 +10,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <Navbar />
-      <PushNotificationManager />
-      <InstallPWA />
+      <div className="mt-12 flex flex-wrap items-center justify-center gap-2 border-b border-primary bg-secondary px-3 py-2 shadow-sm">
+        <PushNotificationManager />
+        <InstallPWA />
+      </div>
       <Suspense fallback={<Loader2 className="animate-spin h-8 w-8" />}>
         <WelcomeNotifications />
       </Suspense>

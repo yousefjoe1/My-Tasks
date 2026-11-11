@@ -171,7 +171,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
           </div>
 
 
-          <div className="flex items-center p-2 bg-linear-to-r from-secondary to-primary">
+          <div className="flex items-center p-2 rounded-2xl to-primary">
             <div className="flex items-center gap-2">
               <UpdateMainTaskModal task={task} onUpdate={onUpdate} />
               <button
