@@ -92,12 +92,7 @@ const SubTaskCard = ({
                         onChange={(e) => setEditContent(e.target.value)}
                         onKeyDown={handleKeyPress}
                         onBlur={handleSave}
-                        className={` flex-1
-                            text-sm mx-2 font-medium bg-transparent border-0 text-primary outline-none
-                            focus:ring-2 focus:ring-primary-2/50 rounded px-1 py-0.5
-                            ${isCompleted ? 'line-through opacity-70' : ''}
-                            w-48 max-w-64
-                        `}
+                        className={`field mx-2 w-48 max-w-64 text-sm font-medium ${isCompleted ? "line-through opacity-70" : ""}`}
                         autoComplete="off"
                     />
                 ) : (
@@ -113,17 +108,11 @@ const SubTaskCard = ({
                 {(!isEditing || loading) && (
                     <div className='h-6 w-6'>
                         {loading ? (
-                            <Loader2 className="w-4 h-4 text-white animate-spin" />
+                            <Loader2 className="w-4 h-4 text-brand animate-spin" />
                         ) : (
-                            <div className={` flex-1
-                                w-6 h-6 rounded-lg border-2 flex items-center justify-center
-                                transition-all duration-300
-                                ${isCompleted
-                                    ? 'bg-primary-2 border-primary-2 shadow-[0_0_10px_rgba(96,165,250,0.5)]'
-                                    : 'border-secondary bg-transparent group-hover:border-primary-2/50'}
-                            `}>
+                            <div className={`check ${isCompleted ? "check-on" : ""}`}>
                                 {isCompleted && (
-                                    <Check className="w-4 h-4 text-white animate-in zoom-in duration-300" />
+                                    <Check className="w-3.5 h-3.5" />
                                 )}
                             </div>
                         )}
@@ -141,9 +130,7 @@ const SubTaskCard = ({
                             handleEdit();
                         }}
                         disabled={saveLoading || deleteLoading}
-                        className="p-1.5 mx-2 rounded-lg
-                           text-muted-foreground text-primary-2 bg-primary-2/10 
-                           transition-all duration-200 active:scale-90"
+                        className="btn btn-icon mx-2"
                         title="تعديل المهمة"
                     >
                         <Edit className="w-3.5 h-3.5" />
@@ -158,9 +145,7 @@ const SubTaskCard = ({
                             handleDelete();
                         }}
                         disabled={saveLoading}
-                        className="p-1.5 rounded-lg
-                           text-muted-foreground text-primary-2 bg-primary-2/10 
-                           transition-all duration-200 active:scale-90"
+                        className="btn btn-icon btn-danger"
                         title="حذف المهمة"
                     >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -176,12 +161,7 @@ const SubTaskCard = ({
                         <button
                             onClick={handleSave}
                             disabled={!editContent.trim() || saveLoading}
-                            className={`
-                                flex items-center justify-center w-7 h-7 border rounded-lg transition-all
-                                ${saveLoading
-                                    ? 'opacity-50'
-                                    : 'bg-success/15 text-success hover:bg-success text-white shadow-sm shadow-success/20'}
-                            `}
+                            className="btn btn-icon check-on"
                         >
                             {saveLoading ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -196,9 +176,7 @@ const SubTaskCard = ({
                                 setEditContent(subTask.content);
                             }}
                             disabled={saveLoading}
-                            className="flex items-center justify-center w-7 h-7 rounded-lg
-                               text-red-500 bg-red-500/15 transition-all
-                               active:scale-90"
+                            className="btn btn-icon btn-danger"
                         >
                             <X className="w-3.5 h-3.5" />
                         </button>

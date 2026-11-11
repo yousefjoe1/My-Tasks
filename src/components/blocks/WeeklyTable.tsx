@@ -132,7 +132,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
       <div className="group relative bg-primary rounded-3xl shadow-sm px-2 pb-1 overflow-visible hover:shadow-md transition-all duration-200">
         {/* Header Section */}
         {error[task.id] && (
-          <p className="text-red-500 text-sm mt-1">{error[task.id]}</p>
+          <p className="text-brand-error text-sm mt-1">{error[task.id]}</p>
         )}
 
         <div className="flex items-center justify-between">
@@ -177,7 +177,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
               <button
                 type="button"
                 onClick={() => deleteDialogRef.current?.showModal()}
-                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-brand-error)_20%,transparent)] text-[var(--color-brand-error)] transition-all duration-200 hover:bg-[color-mix(in_srgb,var(--color-brand-error)_35%,transparent)] active:scale-95 shadow-sm"
+                className="btn btn-icon btn-danger"
                 aria-label="Delete task"
               >
                 <Trash size={16} strokeWidth={2.25} />
@@ -220,7 +220,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
             onClick={() => setWeekDaysOpen((open) => !open)}
             aria-expanded={weekDaysOpen}
             aria-label={weekDaysOpen ? "إخفاء أيام الأسبوع" : "عرض أيام الأسبوع"}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-muted transition-colors hover:bg-tertiary/60 hover:text-primary"
+            className="btn btn-ghost h-auto w-full"
           >
             <CalendarDays size={16} strokeWidth={2} />
             <span className="text-xs font-medium">عملت اي ؟</span>
@@ -245,11 +245,7 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
                       onClick={() => toggleDay(day)}
                       disabled={loading}
                       aria-label={`${day}: ${done ? "مكتمل" : "غير مكتمل"}`}
-                      className={`flex size-6 shrink-0 items-center justify-center rounded-full border transition-all active:scale-95 disabled:opacity-50 ${
-                        done
-                          ? "border-success bg-success text-white shadow-sm shadow-success/30"
-                          : "border-secondary bg-tertiary/50 text-muted"
-                      } ${isToday ? "ring-1 ring-brand" : ""}`}
+                      className={`check ${done ? "check-on" : ""} ${isToday ? "check-today" : ""}`}
                     >
                       {done ? (
                         <Check size={11} strokeWidth={3} aria-hidden />
@@ -285,11 +281,11 @@ const WeeklyTable = ({ task, onUpdate, onDelete, loading }: WeeklyTableProps) =>
           <p className="text-lg font-semibold mb-4 text-brand-error">Are you sure you want to delete this task?</p>
           <button
             disabled={loading}
-            className={`p-3 bg-brand-error ${loading && 'bg-brand-success/50'} gap-3 rounded-full w-full text-brand-text transition-colors shadow-lg border border-primary flex justify-center items-center`}
+            className="btn btn-danger-solid w-full"
 
             onClick={() => onDelete(task.id)}>Yes {loading && <Loader />} </button>
           <button
-            className="p-3 bg-brand-success/20 rounded-full w-full text-brand-text transition-colors shadow-lg border border-primary"
+            className="btn btn-secondary w-full"
             onClick={() => deleteDialogRef.current?.close()}>No</button>
         </div>
       </dialog>

@@ -25,13 +25,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#1a1f17",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" className="dark">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div className="ambient-wash" aria-hidden="true" />
         <SeviceWorker />
         <StoreProvider>
           <ThemeProvider>

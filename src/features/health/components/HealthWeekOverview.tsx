@@ -51,7 +51,7 @@ export default function HealthWeekOverview({
             type="button"
             onClick={onPrevWeek}
             disabled={weekLoading}
-            className="flex items-center gap-1 rounded-lg border border-secondary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-tertiary disabled:opacity-50"
+            className="btn btn-secondary text-sm"
             aria-label="الأسبوع السابق"
           >
             <ChevronRight size={18} aria-hidden />
@@ -64,7 +64,7 @@ export default function HealthWeekOverview({
               value={summary.weekStart}
               onChange={(e) => onSelectWeek(e.target.value)}
               disabled={weekLoading}
-              className="max-w-full truncate rounded-lg border border-secondary bg-secondary px-3 py-1.5 text-sm font-semibold text-primary outline-none focus:ring-2 focus:ring-brand/40"
+              className="field max-w-full truncate text-sm font-semibold"
               aria-label="اختر الأسبوع"
             >
               {activityWeeks.map((weekStart) => (
@@ -80,7 +80,7 @@ export default function HealthWeekOverview({
             type="button"
             onClick={onNextWeek}
             disabled={weekLoading || !canGoNext}
-            className="flex items-center gap-1 rounded-lg border border-secondary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-tertiary disabled:opacity-50"
+            className="btn btn-secondary text-sm"
             aria-label="الأسبوع التالي"
           >
             التالي
@@ -105,11 +105,11 @@ export default function HealthWeekOverview({
                 return (
                   <div key={dayKey} className="flex min-w-[2.25rem] flex-col items-center gap-0.5">
                     <div
-                      className={`flex size-7 items-center justify-center rounded-full border text-[10px] font-bold tabular-nums ${
+                      className={`flex size-7 items-center justify-center rounded-md border text-[10px] font-bold tabular-nums ${
                         done
-                          ? "border-success bg-success text-white"
+                          ? "border-brand bg-brand text-on-primary"
                           : "border-secondary bg-tertiary/50 text-muted"
-                      } ${isToday ? "ring-1 ring-brand" : ""}`}
+                      } ${isToday ? "ring-2 ring-[var(--color-primary)] ring-offset-2 ring-offset-[var(--color-surface)]" : ""}`}
                       title={done ? `${count} تكرار` : "لم يُسجّل"}
                     >
                       {done ? count : "—"}

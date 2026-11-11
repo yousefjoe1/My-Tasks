@@ -21,8 +21,7 @@ import type { SleepLog } from "@/features/sleep/types";
 import { ChevronLeft, ChevronRight, Loader2, Moon, Sun, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-const fieldClass =
-  "w-full rounded-xl border border-secondary bg-primary px-3 py-3 text-lg text-primary outline-none focus:border-brand";
+const fieldClass = "field text-lg";
 
 export default function SleepPageClient() {
   const { user, loading: authLoading } = useAuth();
@@ -184,7 +183,7 @@ export default function SleepPageClient() {
           <button
             type="button"
             onClick={() => shiftDay(-1)}
-            className="rounded-xl border border-secondary p-2 text-primary transition-colors hover:bg-secondary"
+            className="btn btn-icon"
             aria-label="اليوم السابق"
           >
             <ChevronRight className="size-5" />
@@ -200,7 +199,7 @@ export default function SleepPageClient() {
                 const next = event.target.value;
                 if (next && next <= today) setSelectedDate(next);
               }}
-              className="bg-transparent text-center text-sm text-muted outline-none"
+              className="field text-center text-sm"
             />
           </label>
 
@@ -208,7 +207,7 @@ export default function SleepPageClient() {
             type="button"
             onClick={() => shiftDay(1)}
             disabled={selectedDate >= today}
-            className="rounded-xl border border-secondary p-2 text-primary transition-colors hover:bg-secondary disabled:opacity-40"
+            className="btn btn-icon"
             aria-label="اليوم التالي"
           >
             <ChevronLeft className="size-5" />
@@ -280,7 +279,7 @@ export default function SleepPageClient() {
                 type="button"
                 disabled={saving || !preview?.ok}
                 onClick={handleSave}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand/20 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
+                className="btn btn-primary h-auto flex-1"
               >
                 {saving ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
                 {log ? "تحديث" : "حفظ"}
@@ -290,7 +289,7 @@ export default function SleepPageClient() {
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(true)}
-                  className="flex items-center justify-center gap-2 rounded-xl border border-brand-error/30 px-4 py-3 text-sm font-bold text-brand-error transition-colors hover:bg-brand-error/10"
+                  className="btn btn-danger h-auto"
                 >
                   <Trash2 className="size-4" aria-hidden />
                   حذف
@@ -306,14 +305,14 @@ export default function SleepPageClient() {
                     type="button"
                     disabled={deleting}
                     onClick={handleDelete}
-                    className="rounded-lg bg-brand-error px-3 py-2 text-xs font-bold text-white disabled:opacity-60"
+                    className="btn btn-danger-solid text-xs"
                   >
                     {deleting ? "جاري الحذف..." : "نعم، احذف"}
                   </button>
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(false)}
-                    className="rounded-lg bg-tertiary px-3 py-2 text-xs font-medium text-primary"
+                    className="btn btn-ghost text-xs"
                   >
                     إلغاء
                   </button>
@@ -339,10 +338,8 @@ export default function SleepPageClient() {
                   <button
                     type="button"
                     onClick={() => setSelectedDate(item.sleep_date)}
-                    className={`flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-right transition-colors ${
-                      selected
-                        ? "border-brand bg-brand/10"
-                        : "border-secondary bg-primary hover:bg-secondary"
+                    className={`btn h-auto w-full justify-between px-4 text-right ${
+                      selected ? "btn-secondary is-active" : "btn-secondary"
                     }`}
                   >
                     <span className="text-sm font-bold text-primary">{formatArabicDate(item.sleep_date)}</span>

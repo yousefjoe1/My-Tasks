@@ -87,7 +87,7 @@ export default function GermanLessonClient() {
           type="button"
           onClick={handleReplay}
           disabled={!speechSupported}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-secondary bg-primary px-5 py-3.5 text-sm font-bold text-primary transition-all hover:border-brand hover:text-brand active:scale-[0.98] disabled:opacity-50"
+          className="btn btn-secondary h-auto flex-1"
         >
           <Volume2 className="size-5" aria-hidden />
           إعادة السماع
@@ -96,7 +96,7 @@ export default function GermanLessonClient() {
           type="button"
           onClick={handleNext}
           disabled={!speechSupported}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand/20 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+          className="btn btn-primary h-auto flex-1"
         >
           <RefreshCw className="size-5" aria-hidden />
           جملة أخرى

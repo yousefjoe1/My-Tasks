@@ -76,7 +76,7 @@ export default function ExerciseCard({
             onClick={decrement}
             disabled={submitting || reps <= 1}
             aria-label="تقليل التكرارات"
-            className="flex size-9 items-center justify-center rounded-lg text-primary transition-colors hover:bg-primary disabled:opacity-40"
+            className="btn btn-icon"
           >
             <Minus size={18} strokeWidth={2.5} />
           </button>
@@ -88,7 +88,7 @@ export default function ExerciseCard({
             onClick={increment}
             disabled={submitting}
             aria-label="زيادة التكرارات"
-            className="flex size-9 items-center justify-center rounded-lg text-primary transition-colors hover:bg-primary disabled:opacity-40"
+            className="btn btn-icon"
           >
             <Plus size={18} strokeWidth={2.5} />
           </button>
@@ -101,16 +101,10 @@ export default function ExerciseCard({
           className="pushable group !w-auto shrink-0 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <span className="shadow-btn" />
-          <span
-            className="edge-btn"
-            style={{
-              background:
-                "linear-gradient(to left, #064e3b 0%, #059669 8%, #059669 92%, #064e3b 100%)",
-            }}
-          />
-          <span className="front-btn text-sm" style={{ background: "#10b981" }}>
+          <span className="edge-btn" />
+          <span className="front-btn text-sm">
             {submitting ? (
-              <Loader2 className="size-4 animate-spin text-white" aria-hidden />
+              <Loader2 className="size-4 animate-spin" aria-hidden />
             ) : (
               <span>تم ✓</span>
             )}

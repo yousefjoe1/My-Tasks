@@ -60,7 +60,7 @@ export default function InstallPWA() {
                 </p>
                 <button
                     onClick={handleInstallClick}
-                    className="text-xs px-6 py-1 bg-brand text-white font-bold rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center gap-2"
+                    className="btn btn-primary text-xs"
                 >
                     <span>تنزيل التطبيق الآن</span>
                     <span className="text-lg">📲</span>

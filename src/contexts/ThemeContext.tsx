@@ -1,7 +1,7 @@
 'use client'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark' | 'pink';
+type Theme = 'light' | 'dark' | 'pink'
 
 interface ThemeContextType {
   theme: Theme
@@ -12,7 +12,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Start with a default value that matches the server
-  const [theme, setTheme] = useState<Theme>('light')
+  const [theme, setTheme] = useState<Theme>('dark')
   const [mounted, setMounted] = useState<boolean>(false)
 
   // Only run on client after mount
@@ -21,10 +21,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setMounted(prev => prev = true)
 
     const savedTheme = localStorage.getItem('theme') as Theme
-    if (savedTheme) {
+    if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'pink') {
       setTheme(savedTheme)
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark')
     }
   }, [])
 

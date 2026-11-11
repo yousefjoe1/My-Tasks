@@ -89,7 +89,7 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
           <span className="shadow-btn"></span>
           <span className="edge-btn"></span>
           <span className="front-btn">
-            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300 text-white" />
+            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
             <span>إضافة إنجاز جديد</span>
           </span>
         </button>
@@ -101,7 +101,7 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
             </h3>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 hover:bg-brand-error/10 hover:text-brand-error rounded-full transition-colors"
+              className="btn btn-icon"
             >
               <X className="w-6 h-6" />
             </button>
@@ -118,7 +118,7 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
                 onChange={(e) => setTaskName(e.target.value)}
                 value={taskName}
                 placeholder="مثلاً: قراءة سورة البقرة"
-                className="p-3 bg-tertiary border-none text-primary w-full rounded-xl focus:ring-2 focus:ring-brand outline-none transition-all"
+                className="field"
               />
             </div>
 
@@ -132,7 +132,7 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
                 value={description}
                 rows={2}
                 placeholder="تفاصيل إضافية تساعدك على الإنجاز..."
-                className="p-3 bg-tertiary border-none text-primary w-full rounded-xl focus:ring-2 focus:ring-brand outline-none text-sm transition-all resize-none"
+                className="field text-sm resize-none"
               />
             </div>
 
@@ -146,12 +146,12 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
                   onChange={(e) => setCurrentSubTask(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSubTaskToList())}
                   placeholder="أضف مهمة فرعية..."
-                  className="p-2 bg-tertiary/50 border border-primary/10 text-primary flex-1 rounded-lg outline-none text-sm focus:border-brand"
+                  className="field flex-1 text-sm"
                 />
                 <button
                   type="button"
                   onClick={addSubTaskToList}
-                  className="p-2 bg-primary-2/20 text-primary-2 rounded-lg hover:bg-primary-2/40 transition-colors"
+                  className="btn btn-icon shrink-0"
                 >
                   <Plus className="w-5 h-5" />
                 </button>
@@ -160,7 +160,7 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
               {/* قائمة المهام الفرعية المضافة */}
               <div className="flex flex-wrap gap-2 mt-2">
                 {subTasks.map((st, index) => (
-                  <div key={index} className="flex items-center gap-2 bg-tertiary px-3 py-1 rounded-full text-xs text-secondary border border-primary/10">
+                  <div key={index} className="chip">
                     <span>{st}</span>
                     <button
                       type="button"
@@ -187,8 +187,8 @@ export function AddBlock({ success, toast, error, isEssentialPage = false }: Toa
               className="pushable"
             >
               <span className="shadow-btn"></span>
-              <span className="edge-btn" style={{ background: 'linear-gradient(to left, #064e3b 0%, #059669 8%, #059669 92%, #064e3b 100%)' }}></span>
-              <span className="front-btn" style={{ background: '#10b981' }}>
+              <span className="edge-btn"></span>
+              <span className="front-btn">
                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
                 <span>إضافة  </span>
               </span>

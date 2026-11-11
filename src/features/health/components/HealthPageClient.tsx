@@ -203,7 +203,7 @@ export default function HealthPageClient() {
             type="button"
             disabled={seeding}
             onClick={handleSeed}
-            className="flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand/20 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
+            className="btn btn-primary"
           >
             {seeding ? (
               <>

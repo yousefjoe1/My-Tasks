@@ -1,91 +1,380 @@
 @import "tailwindcss";
 
 @theme {
-  /* Light Mode */
-  --color-brand-bg: #ffffff;
-  --color-brand-secondary: #f9fafb;
-  --color-brand-tertiary: #f3f4f6;
-  --color-primary-2: #60a5fa;
-  /* أزرق سماوي هادئ */
-  --color-primary-2-dark: #3b82f6;
-  /* درجة أغمق للحافة */
+  /* Dark is the default palette. Light overrides these on :root.light. */
+  --color-surface: #1a1f17;
+  --color-card: #232920;
+  --color-card-muted: #2c3428;
+  --color-foreground: #f4efe6;
+  --color-muted: #a3aa98;
+  --color-deep: #e7eee0;
+  --color-primary: #a8b89a;
+  --color-primary-foreground: #1c2418;
+  --color-primary-hover: #c3d1b4;
+  --color-danger: #e7a0ab;
+  --color-success: #9dcea8;
 
-  --color-brand-text: #0f172a;
-  --color-brand-text-secondary: #4b5563;
-  --color-brand-text-muted: #6b7280;
-
-  --color-brand-border: #e5e7eb;
-  --color-brand-border-secondary: #d1d5db;
-
-  --color-brand-primary: #3b82f6;
-  --color-brand-success: #22c55d;
-  --color-brand-warning: #f59e0b;
-  --color-brand-error: #ef4444;
+  --color-brand-bg: #1a1f17;
+  --color-brand-secondary: #232920;
+  --color-brand-tertiary: #2c3428;
+  --color-primary-2: #a8b89a;
+  --color-primary-2-dark: #c3d1b4;
+  --color-brand-text: #f4efe6;
+  --color-brand-text-secondary: #e7eee0;
+  --color-brand-text-muted: #a3aa98;
+  --color-brand-border: rgb(244 239 230 / 0.12);
+  --color-brand-border-secondary: rgb(244 239 230 / 0.22);
+  --color-brand-primary: #a8b89a;
+  --color-brand-success: #9dcea8;
+  --color-brand-warning: #c3d1b4;
+  --color-brand-error: #e7a0ab;
 }
 
-:root.dark {
-  --color-brand-bg: #111827;
-  --color-brand-secondary: #1f2937;
-  --color-brand-tertiary: #374151;
-  --color-primary-2: #60a5fa;
-  --color-primary-2-dark: #3b82f6;
-
-  --color-brand-text: #f9fafb;
-  --color-brand-text-secondary: #e5e7eb;
-  --color-brand-text-muted: #9ca3af;
-
-  --color-brand-border: #374151;
-  --color-brand-border-secondary: #4b5563;
-
-  --color-brand-primary: #60a5fa;
-  --color-brand-success: #34d399;
-  --color-brand-warning: #fbbf24;
-  --color-brand-error: #f87171;
+:root {
+  color-scheme: dark;
+  --glow-channel: 168 184 154;
+  --sand-wash: rgb(var(--glow-channel) / 0.14);
+  --glass-fill: linear-gradient(160deg, rgb(44 52 40 / 0.78), rgb(26 31 23 / 0.72));
+  --glass-bar: rgb(32 38 29 / 0.94);
+  --field-bg: rgb(18 22 16 / 0.72);
+  --color-border: rgb(244 239 230 / 0.12);
 }
 
-/* الألوان الأساسية للبنات - Pink Mode */
-:root.pink {
-  --color-brand-bg: #fff5f7;
-  /* خلفية وردية فاتحة جداً */
-  --color-brand-secondary: #fce7f3;
-  /* وردي متوسط للخلفيات الثانوية */
-  --color-brand-tertiary: #fbcfe8;
+:root.light {
+  color-scheme: light;
+  --glow-channel: 92 106 82;
+  --sand-wash: rgb(var(--glow-channel) / 0.12);
+  --glass-fill: linear-gradient(160deg, rgb(251 248 242 / 0.92), rgb(243 238 228 / 0.78));
+  --glass-bar: rgb(251 248 242 / 0.94);
+  --field-bg: rgb(251 248 242 / 0.92);
+  --color-border: rgb(92 106 82 / 0.12);
 
-  --color-brand-text: #831843;
-  /* نص نبيتي غامق للوضوح */
-  --color-brand-text-secondary: #be185d;
-  --color-brand-text-muted: #db2777;
+  --color-surface: #f3eee4;
+  --color-card: #fbf8f2;
+  --color-card-muted: #e8e1d4;
+  --color-foreground: #24281f;
+  --color-muted: #5e6558;
+  --color-deep: #3d4a36;
+  --color-primary: #5c6a52;
+  --color-primary-foreground: #f7f3ea;
+  --color-primary-hover: #4a5842;
+  --color-danger: #9f3040;
+  --color-success: #2f6b3a;
 
-  --color-brand-border: #f9a8d4;
-  --color-brand-border-secondary: #f472b6;
+  --color-brand-bg: #f3eee4;
+  --color-brand-secondary: #fbf8f2;
+  --color-brand-tertiary: #e8e1d4;
+  --color-primary-2: #5c6a52;
+  --color-primary-2-dark: #4a5842;
+  --color-brand-text: #24281f;
+  --color-brand-text-secondary: #3d4a36;
+  --color-brand-text-muted: #5e6558;
+  --color-brand-border: rgb(92 106 82 / 0.12);
+  --color-brand-border-secondary: rgb(92 106 82 / 0.22);
+  --color-brand-primary: #5c6a52;
+  --color-brand-success: #2f6b3a;
+  --color-brand-warning: #4a5842;
+  --color-brand-error: #9f3040;
+}
 
-  --color-brand-primary: #ec4899;
-  /* اللون الوردي الأساسي (Brand) */
-  --color-brand-success: #2dd4bf;
-  /* تركواز خفيف (يتماشى مع الوردي) */
-  --color-brand-warning: #fcd34d;
-  --color-brand-error: #fb7185;
+.ambient-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 72% 48% at 0% 0%, rgb(var(--glow-channel) / 0.42), transparent 58%),
+    radial-gradient(ellipse 52% 36% at 100% 0%, rgb(244 239 230 / 0.16), transparent 54%),
+    radial-gradient(ellipse 78% 40% at 50% 100%, rgb(var(--glow-channel) / 0.2), transparent 62%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 38%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 38%, transparent 100%);
 }
 
 @layer base {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--glow-channel) / 0.65) transparent;
+  }
+
   body {
-    background-color: var(--color-brand-bg);
-    color: var(--color-brand-text);
-    @apply transition-colors duration-300;
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    background-color: var(--color-surface);
+    color: var(--color-foreground);
+    min-height: 100dvh;
+    @apply transition-colors duration-200;
+  }
+
+  body > :not(.ambient-wash) {
+    position: relative;
+    z-index: 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background: rgb(var(--glow-channel) / 0.28);
+    color: var(--color-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 
   button {
     cursor: pointer;
   }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgb(var(--glow-channel) / 0.55);
+    border-radius: 999px;
+  }
 }
 
 @layer utilities {
   .glass-card {
-    background-color: color-mix(in srgb, var(--color-brand-secondary), transparent 60%);
-    backdrop-filter: blur(12px);
-    border: 1px solid color-mix(in srgb, var(--color-brand-border-secondary), transparent 50%);
-    @apply rounded-2xl shadow-xl transition-all duration-300;
+    background: var(--glass-fill);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border);
+    @apply rounded-2xl shadow-xl transition-all duration-200;
   }
+}
+
+/* Shared controls */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  height: 44px;
+  padding: 0 1.1rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  font-weight: 600;
+  line-height: 1;
+  transition:
+    transform 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    color 200ms ease,
+    filter 200ms ease;
+}
+
+.btn.flex-1,
+.btn.h-auto,
+.btn.w-full {
+  height: auto;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  box-shadow: 0 8px 24px rgb(var(--glow-channel) / 0.28);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--glass-fill);
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+  backdrop-filter: blur(12px);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: rgb(var(--glow-channel) / 0.55);
+  background: var(--sand-wash);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-muted);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--sand-wash);
+  color: var(--color-foreground);
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border-radius: 0.75rem;
+  background: var(--glass-fill);
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  backdrop-filter: blur(12px);
+}
+
+.btn-icon:hover:not(:disabled) {
+  border-color: rgb(var(--glow-channel) / 0.5);
+  background: var(--sand-wash);
+  color: var(--color-foreground);
+}
+
+.btn.is-active {
+  background: var(--sand-wash);
+  color: var(--color-deep);
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1px rgb(var(--glow-channel) / 0.5);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--color-danger);
+  border-color: color-mix(in srgb, var(--color-danger) 40%, transparent);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+}
+
+.btn-icon.btn-danger {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+}
+
+.btn-danger-solid {
+  background: var(--color-danger);
+  color: var(--color-primary-foreground);
+  border-color: transparent;
+}
+
+.btn-danger-solid:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.field {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 44px;
+  height: 44px;
+  border-radius: 0.75rem;
+  background: var(--field-bg);
+  border: 1px solid var(--color-border);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.18);
+  color: var(--color-foreground);
+  padding-inline: 0.9rem;
+}
+
+textarea.field {
+  height: auto;
+  min-height: 5.5rem;
+  padding-block: 0.75rem;
+}
+
+.field::placeholder {
+  color: color-mix(in srgb, var(--color-muted) 70%, transparent);
+}
+
+.field:focus,
+.field:focus-visible {
+  outline: none;
+  border-color: rgb(var(--glow-channel) / 0.55);
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.18),
+    0 0 0 4px rgb(var(--glow-channel) / 0.16);
+}
+
+.check {
+  width: 1.35rem;
+  height: 1.35rem;
+  min-height: 0;
+  padding: 0;
+  border-radius: 0.35rem;
+  border: 1.5px solid rgb(var(--glow-channel) / 0.55);
+  background: transparent;
+  color: var(--color-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+
+.check:hover {
+  transform: translateY(-1px);
+}
+
+.check:active {
+  transform: scale(0.98);
+}
+
+.check-on {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.check-today {
+  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+}
+
+.btn-icon.check-on {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 32px;
+  padding-inline: 0.85rem;
+  border-radius: 999px;
+  background: var(--glass-fill);
+  border: 1px solid var(--color-border);
+  color: color-mix(in srgb, var(--color-foreground) 85%, transparent);
+  font-size: 0.75rem;
+}
+
+.chip.is-active,
+.chip[aria-pressed="true"] {
+  background: var(--sand-wash);
+  color: var(--color-deep);
+  box-shadow: inset 0 0 0 1px rgb(var(--glow-channel) / 0.5);
 }
 
 .pushable {
@@ -94,40 +383,17 @@
   background: transparent;
   padding: 0;
   cursor: pointer;
-  outline-offset: 4px;
-  transition: filter 250ms;
+  width: 100%;
+  min-height: 44px;
+  height: 44px;
+  border-radius: 0.75rem;
   user-select: none;
   touch-action: manipulation;
-  width: 100%;
-  /* عشان ياخد عرض الحاوية */
 }
 
-.shadow-btn {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  background: hsl(0deg 0% 0% / 0.25);
-  will-change: transform;
-  transform: translateY(2px);
-  transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
-}
-
+.shadow-btn,
 .edge-btn {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  /* بيستخدم لون البراند بس بيغمقه شوية عشان يبان إنه حافة 3D */
-  background: linear-gradient(to left,
-      color-mix(in srgb, var(--color-brand-primary), black 30%) 0%,
-      color-mix(in srgb, var(--color-brand-primary), black 10%) 8%,
-      color-mix(in srgb, var(--color-brand-primary), black 10%) 92%,
-      color-mix(in srgb, var(--color-brand-primary), black 30%) 100%);
+  display: none;
 }
 
 .front-btn {
@@ -136,49 +402,41 @@
   justify-content: center;
   gap: 8px;
   position: relative;
-  padding: 10px 20px;
-  /* صغرنا الـ padding شوية عشان يبقى أرق */
-  border-radius: 12px;
+  width: 100%;
+  height: 44px;
+  padding: 0 1.15rem;
+  border-radius: 0.75rem;
   font-size: 1rem;
   font-weight: 700;
-  color: white;
-  /* بيستخدم لون الـ Primary اللي أنت معرفه في كل مود */
-  background: var(--color-brand-primary);
-  will-change: transform;
-  transform: translateY(-4px);
-  transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
-}
-
-.pushable:hover {
-  filter: brightness(110%);
+  color: var(--color-primary-foreground);
+  background: var(--color-primary);
+  box-shadow: 0 8px 24px rgb(var(--glow-channel) / 0.28);
+  transform: none;
+  transition: transform 200ms ease, background-color 200ms ease;
 }
 
 .pushable:hover .front-btn {
-  transform: translateY(-6px);
-  transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+  transform: translateY(-1px);
+  background: var(--color-primary-hover);
 }
 
 .pushable:active .front-btn {
-  transform: translateY(-2px);
-  transition: transform 34ms;
-}
-
-.pushable:hover .shadow-btn {
-  transform: translateY(4px);
-  transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
-}
-
-.pushable:active .shadow-btn {
-  transform: translateY(1px);
-  transition: transform 34ms;
+  transform: scale(0.98);
 }
 
 .pushable:focus:not(:focus-visible) {
   outline: none;
 }
 
+.pushable:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
-/* Custom Utility Classes mapped to your brand variables */
+.text-on-primary {
+  color: var(--color-primary-foreground);
+}
+
 .bg-primary {
   background-color: var(--color-brand-bg);
 }
@@ -235,6 +493,10 @@
   background-color: var(--color-brand-error);
 }
 
+.text-warning {
+  color: var(--color-brand-warning);
+}
+
 .loader {
   width: 100px;
   height: 60px;
@@ -288,7 +550,6 @@
 }
 
 @keyframes l12-0 {
-
   0%,
   49.9% {
     transform: scaleX(1)

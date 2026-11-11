@@ -99,7 +99,7 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
                 type="button"
                 onClick={() => detailsModalRef.current?.showModal()}
                 aria-label="Edit task"
-                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-2/25 text-primary-2-dark transition-all duration-200 hover:bg-primary-2/40 active:scale-95 shadow-sm"
+                className="btn btn-icon"
             >
                 <Pen size={16} strokeWidth={2.25} />
             </button>
@@ -117,7 +117,7 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
                             <h3 className="text-xl font-bold text-brand">{task.content}</h3>
                             <p className="text-xs text-muted mt-1">{task.description || "لا يوجد وصف"}</p>
                         </div>
-                        <button onClick={() => detailsModalRef.current?.close()} className="p-2 bg-tertiary rounded-full">
+                        <button onClick={() => detailsModalRef.current?.close()} className="btn btn-icon" aria-label="Close">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -131,7 +131,7 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
                                     onKeyDown={handleKeyPress}
-                                    className="flex-1 px-4 py-2 text-lg font-semibold border border-brand rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-brand bg-primary text-primary transition-all placeholder:text-muted"
+                                    className="field text-lg font-semibold"
                                     autoFocus
                                     placeholder="Enter task name..."
                                 />
@@ -140,7 +140,7 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     onKeyDown={handleKeyPress}
-                                    className="flex-1 px-4 py-2 text-lg font-semibold border border-brand rounded-xl outline-none focus:ring-2 focus:ring-blue-200 focus:border-brand bg-primary text-primary transition-all placeholder:text-muted"
+                                    className="field text-lg font-semibold"
                                     autoFocus
                                     placeholder="Enter task description..."
                                 />
@@ -149,15 +149,15 @@ const UpdateMainTaskModal = ({ task, onUpdate }: { task: WeeklyTask, onUpdate: (
                                 <button
                                     disabled={loading}
                                     onClick={handleSave}
-                                    className={`px-4 py-2 text-sm flex items-center justify-center gap-2 ${loading ? 'bg-secondary' : 'bg-success'} text-white rounded-lg hover:bg-success/80 active:scale-95 transition-all font-medium shadow-sm ${loading ? 'opacity-50' : ''}`}
+                                    className="btn btn-primary text-sm"
                                 >
-                                    Save {loading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+                                    Save {loading && <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />}
                                 </button>
                                 <button
                                     onClick={() => {
                                         detailsModalRef.current?.close();
                                     }}
-                                    className="px-4 py-2 text-sm bg-secondary text-primary rounded-lg hover:bg-secondary active:scale-95 transition-all font-medium shadow-sm"
+                                    className="btn btn-ghost text-sm"
                                 >
                                     Cancel
                                 </button>

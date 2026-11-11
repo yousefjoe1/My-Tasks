@@ -37,7 +37,7 @@ export default function AzkarCard({
             type="button"
             disabled={disabled}
             onClick={onPlus}
-            className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border border-brand-border bg-brand-bg transition-colors hover:bg-brand-tertiary disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]"
+            className="btn btn-secondary h-auto flex-1 flex-col"
             aria-label="زيادة العدد"
           >
             <Plus className="h-8 w-8 text-brand-primary" strokeWidth={2.5} />
@@ -46,11 +46,7 @@ export default function AzkarCard({
             type="button"
             disabled={disabled}
             onClick={onTimerToggle}
-            className={`flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border transition-colors active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${
-              timerRunning
-                ? 'border-brand-primary bg-brand-primary/10'
-                : 'border-brand-border bg-brand-bg hover:bg-brand-tertiary'
-            }`}
+            className={`btn btn-secondary h-auto flex-1 flex-col ${timerRunning ? "is-active" : ""}`}
             aria-label={timerRunning ? 'إيقاف المؤقت' : 'تشغيل المؤقت'}
           >
             {timerRunning ? (
@@ -78,7 +74,7 @@ export default function AzkarCard({
             type="button"
             disabled={disabled}
             onClick={onSave}
-            className="flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-brand-tertiary py-2.5 text-sm font-bold text-brand-text transition-colors hover:bg-brand-border disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]"
+            className="btn btn-primary h-auto w-full"
           >
             {card.saving ? (
               <Loader2 className="h-4 w-4 animate-spin" />

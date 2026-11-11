@@ -1,6 +1,6 @@
 'use client'
 import { useRef, useState, useEffect, Suspense } from "react";
-import { LoaderIcon, LogIn, LogOut, Settings } from "lucide-react";
+import { BarChart3, BookOpen, Dumbbell, Languages, LoaderIcon, LogIn, LogOut, Moon, Settings } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import LoginModal from "../Modals/LoginModal";
@@ -9,12 +9,19 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import { useToast } from "@/components/Toasts/useToast";
-import { useSearchParams } from "next/navigation";
-import { resolveSignedInDisplayName } from "@/features/group-tasks/services/azkarData";
+import { usePathname, useSearchParams } from "next/navigation";
+
+const navLinks = [
+  { name: "معلومات التقدم", href: "/dashboard", icon: BarChart3 },
+  { name: "ذكر بسيط", href: "/group-tasks", icon: BookOpen },
+  { name: "صحتك", href: "/health", icon: Dumbbell },
+  { name: "نومك", href: "/sleep", icon: Moon },
+  // { name: "درس ألماني", href: "/german-lesson", icon: Languages },
+];
 
 export default function Navbar() {
   const { user, loading: authLoading } = useAuth();
-  const [displayName, setDisplayName] = useState("");
+  const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -22,20 +29,6 @@ export default function Navbar() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const settingsRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!user?.id) {
-      setDisplayName("");
-      return;
-    }
-    let cancelled = false;
-    void resolveSignedInDisplayName(user.id).then((name) => {
-      if (!cancelled) setDisplayName(name);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [user?.id]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -87,14 +80,25 @@ export default function Navbar() {
             </div>
 
             <div
-              className="pointer-events-none absolute inset-0 flex items-center justify-center px-24"
-              aria-hidden={!user}
+              role="group"
+              aria-label="تنقل سريع"
+              className="pointer-events-none absolute inset-x-0 z-10 flex items-center justify-center gap-1 px-16 sm:gap-2"
             >
-              {user && !authLoading && (
-                <span className="max-w-[min(100%,14rem)] truncate text-center text-base font-bold text-primary">
-                  {displayName.trim() || "مستخدم"}
-                </span>
-              )}
+              {navLinks.map(({ name, href, icon: Icon }) => {
+                const active = pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-label={name}
+                    aria-current={active ? "page" : undefined}
+                    title={name}
+                    className={`btn btn-icon pointer-events-auto ${active ? "is-active" : ""}`}
+                  >
+                    <Icon className="size-5" aria-hidden />
+                  </Link>
+                );
+              })}
             </div>
 
             <div className="relative z-10" ref={settingsRef}>
@@ -107,14 +111,13 @@ export default function Navbar() {
                     title="الإعدادات"
                     aria-expanded={settingsOpen}
                     aria-haspopup="menu"
-                    className={`p-3 rounded-full transition-colors shadow-lg border border-primary ${settingsOpen ? 'bg-tertiary border-brand' : 'bg-secondary hover:bg-tertiary'
-                      }`}
+                    className={`btn btn-icon ${settingsOpen ? "is-active" : ""}`}
                     onClick={() => {
                       setSettingsOpen((open) => !open);
                       setShowLogoutConfirm(false);
                     }}
                   >
-                    <Settings className="h-5 w-5 text-primary" />
+                    <Settings className="h-5 w-5" />
                   </button>
 
                   {settingsOpen && (
@@ -128,8 +131,7 @@ export default function Navbar() {
                           type="button"
                           title="وردي"
                           onClick={() => toggleTheme('pink')}
-                          className={`w-11 h-11 rounded-full bg-secondary hover:bg-tertiary transition-all shadow-lg border overflow-hidden flex items-center justify-center p-0 ${theme === 'pink' ? 'border-brand ring-2 ring-brand/40' : 'border-primary'
-                            }`}
+                          className={`btn btn-icon overflow-hidden p-0 ${theme === "pink" ? "is-active" : ""}`}
                         >
                           <Image height={44} width={44} alt="وردي" src="/icons/pink-img.png" className="w-full h-full object-cover" />
                         </button>
@@ -137,8 +139,7 @@ export default function Navbar() {
                           type="button"
                           title="فاتح"
                           onClick={() => toggleTheme('light')}
-                          className={`p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border ${theme === 'light' ? 'border-brand ring-2 ring-brand/40' : 'border-primary'
-                            }`}
+                          className={`btn btn-icon ${theme === "light" ? "is-active" : ""}`}
                         >
                           <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -148,8 +149,7 @@ export default function Navbar() {
                           type="button"
                           title="داكن"
                           onClick={() => toggleTheme('dark')}
-                          className={`p-3 rounded-full bg-secondary hover:bg-tertiary transition-colors shadow-lg border ${theme === 'dark' ? 'border-brand ring-2 ring-brand/40' : 'border-primary'
-                            }`}
+                          className={`btn btn-icon ${theme === "dark" ? "is-active" : ""}`}
                         >
                           <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -161,7 +161,7 @@ export default function Navbar() {
                         <button
                           type="button"
                           title="Log in"
-                          className="w-full py-2.5 rounded-lg bg-secondary hover:bg-tertiary border border-primary text-primary font-medium transition-all flex justify-center items-center gap-2"
+                          className="btn btn-secondary w-full"
                           onClick={() => {
                             closeSettings();
                             dialogRef.current?.showModal();
@@ -177,14 +177,14 @@ export default function Navbar() {
                             type="button"
                             disabled={loading}
                             onClick={handleLogout}
-                            className="w-full py-2 bg-brand-error/10 text-brand-error hover:bg-brand-error hover:text-white rounded-lg text-xs font-black transition-all flex justify-center items-center gap-2"
+                            className="btn btn-danger-solid w-full text-xs"
                           >
                             {loading ? <LoaderIcon className="animate-spin h-3 w-3" /> : "نعم، خروج"}
                           </button>
                           <button
                             type="button"
                             onClick={() => setShowLogoutConfirm(false)}
-                            className="w-full py-2 bg-tertiary text-primary hover:bg-secondary rounded-lg text-xs font-medium transition-all"
+                            className="btn btn-ghost w-full text-xs"
                           >
                             إلغاء
                           </button>
@@ -193,7 +193,7 @@ export default function Navbar() {
                         <button
                           type="button"
                           title="Logout"
-                          className="w-full py-2.5 rounded-lg bg-secondary hover:bg-brand-error/10 hover:text-brand-error border border-primary text-primary font-medium transition-all flex justify-center items-center gap-2"
+                          className="btn btn-secondary w-full"
                           onClick={() => setShowLogoutConfirm(true)}
                         >
                           <LogOut className="h-4 w-4" />
@@ -215,7 +215,7 @@ export default function Navbar() {
             <LoginModalWrapper closeModal={() => dialogRef?.current?.close()} />
           </Suspense>
           <button
-            className="p-3 rounded-2xl w-full text-brand-error bg-secondary hover:bg-brand-error/10 transition-colors shadow-lg border border-primary font-bold"
+            className="btn btn-danger w-full"
             onClick={() => dialogRef?.current?.close()}
           >
             إغلاق

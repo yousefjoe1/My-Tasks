@@ -53,7 +53,7 @@ export default function OnboardingWrapper() {
             {/* الزرار اللي بيفتح الـ Onboarding - متناسق مع الـ glass-card بتاعتك */}
             <button
                 onClick={() => setShowModal(true)}
-                className="flex  items-center gap-2 px-5 py-2.5 glass-card text-secondary hover:text-brand transition-all text-sm font-bold group"
+                className="btn btn-secondary text-sm group"
             >
                 <HelpCircle size={18} className="group-hover:rotate-12 transition-transform" />
                 <span className='text-xs'>فهمّني أكتر</span>
@@ -68,7 +68,7 @@ export default function OnboardingWrapper() {
                         {/* زرار إغلاق سريع */}
                         <button
                             onClick={() => setShowModal(false)}
-                            className="absolute top-4 right-4 p-1 text-muted hover:bg-tertiary rounded-full transition-colors"
+                            className="btn btn-icon absolute top-4 right-4"
                         >
                             <X size={20} />
                         </button>
@@ -104,8 +104,7 @@ export default function OnboardingWrapper() {
 
                         <button
                             onClick={handleNext}
-                            className="w-full py-4 bg-brand text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-brand/20"
-                            style={{ color: 'white' }} // لضمان الوضوح فوق لون الـ brand
+                            className="btn btn-primary w-full"
                         >
                             <span className="text-lg">
                                 {step === slides.length - 1 ? 'فهمت، يلا بينا!' : 'التالي'}

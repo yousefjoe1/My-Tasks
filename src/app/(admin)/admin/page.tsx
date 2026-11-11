@@ -50,8 +50,8 @@ function DayPills({ days }: { days: Record<string, boolean> }) {
                         fontFamily: "monospace",
                         padding: "2px 6px",
                         borderRadius: "4px",
-                        border: `1px solid ${v ? "rgba(52,211,153,0.4)" : "var(--color-brand-border)"}`,
-                        background: v ? "rgba(52,211,153,0.1)" : "transparent",
+                        border: `1px solid ${v ? "color-mix(in srgb, var(--color-success) 40%, transparent)" : "var(--color-brand-border)"}`,
+                        background: v ? "color-mix(in srgb, var(--color-success) 12%, transparent)" : "transparent",
                         color: v ? "var(--color-brand-success)" : "var(--color-brand-text-muted)",
                     }}
                 >
@@ -157,8 +157,8 @@ function TaskItem({ task, subtasks }: { task: Task; subtasks: SubTask[] }) {
                             fontSize: "11px",
                             color: "var(--color-primary-2)",
                             fontFamily: "monospace",
-                            background: "rgba(96,165,250,0.1)",
-                            border: "1px solid rgba(96,165,250,0.2)",
+                            background: "color-mix(in srgb, var(--color-primary) 12%, transparent)",
+                            border: "1px solid color-mix(in srgb, var(--color-primary) 28%, transparent)",
                             borderRadius: "5px",
                             padding: "2px 8px",
                         }}
@@ -214,14 +214,14 @@ function UserCard({
                             width: "42px",
                             height: "42px",
                             borderRadius: "50%",
-                            background: "linear-gradient(135deg, var(--color-primary-2-dark), var(--color-brand-success))",
+                            background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             fontFamily: "monospace",
                             fontSize: "16px",
                             fontWeight: 700,
-                            color: "#fff",
+                            color: "var(--color-primary-foreground)",
                             flexShrink: 0,
                         }}
                     >
@@ -245,9 +245,9 @@ function UserCard({
                             padding: "3px 10px",
                             borderRadius: "20px",
                             fontWeight: 600,
-                            background: user.notificationsEnabled ? "rgba(52,211,153,0.12)" : "rgba(156,163,175,0.1)",
+                            background: user.notificationsEnabled ? "color-mix(in srgb, var(--color-success) 14%, transparent)" : "color-mix(in srgb, var(--color-muted) 12%, transparent)",
                             color: user.notificationsEnabled ? "var(--color-brand-success)" : "var(--color-brand-text-muted)",
-                            border: `1px solid ${user.notificationsEnabled ? "rgba(52,211,153,0.35)" : "var(--color-brand-border)"}`,
+                            border: `1px solid ${user.notificationsEnabled ? "color-mix(in srgb, var(--color-success) 35%, transparent)" : "var(--color-brand-border)"}`,
                         }}
                     >
                         {user.notificationsEnabled ? "تذكير مفعّل" : "تذكير غير مفعّل"}
@@ -260,9 +260,9 @@ function UserCard({
                             padding: "3px 10px",
                             borderRadius: "20px",
                             fontWeight: 600,
-                            background: user.role === "admin" ? "rgba(96,165,250,0.15)" : "rgba(156,163,175,0.1)",
+                            background: user.role === "admin" ? "var(--sand-wash)" : "color-mix(in srgb, var(--color-muted) 12%, transparent)",
                             color: user.role === "admin" ? "var(--color-primary-2)" : "var(--color-brand-text-muted)",
-                            border: `1px solid ${user.role === "admin" ? "rgba(96,165,250,0.3)" : "var(--color-brand-border)"}`,
+                            border: `1px solid ${user.role === "admin" ? "color-mix(in srgb, var(--color-primary) 35%, transparent)" : "var(--color-brand-border)"}`,
                         }}
                     >
                         {user.role}
@@ -409,18 +409,7 @@ export default function AdminPage() {
                     placeholder="ابحث باسم المستخدم أو البريد..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    style={{
-                        width: "100%",
-                        background: "var(--color-brand-secondary)",
-                        border: "1px solid var(--color-brand-border)",
-                        borderRadius: "8px",
-                        padding: "10px 16px",
-                        color: "var(--color-brand-text)",
-                        fontSize: "14px",
-                        marginBottom: "20px",
-                        outline: "none",
-                        fontFamily: "inherit",
-                    }}
+                    className="field mb-5 text-sm"
                 />
 
                 {loading && (

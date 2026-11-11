@@ -18,17 +18,15 @@ const TodayBadge = () => {
 
             {/* طبقة التوهج الخارجية */}
             <div className="absolute inset-0 rounded-full overflow-hidden blur-[2px]">
-                <div className="animate-eclipse-custom absolute inset-0 rounded-full -z-[1] bg-white opacity-60"></div>
+                <div className="animate-eclipse-custom absolute inset-0 rounded-full -z-[1] bg-brand opacity-60"></div>
             </div>
 
             {/* جسم الـ Badge الرئيسي */}
-            <div className="relative rounded-full text-[10px] text-white font-medium bg-black/20 overflow-hidden">
-                {/* الشعاع الداخلي المتحرك */}
-                <div className="animate-eclipse-custom absolute inset-0 rounded-full bg-white/30 blur-[1px] -z-[1]"></div>
+            <div className="relative rounded-full text-[10px] text-on-primary font-medium bg-brand-primary/20 overflow-hidden">
+                <div className="animate-eclipse-custom absolute inset-0 rounded-full bg-brand-primary/30 blur-[1px] -z-[1]"></div>
 
-                {/* المحتوى النصي */}
-                <div className="m-[1px] px-2 py-0.5 rounded-full bg-black/95 backdrop-blur-md flex items-center gap-1">
-                    <span className="w-1 h-1 rounded-full bg-white shadow-[0_0_3px_white] animate-pulse" />
+                <div className="m-[1px] px-2 py-0.5 rounded-full bg-brand backdrop-blur-md flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-primary-foreground shadow-[0_0_3px_var(--color-primary-foreground)] animate-pulse" />
                     Today
                 </div>
             </div>

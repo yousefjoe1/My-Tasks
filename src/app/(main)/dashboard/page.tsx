@@ -81,7 +81,7 @@ const DashBoard = () => {
                 {snapData && snapData.length > 0 && (
                     <div className="relative overflow-hidden rounded-3xl bg-brand-secondary p-8 text-primary border shadow-2xl shadow-brand/20 mb-8">
                         {/* خلفية جمالية خفيفة */}
-                        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+                        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-brand-primary/10 rounded-full blur-3xl" />
 
                         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                             <div>

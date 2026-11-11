@@ -131,7 +131,7 @@ export default function PushNotificationManager() {
                         <button
                             disabled={loading}
                             onClick={unsubscribeFromPush}
-                            className="px-4 py-2 bg-primary border border-secondary text-secondary hover:bg-error hover:text-white hover:border-transparent font-medium rounded-xl transition-all active:scale-95"
+                            className="btn btn-danger"
                         >
                             {loading ? 'جاري التعطيل...' : 'تعطيل التذكيرات'}
 
@@ -148,7 +148,7 @@ export default function PushNotificationManager() {
                     <button
                         disabled={loading || !user}
                         onClick={subscribeToPush}
-                        className="whitespace-nowrap text-xs px-6 py-2 hover:opacity-90 text-primary font-semibold rounded-xl transition-all active:scale-[0.98] bg-primary border border-primary disabled:opacity-50"
+                        className="btn btn-primary whitespace-nowrap text-xs"
                     >
                         {loading ? 'جاري التفعيل...' : 'تحب افكرك ؟'}
                     </button>

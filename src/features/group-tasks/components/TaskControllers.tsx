@@ -53,7 +53,7 @@ const TaskControllers = ({ userTask }: { userTask: UserTask }) => {
             {/* العداد المركزي */}
             <div className="text-center mb-4">
                 <div className="relative flex items-center justify-center">
-                    <div className="w-18 h-18 flex items-center justify-center rounded-full bg-gradient-to-br from-brand-primary to-brand-primary/50 text-white font-black text-4xl shadow-xl  border-brand-primary/20">
+                    <div className="w-18 h-18 flex items-center justify-center rounded-full bg-brand text-on-primary font-black text-4xl shadow-xl">
                         {userTask.count}
                     </div>
                 </div>
@@ -71,7 +71,7 @@ const TaskControllers = ({ userTask }: { userTask: UserTask }) => {
 
                 <button
                     onClick={() => handleSave(userTask)}
-                    className="w-14 flex items-center justify-center bg-brand-tertiary hover:bg-brand-border text-brand-text-secondary rounded-2xl transition-all active:scale-95 border border-brand-border"
+                    className="btn btn-secondary w-14"
                     title="حفظ التقدم"
                     disabled={loading}
                 >

@@ -47,7 +47,7 @@ export default function Footer() {
                                     <p className="text-[10px] text-muted font-bold uppercase tracking-widest">Get in touch</p>
                                     <p className="text-primary font-medium">yousefmahmoud150@gmail.com</p>
                                 </div>
-                                <div className="p-2 bg-primary rounded-lg text-brand group-hover:bg-brand group-hover:text-white transition-colors">
+                                <div className="p-2 bg-primary rounded-lg text-brand group-hover:bg-brand group-hover:text-on-primary transition-colors">
                                     <Mail size={18} />
                                 </div>
                             </a>
@@ -60,7 +60,7 @@ export default function Footer() {
                                     <p className="text-[10px] text-muted font-bold uppercase tracking-widest">WhatsApp Me</p>
                                     <p className="text-primary font-medium">01554464169</p>
                                 </div>
-                                <div className="p-2 bg-primary rounded-lg text-brand-success group-hover:bg-brand-success group-hover:text-white transition-colors">
+                                <div className="p-2 bg-primary rounded-lg text-brand-success group-hover:bg-brand-success group-hover:text-on-primary transition-colors">
                                     <Phone size={18} />
                                 </div>
                             </a>

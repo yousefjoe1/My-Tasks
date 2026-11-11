@@ -88,7 +88,7 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
                             type="text"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
-                            className="w-full p-3.5 rounded-xl bg-brand-secondary border border-brand-border text-brand-text"
+                            className="field"
                             placeholder="أحمد محمود"
                             required
                         />
@@ -101,7 +101,7 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-3.5 rounded-xl bg-brand-secondary border border-brand-border text-brand-text"
+                        className="field"
                         placeholder="name@example.com"
                         required
                     />
@@ -113,25 +113,25 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full p-3.5 rounded-xl bg-brand-secondary border border-brand-border text-brand-text"
+                        className="field"
                         placeholder="••••••••"
                         required
                     />
                 </div>
 
-                <button disabled={loading} type="submit" className="w-full bg-brand-primary text-white font-bold py-3.5 rounded-xl">
+                <button disabled={loading} type="submit" className="btn btn-primary w-full">
                     {loading ? 'جاري المعالجة...' : (isSignUp ? 'تسجيل' : 'دخول')}
                 </button>
             </form>
 
             {/* هنا كود عرض الرسائل */}
             {message && (
-                <div className={`mt-6 p-4 rounded-xl text-sm font-medium ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <div className={`mt-6 p-4 rounded-xl text-sm font-medium ${message.type === 'success' ? 'bg-brand-success/15 text-brand-success' : 'bg-brand-error/15 text-brand-error'}`}>
                     {message.text}
                 </div>
             )}
 
-            <button onClick={() => setIsSignUp(!isSignUp)} className="mt-6 text-sm text-brand-primary w-full text-center">
+            <button onClick={() => setIsSignUp(!isSignUp)} className="btn btn-ghost mt-6 w-full text-sm">
                 {isSignUp ? 'لديك حساب بالفعل؟ سجل دخول' : "ليس لديك حساب؟ سجل الآن"}
             </button>
         </div>

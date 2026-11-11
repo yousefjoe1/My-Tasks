@@ -90,9 +90,7 @@ const AddSubTask: React.FC<AddSubTaskProps> = ({ taskId, onSubTaskAdded }) => {
                         onKeyDown={handleKeyPress}
                         onBlur={handleSubmit}
                         placeholder="أضف مهمة فرعية جديدة..."
-                        className="flex-1 px-3 py-2 text-sm bg-primary text-primary border border-primary 
-                                   rounded-xl outline-none focus:ring-2 focus:ring-primary-2/50 
-                                   focus:border-primary-2 transition-all"
+                        className="field flex-1 text-sm"
                         disabled={loading}
                         autoComplete="off"
                     />
@@ -100,12 +98,10 @@ const AddSubTask: React.FC<AddSubTaskProps> = ({ taskId, onSubTaskAdded }) => {
                     <button
                         onClick={handleSubmit}
                         disabled={!newSubTaskContent.trim() || loading}
-                        className="p-2 rounded-xl bg-success/15 text-success hover:bg-success 
-                                   text-white border active:scale-95 transition-all font-medium 
-                                   disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn btn-icon check-on"
                     >
                         {loading ? (
-                            <div className="w-4 h-4 border-2 border-white border-t-white rounded-full animate-spin" />
+                            <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
                         ) : (
                             <Plus className="w-4 h-4" />
                         )}
@@ -114,8 +110,7 @@ const AddSubTask: React.FC<AddSubTaskProps> = ({ taskId, onSubTaskAdded }) => {
                     <button
                         onClick={handleCancel}
                         disabled={loading}
-                        className="p-2 rounded-xl text-red-400 border border-red-400 hover:bg-secondary/50 
-                                   hover:text-primary active:scale-95 transition-all"
+                        className="btn btn-icon btn-danger"
                     >
                         <X className="w-4 h-4" />
                     </button>
@@ -125,10 +120,7 @@ const AddSubTask: React.FC<AddSubTaskProps> = ({ taskId, onSubTaskAdded }) => {
                 <button
                     onClick={handleAddClick}
                     disabled={loading}
-                    className="group flex items-center gap-2 w-full p-3 bg-tertiary/30 
-                               hover:bg-primary-2/20 border-2 border-dashed border-primary-2/40 
-                               rounded-2xl transition-all duration-200 hover:scale-[1.02] 
-                               active:scale-100 font-medium text-primary-2 hover:text-primary"
+                    className="btn btn-secondary group h-auto w-full justify-start border-dashed"
                 >
                     <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     <span className="text-sm">أضف مهمة فرعية جديدة</span>

@@ -25,10 +25,10 @@ const ToastContainer = ({ toasts, removeToast }: { toasts: Toast[]; removeToast:
         <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
             {toasts.map(toast => {
                 const config: Record<ToastType, ToastConfig> = {
-                    success: { icon: CheckCircle, bg: 'bg-green-400' },
-                    error: { icon: AlertCircle, bg: 'bg-red-400 text-white' },
-                    warning: { icon: AlertTriangle, bg: 'bg-yellow-500' },
-                    info: { icon: Info, bg: 'bg-blue-500' }
+                    success: { icon: CheckCircle, bg: 'bg-success text-on-primary' },
+                    error: { icon: AlertCircle, bg: 'bg-error text-on-primary' },
+                    warning: { icon: AlertTriangle, bg: 'bg-brand text-on-primary' },
+                    info: { icon: Info, bg: 'bg-brand text-on-primary' }
                 };
 
                 const { bg } = config[toast.type];

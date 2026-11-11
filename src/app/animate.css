@@ -43,7 +43,7 @@
     animation: slideIn 0.5s ease-out forwards;
 }
 
-/* New 3D Soft Style - Class: day-btn-3d */
+/* Sage checkbox treatment for the day completion control */
 .day-btn-3d {
     position: relative;
     background: transparent;
@@ -52,37 +52,14 @@
     user-select: none;
     width: 36px;
     height: 36px;
-    transition: filter 250ms;
     margin: 0 auto;
 }
 
-/* الظل الخارجي الناعم */
-.day-btn-3d-shadow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    background: hsl(0deg 0% 0% / 0.15);
-    /* ظل خفيف جداً */
-    transform: translateY(2px);
-    filter: blur(2px);
-    will-change: transform;
-    transition: transform 200ms cubic-bezier(.3, .7, .4, 1);
-}
-
-/* سُمك الزرار (الحافة السفلية) */
+.day-btn-3d-shadow,
 .day-btn-3d-edge {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
+    display: none;
 }
 
-/* واجهة الزرار */
 .day-btn-3d-front {
     display: flex;
     align-items: center;
@@ -90,48 +67,35 @@
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: 12px;
-    color: white;
-    will-change: transform;
-    transform: translateY(-5px);
-    /* الرفعة البارزة */
-    transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* ألوان حالة OFF */
-.day-btn-3d-off .day-btn-3d-edge {
-    background: color-mix(in srgb, var(--color-brand-tertiary), black 20%);
+    border-radius: 0.45rem;
+    color: var(--color-muted);
+    background: transparent;
+    border: 1.5px solid rgb(var(--glow-channel) / 0.55);
+    transform: none;
+    transition: transform 200ms ease, background-color 200ms ease, border-color 200ms ease;
 }
 
 .day-btn-3d-off .day-btn-3d-front {
-    background: var(--color-brand-tertiary);
-    color: var(--color-brand-text-muted);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-/* ألوان حالة ON (Success) */
-.day-btn-3d-on .day-btn-3d-edge {
-    background: color-mix(in srgb, var(--color-brand-success), black 25%);
+    background: transparent;
+    color: var(--color-muted);
 }
 
 .day-btn-3d-on .day-btn-3d-front {
-    background: var(--color-brand-success);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        /* لمعة فوق */
-        inset 0 -1px 1px rgba(0, 0, 0, 0.1);
-    /* عمق خفيف تحت */
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-primary-foreground);
 }
 
-/* التفاعل */
-.day-btn-3d:hover .day-btn-3d-front {
-    transform: translateY(-6px);
-    filter: brightness(110%);
-}
-
-.day-btn-3d:active .day-btn-3d-front {
+.day-btn-3d:hover .day-btn-3d-front,
+.day-btn-3d-sm:hover .day-btn-3d-front,
+.day-btn-3d-md:hover .day-btn-3d-front {
     transform: translateY(-1px);
+}
+
+.day-btn-3d:active .day-btn-3d-front,
+.day-btn-3d-sm:active .day-btn-3d-front,
+.day-btn-3d-md:active .day-btn-3d-front {
+    transform: scale(0.98);
 }
 
 .day-btn-3d-sm {
@@ -140,22 +104,8 @@
     margin: 0;
 }
 
-.day-btn-3d-sm .day-btn-3d-shadow,
-.day-btn-3d-sm .day-btn-3d-edge,
 .day-btn-3d-sm .day-btn-3d-front {
-    border-radius: 8px;
-}
-
-.day-btn-3d-sm .day-btn-3d-front {
-    transform: translateY(-3px);
-}
-
-.day-btn-3d-sm:hover .day-btn-3d-front {
-    transform: translateY(-4px);
-}
-
-.day-btn-3d-sm:active .day-btn-3d-front {
-    transform: translateY(-1px);
+    border-radius: 0.3rem;
 }
 
 .day-btn-3d-md {
@@ -164,30 +114,16 @@
     margin: 0;
 }
 
-.day-btn-3d-md .day-btn-3d-shadow,
-.day-btn-3d-md .day-btn-3d-edge,
 .day-btn-3d-md .day-btn-3d-front {
-    border-radius: 10px;
-}
-
-.day-btn-3d-md .day-btn-3d-front {
-    transform: translateY(-4px);
-}
-
-.day-btn-3d-md:hover .day-btn-3d-front {
-    transform: translateY(-5px);
-}
-
-.day-btn-3d-md:active .day-btn-3d-front {
-    transform: translateY(-1px);
+    border-radius: 0.4rem;
 }
 
 .loader-v3 {
     width: 96px;
     box-sizing: content-box;
     height: 48px;
-    background: #FFF;
-    border-color: #60a5fa;
+    background: var(--color-surface);
+    border-color: var(--color-primary);
     border-style: solid;
     border-width: 2px 2px 50px 2px;
     border-radius: 100%;
@@ -200,8 +136,8 @@
     position: absolute;
     top: 50%;
     left: 0;
-    background: #FFF;
-    border: 18px solid #60a5fa;
+    background: var(--color-surface);
+    border: 18px solid var(--color-primary);
     border-radius: 100%;
     width: 12px;
     height: 12px;
@@ -213,8 +149,8 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    background: #60a5fa;
-    border: 18px solid #FFF;
+    background: var(--color-primary);
+    border: 18px solid var(--color-surface);
     border-radius: 100%;
     width: 12px;
     height: 12px;

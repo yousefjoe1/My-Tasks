@@ -71,7 +71,7 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
             {/* Header: ترحيب بالمستخدم */}
             <header className="flex flex-col gap-2 border-b border-brand-border pb-1">
                 <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-brand-primary flex items-center justify-center text-white shadow-lg shadow-brand-primary/20">
+                    <div className="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center text-on-primary shadow-lg">
                         <Award size={28} />
                     </div>
                     <div>
@@ -128,7 +128,7 @@ export default function MyTasksControls({ users }: MyTasksControlsProps) {
 
                             <button
                                 onClick={() => handleSave(userTask)}
-                                className="p-2 flex items-center w-full justify-center bg-brand-tertiary hover:bg-brand-border text-brand-text-secondary transition-all active:scale-95 border border-brand-border"
+                                className="btn btn-secondary w-full"
                                 title="حفظ التقدم"
                                 disabled={loading}
                             >
