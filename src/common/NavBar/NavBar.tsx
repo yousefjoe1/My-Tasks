@@ -6,7 +6,6 @@ import Image from "next/image";
 import LoginModal from "../Modals/LoginModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { supabase } from "@/lib/supabase/client";
 import { LocalStorageStrategy } from "@/lib/storage/weeklyTasks/LocalStorageStrategy";
 import { useToast } from "@/components/Toasts/useToast";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -20,7 +19,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -44,19 +43,13 @@ export default function Navbar() {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const { error: err } = await supabase.auth.signOut();
-      localStorage.removeItem('sb-atfsfrwxmhrzlvmwxayi-auth-token');
-
-      if (err) {
-        error(err.message);
-      } else {
-        window.location.reload();
-      }
+      await logout();
+      LocalStorageStrategy.resetSync();
+      window.location.reload();
     } catch (err) {
       console.error("Logout error details:", err);
+      error(err instanceof Error ? err.message : "تعذر تسجيل الخروج");
     } finally {
-      LocalStorageStrategy.resetSync();
-      localStorage.removeItem('supabase.auth.token');
       setLoading(false);
       setShowLogoutConfirm(false);
       setSettingsOpen(false);

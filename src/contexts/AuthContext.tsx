@@ -2,44 +2,67 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import { User } from '@/types';
+import { api } from '@/lib/api/api';
+
+type MeResponse = { user: { id: string; email: string } };
 
 interface AuthContextType {
     user: User | null;
     loading: boolean;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
+const AuthContext = createContext<AuthContextType>({
+    user: null,
+    loading: true,
+    login: async () => {},
+    logout: async () => {},
+});
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // 1. Check active session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session?.user) {
-                setUser({ id: session.user.id, email: session.user.email || "" });
-            }
-            setLoading(false);
-        });
+        let cancelled = false;
 
-        // 2. Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            if (session?.user) {
-                setUser({ id: session.user.id, email: session.user.email || "" });
-            } else {
-                setUser(null);
-            }
-            setLoading(false);
-        });
+        api.get<MeResponse>('/me')
+            .then((res) => {
+                console.log("🚀 ~ AuthProvider ~ res:", res)
+                if (!cancelled) {
+                    setUser({ id: res.data.user.id, email: res.data.user.email });
+                }
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setUser(null);
+                }
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
+    const login = async (email: string, password: string) => {
+        const res = await api.post<MeResponse>('/auth/login', { email, password });
+        setUser({ id: res.data.user.id, email: res.data.user.email });
+    };
+
+    const logout = async () => {
+        await api.post('/auth/logout');
+        setUser(null);
+    };
+
     return (
-        <AuthContext.Provider value={{ user, loading }}>
+        <AuthContext.Provider value={{ user, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

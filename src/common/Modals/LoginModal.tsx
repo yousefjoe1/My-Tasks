@@ -1,23 +1,19 @@
 import { useToast } from '@/components/Toasts/useToast';
-import { attachSignupReferral } from '@/features/auth/actions/referral.actions';
-import { supabase } from '@/lib/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { api, ApiError } from '@/lib/api/api';
 import React, { useState } from 'react';
 
-const UUID_RE =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-function readReferral(fromQuery?: string | null): string | null {
-    const fromStorage = typeof window !== 'undefined' ? localStorage.getItem('referred_by') : null;
-    const value = (fromQuery || fromStorage || '').trim();
-    return UUID_RE.test(value) ? value : null;
-}
-
-// تعريف أنواع الأخطاء والرسائل
-interface Error { message: string; }
 type MessageType = 'success' | 'error'
 interface Message { type: MessageType; text: string; }
 
-export default function LoginModal({ closeModal, referredByQuery }: { closeModal: () => void, referredByQuery?: string | null }) {
+function authErrorText(code: string) {
+    if (code === 'invalid_credentials') return 'البريد أو كلمة المرور غير صحيحة';
+    if (code === 'email_already_registered') return 'هذا البريد مسجل بالفعل';
+    if (code === 'validation_error') return 'تحقق من البيانات. كلمة المرور 8 أحرف على الأقل';
+    return 'حدث خطأ ما';
+}
+
+export default function LoginModal({ closeModal }: { closeModal: () => void, referredByQuery?: string | null }) {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -25,6 +21,7 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
     const [isSignUp, setIsSignUp] = useState(false);
     const [message, setMessage] = useState<Message | null>(null);
     const { error: toastError, success: toastSuccess } = useToast();
+    const { login } = useAuth();
 
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -34,41 +31,20 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
 
         try {
             if (isSignUp) {
-                const referredBy = readReferral(referredByQuery);
-                const signUpData = {
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            full_name: fullName,
-                            ...(referredBy ? { referred_by: referredBy } : {}),
-                        }
-                    }
-                };
-
-                const { data, error } = await supabase.auth.signUp(signUpData);
-
-                if (error) throw error;
-
-                if (data.user?.id && referredBy) {
-                    await attachSignupReferral(data.user.id, referredBy, fullName);
-                    localStorage.removeItem('referred_by');
-                }
-
-                setMessage({ type: 'success', text: 'تم التسجيل بنجاح!.' });
+                await api.post('/auth/register', { email, password, fullName });
+                setMessage({ type: 'success', text: 'تم التسجيل بنجاح. سجل الدخول الآن.' });
                 toastSuccess('تم التسجيل بنجاح!');
+                setIsSignUp(false);
             } else {
-                // منطق تسجيل الدخول العادي
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
+                await login(email, password);
                 setMessage({ type: 'success', text: 'أهلاً بك مجدداً!' });
                 toastSuccess('أهلاً بك مجدداً!');
                 closeModal();
             }
         } catch (error: unknown) {
-            const err = error as Error;
-            toastError(err.message || 'حدث خطأ ما');
-            setMessage({ type: 'error', text: err.message });
+            const text = error instanceof ApiError ? authErrorText(error.code) : 'حدث خطأ ما';
+            toastError(text);
+            setMessage({ type: 'error', text });
         } finally {
             setLoading(false);
         }
@@ -114,9 +90,10 @@ export default function LoginModal({ closeModal, referredByQuery }: { closeModal
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="field"
-                        placeholder="••••••••"
-                        required
-                    />
+                            placeholder="••••••••"
+                            minLength={isSignUp ? 8 : undefined}
+                            required
+                        />
                 </div>
 
                 <button disabled={loading} type="submit" className="btn btn-primary w-full">
